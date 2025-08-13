@@ -60,7 +60,7 @@ Copie o arquivo `ImportadorSAGE.py` para a pasta de scripts do seu usuário no L
         
 2.  **Editar:**
     
-    - Navegue pelas abas (`EST`, `CDT`, `VAR`, etc.) para editar os dados.
+    - Navegue pelas abas (`PDS`, `PDF`, `PDD`, etc.) para editar os dados.
         
     - Utilize a **coluna "Gera"** para definir como cada linha será tratada na exportação (veja detalhes abaixo).
         
@@ -68,7 +68,7 @@ Copie o arquivo `ImportadorSAGE.py` para a pasta de scripts do seu usuário no L
     
     - Após a edição, clique no botão **`Exportar para .dat`**.
         
-    - O arquivo final (ex: `SAIDA.dat`) será salvo na mesma pasta dos arquivos de origem.
+    - O arquivo final (ex: `pds.dat`) será salvo na pasta de destino na aba geral.
         
 
 ## A Coluna "Gera"

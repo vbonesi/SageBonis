@@ -15,7 +15,7 @@ import re
 # ==================== FUNÇÃO DE IMPORTAÇÃO =====================
 # ===============================================================
 
-def importar_dats():
+def importar_dats(*args):
     """
     Função principal de importação dos arquivos .dat para o LibreOffice Calc.
     - Lê o caminho da pasta informado na aba 'geral'.
@@ -181,7 +181,7 @@ def write_to_sheet(doc, sheet_name, lines):
 # ==================== FUNÇÃO DE EXPORTAÇÃO =====================
 # ===============================================================
 
-def exportar_dats():
+def exportar_dats(*args):
     """
     Função principal de exportação dos dados das abas do Calc para arquivos .dat.
     - Lê o caminho de exportação informado na aba 'geral'.

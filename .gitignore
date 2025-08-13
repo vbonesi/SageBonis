@@ -10,6 +10,7 @@ desktop.ini        # idem
 ###############################################################################
 *.tmp              # arquivos “hidratados” parciais
 ~$*                # prefixo que o Office/OneDrive usa p/ locks
+*.ods#             # sufixo libreoffice calc parcial
 
 ###############################################################################
 # 3. Editores comuns

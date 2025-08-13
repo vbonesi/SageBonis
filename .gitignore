@@ -1,0 +1,37 @@
+###############################################################################
+# 1. Arquivos temporários / caches de sistemas operacionais
+###############################################################################
+.DS_Store          # macOS cria em cada pasta
+Thumbs.db          # Windows thumbnails
+desktop.ini        # idem
+
+###############################################################################
+# 2. Arquivos-lock do OneDrive
+###############################################################################
+*.tmp              # arquivos “hidratados” parciais
+~$*                # prefixo que o Office/OneDrive usa p/ locks
+
+###############################################################################
+# 3. Editores comuns
+###############################################################################
+*~                 # backup do nano, emacs etc.
+*.swp              # swap do vim
+*.bak
+*.orig
+
+###############################################################################
+# 4. Saída gerada pelo próprio script
+###############################################################################
+backup_*/          # diretórios de backup que o AutomaToolbox cria
+*.tar.gz           # pacotes compactados gerados
+*.log              # logs rotativos podem ficar gigantes
+
+###############################################################################
+# 5. CI / build artefacts (se um dia fizer)
+###############################################################################
+/dist/
+/build/
+/coverage/
+
+/*.zip             # releases gerados localmente
+

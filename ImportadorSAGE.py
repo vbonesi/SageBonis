@@ -4,7 +4,7 @@ import os
 import re
 
 # ===============================================================
-# ================ MACRO SAGE - VERSÃO 0.6 ======================
+# ================ MACRO SAGE - VERSÃO 0.8 ======================
 # ===============================================================
 # Este script é utilizado como macro no LibreOffice Calc para importar e exportar arquivos .dat
 # do Sistema Aberto de Gerenciamento de Energia (SAGE).
@@ -45,7 +45,7 @@ CODIGO_INCLUDE_COMENTADO = 'u'
 # --- Cabeçalhos Padrão ---
 CABEÇALHO_COLUNA_ORIGEM = "Origem"
 CABEÇALHO_COLUNA_CONTROLE = "Gera"
-CABEÇALHO_COLUNA_DADOS = "Aux"
+CABEÇALHO_COLUNA_DADOS = "Comentario/Include"
 
 # --- NOVO: Cores para Linhas Alternadas (Efeito Zebra) ---
 # Cores em formato numérico (Decimal de Hex BGR: Blue-Green-Red)

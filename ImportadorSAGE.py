@@ -4,13 +4,16 @@ import os
 import re
 
 # ===============================================================
-# ================ MACRO SAGE - VERSÃO 0.8 ======================
+# ================ MACRO SAGE - VERSÃO 0.9 ======================
 # ===============================================================
 # Este script é utilizado como macro no LibreOffice Calc para importar e exportar arquivos .dat
 # do Sistema Aberto de Gerenciamento de Energia (SAGE).
 #
 # A partir desta versão, o script lê dinamicamente as configurações de
 # ordenação, cores e validação das abas "MaisUsadas" e "EntidadesValoresAtributos".
+#
+# Adicionado a aba cores para facilitar a aplicação de temas de cores.
+# Correção de importação de comentarios
 #
 # Desenvolvido para rodar com a planilha SageBonis.ods
 # Duvidas/Bugs/Sugestões - (11) 95456-4510 - Victor Bonesi - https://github.com/vbonesi/SageBonis
@@ -23,9 +26,11 @@ import re
 NOME_ABA_GERAL = "geral"
 NOME_ABA_MAIS_USADAS = "MaisUsadas"
 NOME_ABA_VALIDACAO = "EntidadeAtributoValor"
+NOME_ABA_OPMSK = "EntidadeAtributoValor"
+NOME_ABA_CORES = "EntidadeAtributoValor"
 
 # --- Lista de Abas a Ignorar ---
-FOLHAS_IGNORADAS = [NOME_ABA_GERAL, NOME_ABA_MAIS_USADAS, NOME_ABA_VALIDACAO, "opmsk"]
+FOLHAS_IGNORADAS = [NOME_ABA_GERAL, NOME_ABA_MAIS_USADAS, NOME_ABA_VALIDACAO, NOME_ABA_OPMSK, NOME_ABA_CORES]
 
 # --- Posições das Células na Aba "geral" ---
 CELULA_CAMINHO_IMPORTACAO = (0, 3)  # A4
@@ -287,7 +292,6 @@ def write_to_sheet(doc, sheet_name, pontos_importados, modo, config):
 # ===============================================================
 # =================== LÓGICA DE PARSING =========================
 # ===============================================================
-# (A função parse_dat_file não muda nesta atualização)
 def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
     try:
         with open(file_path, 'r', encoding='latin-1', errors='ignore') as f:
@@ -295,50 +299,97 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
     except IOError as e:
         print(f"Erro ao ler o arquivo {file_path}: {e}")
         return
+        
     i = 0
+    # Inicializa a chave de entidade com o nome do arquivo (como fallback)
+    current_entidade_chave = os.path.splitext(os.path.basename(file_path))[0].lower()
+    
     while i < len(lines):
         line = lines[i].strip()
         original_line = lines[i].strip('\r\n')
         i += 1
+        
         if not line: continue
-        entidade_chave = os.path.splitext(os.path.basename(file_path))[0].lower()
+        
+        # -------------------------------------------------------------
+        # 1. TRATAMENTO DE INCLUDES (Comentado e Ativo)
+        # -------------------------------------------------------------
         include_comentado_match = REGEX_INCLUDE_COMENTADO.match(original_line)
         if include_comentado_match:
             caminho_do_include = include_comentado_match.group(1).strip()
             ponto = {'type': CODIGO_INCLUDE_COMENTADO, 'data': caminho_do_include, 'origem': relative_path}
-            all_data.setdefault(entidade_chave, []).append(ponto)
+            all_data.setdefault(current_entidade_chave, []).append(ponto)
             continue
+            
         include_match = REGEX_INCLUDE.match(original_line)
         if include_match:
             caminho_do_include = include_match.group(1).strip()
             ponto = {'type': CODIGO_INCLUDE, 'data': caminho_do_include, 'origem': relative_path}
-            all_data.setdefault(entidade_chave, []).append(ponto)
+            all_data.setdefault(current_entidade_chave, []).append(ponto)
             continue
+            
+        # -------------------------------------------------------------
+        # 2. TRATAMENTO DE BLOCO ATIVO (CGS, COR, etc.)
+        # -------------------------------------------------------------
+        if line.upper() in entidades_validas: 
+            entidade_nome = line.upper() # Pega o nome do bloco (ex: 'COR')
+            current_entidade_chave = entidade_nome.lower() # Atualiza a chave para 'cor'
+            
+            ponto = {'type': CODIGO_BLOCO_ATIVO, 'identifier': entidade_nome, 'attributes': {}, 'origem': relative_path}
+            
+            # INICIA A LEITURA DAS LINHAS DENTRO DO BLOCO
+            while i < len(lines):
+                next_line = lines[i].strip()
+                original_next_line = lines[i].strip('\r\n')
+                
+                # CONDIÇÃO DE QUEBRA DE BLOCO
+                if not next_line or next_line.upper() in entidades_validas or REGEX_INCLUDE.match(lines[i]) or REGEX_INCLUDE_COMENTADO.match(lines[i]):
+                    break 
+                
+                # TRATAMENTO DE COMENTÁRIO SIMPLES DENTRO DO BLOCO (Ex: ;[NHS] PINT=...)
+                if next_line.startswith(';'):
+                    comentario_limpo = original_next_line.lstrip(';').lstrip()
+                    # Adiciona o comentário ANTES de continuar com os atributos
+                    all_data.setdefault(current_entidade_chave, []).append({'type': CODIGO_COMENTARIO_SIMPLES, 'data': comentario_limpo, 'origem': relative_path})
+                    i += 1 
+                    continue
+                
+                # TRATAMENTO DE ATRIBUTO NORMAL (Ex: ID= JDM:...)
+                if '=' in next_line: 
+                    key, value = next_line.split('=', 1)
+                    ponto['attributes'][key.strip()] = value.strip()
+                
+                i += 1
+            
+            # Adiciona o Ponto Ativo à lista
+            if ponto['attributes']:
+                all_data.setdefault(current_entidade_chave, []).append(ponto)
+            continue
+            
+        # -------------------------------------------------------------
+        # 3. TRATAMENTO DE BLOCO COMENTADO OU COMENTÁRIO SIMPLES (FORA)
+        # -------------------------------------------------------------
         if line.startswith(';'):
             match = re.match(r'^; *([A-Z_]+)', line, re.IGNORECASE)
+            
             if match and match.group(1).upper() in entidades_validas:
-                ponto = {'type': CODIGO_BLOCO_COMENTADO, 'identifier': match.group(1).upper(), 'attributes': {}, 'origem': relative_path}
+                # Lógica para Bloco Comentado (Ex: ;CGS / ;COR)
+                entidade_nome_comentado = match.group(1).upper()
+                ponto = {'type': CODIGO_BLOCO_COMENTADO, 'identifier': entidade_nome_comentado, 'attributes': {}, 'origem': relative_path}
+                
+                # Assume que o bloco comentado é da última entidade ativa conhecida
+                chave_a_usar = entidade_nome_comentado.lower() 
+                
                 while i < len(lines) and lines[i].strip().startswith(';'):
                     attr_line = lines[i].strip()[1:].strip()
                     if '=' in attr_line: key, value = attr_line.split('=', 1); ponto['attributes'][key.strip()] = value.strip()
                     i += 1
-                entidade_ponto = ponto['identifier'].lower()
-                all_data.setdefault(entidade_ponto, []).append(ponto)
+                
+                all_data.setdefault(chave_a_usar, []).append(ponto)
             else:
+                # Lógica para Comentário Simples (FORA de qualquer bloco)
                 comentario_limpo = original_line.lstrip(';').lstrip()
-                all_data.setdefault(entidade_chave, []).append({'type': CODIGO_COMENTARIO_SIMPLES, 'data': comentario_limpo, 'origem': relative_path})
-            continue
-        if line.upper() in entidades_validas:
-            ponto = {'type': CODIGO_BLOCO_ATIVO, 'identifier': line.upper(), 'attributes': {}, 'origem': relative_path}
-            while i < len(lines):
-                next_line = lines[i].strip()
-                if not next_line or next_line.upper() in entidades_validas or next_line.startswith(';') or REGEX_INCLUDE.match(lines[i]) or REGEX_INCLUDE_COMENTADO.match(lines[i]):
-                    break
-                if '=' in next_line: key, value = next_line.split('=', 1); ponto['attributes'][key.strip()] = value.strip()
-                i += 1
-            if ponto['attributes']:
-                entidade_ponto = ponto['identifier'].lower()
-                all_data.setdefault(entidade_ponto, []).append(ponto)
+                all_data.setdefault(current_entidade_chave, []).append({'type': CODIGO_COMENTARIO_SIMPLES, 'data': comentario_limpo, 'origem': relative_path})
             continue
 
 # ===============================================================
@@ -490,6 +541,100 @@ def _exportar_folha(sheet, export_folder):
     return None
 
 # ===============================================================
+# ================= FUNÇÃO DE CORES DO TEMA =====================
+# ===============================================================
+
+# --- CONFIGURAÇÃO DA ABA DE CORES ---
+# Verifique o nome da aba onde a tabela de cores se encontra.
+# Se for "TEMA ESCURO" use-o, caso contrário ajuste.
+NOME_ABA_TEMA_CORES = "Cores" 
+# Colunas:
+COL_R_DEC = 5  # Coluna F (índice 5)
+COL_G_DEC = 6  # Coluna G (índice 6)
+COL_B_DEC = 7  # Coluna H (índice 7)
+COL_COR_AMOSTRA = 11 # Coluna L (índice 11)
+
+
+def rgb_to_bgr_decimal(r, g, b):
+    """
+    Converte os valores RGB (Red, Green, Blue) de 0-255 para
+    o formato BGR Decimal (Blue-Green-Red), que é o padrão
+    de cor numérica para CellBackColor no LibreOffice.
+    Fórmula: (B * 256^2) + (G * 256^1) + (R * 256^0)
+    """
+    try:
+        # Garante que os valores são inteiros e no intervalo 0-255.
+        r = int(r) if 0 <= r <= 255 else 0
+        g = int(g) if 0 <= g <= 255 else 0
+        b = int(b) if 0 <= b <= 255 else 0
+        
+        # Se os três valores forem zero (preto), retorna a cor
+        if r == 0 and g == 0 and b == 0:
+             return 0 # Preto é o valor 0
+        
+        # Se houver algum valor diferente de zero, calcula o BGR.
+        # B é o mais significativo (<< 16), G é o intermediário (<< 8), R é o menos significativo.
+        bgr_decimal = (b * 65536) + (g * 256) + r
+        return bgr_decimal
+    except:
+        # Retorna -1 para sinalizar que a célula deve ficar sem cor
+        return -1
+
+
+def atualizar_amostras_cores(*args):
+    """
+    Lê os valores RGB Decimais (Colunas H, I, J) da aba do tema
+    e aplica a cor de fundo (CellBackColor) na coluna de amostra (L).
+    """
+    try:
+        doc = XSCRIPTCONTEXT.getDocument() # type: ignore
+        sheets = doc.getSheets()
+
+        if not sheets.hasByName(NOME_ABA_TEMA_CORES):
+            print(f"ERRO: A aba de tema '{NOME_ABA_TEMA_CORES}' não foi encontrada.")
+            return
+
+        sheet = sheets.getByName(NOME_ABA_TEMA_CORES)
+        
+        # 1. Determina a última linha preenchida para otimizar a leitura
+        cursor = sheet.createCursor()
+        cursor.gotoEndOfUsedArea(False)
+        last_row = cursor.getRangeAddress().EndRow
+        
+        # 2. Leitura otimizada de um bloco de dados (Colunas R DEC a B DEC)
+        # Lemos de R DEC (H) até B DEC (J) da linha 1 até a última.
+        # Os índices iniciais são: COL_R_DEC (7) e LINHA 1.
+        data_range = sheet.getCellRangeByPosition(COL_R_DEC, 1, COL_B_DEC, last_row)
+        data = data_range.getDataArray()
+        
+        # 3. Itera sobre os dados lidos
+        for row_idx, row_data in enumerate(data):
+            # Índices relativos ao bloco de dados lido: 0=R, 1=G, 2=B
+            r_dec = row_data[0]
+            g_dec = row_data[1]
+            b_dec = row_data[2]
+            
+            # Converte para BGR Decimal
+            bgr_cor = rgb_to_bgr_decimal(r_dec, g_dec, b_dec)
+            
+            # A linha de destino é o índice da linha atual (row_idx) + 1 (cabeçalho)
+            target_row = row_idx + 1 
+            
+            amostra_cell = sheet.getCellByPosition(COL_COR_AMOSTRA, target_row)
+            
+            if bgr_cor == -1:
+                # Se a conversão falhar ou os valores não existirem, remove a cor
+                amostra_cell.CellBackColor = -1 # O valor -1 no LibreOffice remove o preenchimento
+            else:
+                # Aplica a cor
+                amostra_cell.CellBackColor = bgr_cor
+                
+        print("Amostras de cores do tema atualizadas com sucesso!")
+
+    except Exception as e:
+        print(f"ERRO ao aplicar as cores do tema: {e}")
+
+# ===============================================================
 # ================= EXPOSIÇÃO PARA LIBREOFFICE ==================
 # ===============================================================
-g_exportedScripts = importar_dats, exportar_dats, importar_parcial, exportar_parcial
+g_exportedScripts = importar_dats, exportar_dats, importar_parcial, exportar_parcial, atualizar_amostras_cores

@@ -4,6 +4,8 @@
 
 [cite_start]A partir desta versão, o script lê dinamicamente as configurações de ordenação, cores e validação das abas "MaisUsadas" e "EntidadesValoresAtributos". [cite: 7495]
 
+[cite_start]Adicionado a aba cores para facilitar a aplicação de temas de cores. Correção de importação de comentarios. [cite: 7495]
+
 ## Guia Rápido
 
 ### Passo 1: Instalar a Macro

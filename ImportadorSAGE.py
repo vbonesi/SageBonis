@@ -26,8 +26,8 @@ import re
 NOME_ABA_GERAL = "geral"
 NOME_ABA_MAIS_USADAS = "MaisUsadas"
 NOME_ABA_VALIDACAO = "EntidadeAtributoValor"
-NOME_ABA_OPMSK = "EntidadeAtributoValor"
-NOME_ABA_CORES = "EntidadeAtributoValor"
+NOME_ABA_OPMSK = "opmsk"
+NOME_ABA_CORES = "Cores"
 
 # --- Lista de Abas a Ignorar ---
 FOLHAS_IGNORADAS = [NOME_ABA_GERAL, NOME_ABA_MAIS_USADAS, NOME_ABA_VALIDACAO, NOME_ABA_OPMSK, NOME_ABA_CORES]
@@ -574,7 +574,7 @@ def rgb_to_bgr_decimal(r, g, b):
         
         # Se houver algum valor diferente de zero, calcula o BGR.
         # B é o mais significativo (<< 16), G é o intermediário (<< 8), R é o menos significativo.
-        bgr_decimal = (b * 65536) + (g * 256) + r
+        bgr_decimal = (r * 65536) + (g * 256) + b
         return bgr_decimal
     except:
         # Retorna -1 para sinalizar que a célula deve ficar sem cor

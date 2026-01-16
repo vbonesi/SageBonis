@@ -4,7 +4,7 @@ import os
 import re
 
 # ===============================================================
-# ================ MACRO SAGE - VERSÃO 0.9 ======================
+# ================ MACRO SAGE - VERSÃO 0.9.1 ====================
 # ===============================================================
 # Este script é utilizado como macro no LibreOffice Calc para importar e exportar arquivos .dat
 # do Sistema Aberto de Gerenciamento de Energia (SAGE).

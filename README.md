@@ -1,5 +1,7 @@
 # SageBonis - Editor Rápido para Base de Dados SAGE
 
+**Versão atual:** 0.9.1
+
 [cite_start]O SageBonis é uma ferramenta em LibreOffice Calc projetada para otimizar a edição da base de dados do **SAGE (Sistema Aberto de Gerenciamento de Energia)**. [cite: 7495] [cite_start]Ela importa múltiplos arquivos `.dat`, organiza as entidades em abas, permite a edição em massa e exporta a configuração de volta para múltiplos arquivos `.dat` de forma controlada. [cite: 7495]
 
 [cite_start]A partir desta versão, o script lê dinamicamente as configurações de ordenação, cores e validação das abas "MaisUsadas" e "EntidadesValoresAtributos". [cite: 7495]
@@ -108,6 +110,12 @@ Para agilizar seu fluxo de trabalho, você pode associar as macros a atalhos de 
     - `exportar_dats` -> `Ctrl + Shift + W`
     - `exportar_parcial` -> `Ctrl + Shift + E`
 8.  Clique em `OK` para salvar as configurações.
+
+## Objetivos futuros (roadmap)
+
+- **Unificar abas de entidades** em grupos mais compactos (ex.: digital, analógico, comando, comunicações, sistemas, infos, cores, ocorrências, etc.) para reduzir o número de abas e acelerar a configuração de uma SE completa.
+- **Importar uma base existente** para esse modelo unificado (converter DAT → planilhas do SageBonis) para reaproveitar bases já prontas.
+- **Criar uma aba “simul”** para geração de scripts de simulação, mesmo que o formato ainda esteja em definição.
 
 ## Contato
 

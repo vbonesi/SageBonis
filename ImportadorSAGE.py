@@ -247,7 +247,9 @@ def write_to_sheet(doc, sheet_name, pontos_importados, modo, config):
         sheet.getCellByPosition(1, row_idx).setString(ponto['type'])
         if ponto['type'] in [CODIGO_COMENTARIO_SIMPLES, CODIGO_INCLUDE, CODIGO_INCLUDE_COMENTADO]:
             sheet.getCellByPosition(2, row_idx).setString(ponto.get('data', ''))
-        elif 'attributes' in ponto:
+        elif ponto['type'] == CODIGO_BLOCO_COMENTADO:
+            sheet.getCellByPosition(2, row_idx).setString(ponto.get('comment', ''))
+        if 'attributes' in ponto:
             for attr_key, attr_value in ponto['attributes'].items():
                 try: col_idx = cabecalhos.index(attr_key); sheet.getCellByPosition(col_idx, row_idx).setString(attr_value)
                 except ValueError: pass
@@ -376,15 +378,22 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
                 # Lógica para Bloco Comentado (Ex: ;CGS / ;COR)
                 entidade_nome_comentado = match.group(1).upper()
                 ponto = {'type': CODIGO_BLOCO_COMENTADO, 'identifier': entidade_nome_comentado, 'attributes': {}, 'origem': relative_path}
+                comentarios_textuais = []
                 
                 # Assume que o bloco comentado é da última entidade ativa conhecida
                 chave_a_usar = entidade_nome_comentado.lower() 
                 
                 while i < len(lines) and lines[i].strip().startswith(';'):
                     attr_line = lines[i].strip()[1:].strip()
-                    if '=' in attr_line: key, value = attr_line.split('=', 1); ponto['attributes'][key.strip()] = value.strip()
+                    if '=' in attr_line:
+                        key, value = attr_line.split('=', 1)
+                        ponto['attributes'][key.strip()] = value.strip()
+                    elif attr_line:
+                        comentarios_textuais.append(attr_line)
                     i += 1
                 
+                if comentarios_textuais:
+                    ponto['comment'] = "\n".join(comentarios_textuais)
                 all_data.setdefault(chave_a_usar, []).append(ponto)
             else:
                 # Lógica para Comentário Simples (FORA de qualquer bloco)

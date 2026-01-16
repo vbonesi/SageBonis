@@ -305,6 +305,7 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
     i = 0
     # Inicializa a chave de entidade com o nome do arquivo (como fallback)
     current_entidade_chave = os.path.splitext(os.path.basename(file_path))[0].lower()
+    pending_comments = []
     
     while i < len(lines):
         line = lines[i].strip()
@@ -338,6 +339,9 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
             current_entidade_chave = entidade_nome.lower() # Atualiza a chave para 'cor'
             
             ponto = {'type': CODIGO_BLOCO_ATIVO, 'identifier': entidade_nome, 'attributes': {}, 'origem': relative_path}
+            if pending_comments:
+                ponto['comment'] = "\n".join(pending_comments)
+                pending_comments = []
             
             # INICIA A LEITURA DAS LINHAS DENTRO DO BLOCO
             comentarios_bloco = []
@@ -400,7 +404,7 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
             else:
                 # Lógica para Comentário Simples (FORA de qualquer bloco)
                 comentario_limpo = original_line.lstrip(';').lstrip()
-                all_data.setdefault(current_entidade_chave, []).append({'type': CODIGO_COMENTARIO_SIMPLES, 'data': comentario_limpo, 'origem': relative_path})
+                pending_comments.append(comentario_limpo)
             continue
 
 # ===============================================================

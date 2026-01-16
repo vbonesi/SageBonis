@@ -247,7 +247,7 @@ def write_to_sheet(doc, sheet_name, pontos_importados, modo, config):
         sheet.getCellByPosition(1, row_idx).setString(ponto['type'])
         if ponto['type'] in [CODIGO_COMENTARIO_SIMPLES, CODIGO_INCLUDE, CODIGO_INCLUDE_COMENTADO]:
             sheet.getCellByPosition(2, row_idx).setString(ponto.get('data', ''))
-        elif ponto['type'] == CODIGO_BLOCO_COMENTADO:
+        elif ponto['type'] in [CODIGO_BLOCO_ATIVO, CODIGO_BLOCO_COMENTADO]:
             sheet.getCellByPosition(2, row_idx).setString(ponto.get('comment', ''))
         if 'attributes' in ponto:
             for attr_key, attr_value in ponto['attributes'].items():
@@ -340,6 +340,7 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
             ponto = {'type': CODIGO_BLOCO_ATIVO, 'identifier': entidade_nome, 'attributes': {}, 'origem': relative_path}
             
             # INICIA A LEITURA DAS LINHAS DENTRO DO BLOCO
+            comentarios_bloco = []
             while i < len(lines):
                 next_line = lines[i].strip()
                 original_next_line = lines[i].strip('\r\n')
@@ -351,8 +352,7 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
                 # TRATAMENTO DE COMENTÁRIO SIMPLES DENTRO DO BLOCO (Ex: ;[NHS] PINT=...)
                 if next_line.startswith(';'):
                     comentario_limpo = original_next_line.lstrip(';').lstrip()
-                    # Adiciona o comentário ANTES de continuar com os atributos
-                    all_data.setdefault(current_entidade_chave, []).append({'type': CODIGO_COMENTARIO_SIMPLES, 'data': comentario_limpo, 'origem': relative_path})
+                    comentarios_bloco.append(comentario_limpo)
                     i += 1 
                     continue
                 
@@ -363,6 +363,8 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
                 
                 i += 1
             
+            if comentarios_bloco:
+                ponto['comment'] = "\n".join(comentarios_bloco)
             # Adiciona o Ponto Ativo à lista
             if ponto['attributes']:
                 all_data.setdefault(current_entidade_chave, []).append(ponto)

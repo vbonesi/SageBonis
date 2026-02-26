@@ -2,11 +2,11 @@
 
 **Versão atual:** 0.9.1
 
-[cite_start]O SageBonis é uma ferramenta em LibreOffice Calc projetada para otimizar a edição da base de dados do **SAGE (Sistema Aberto de Gerenciamento de Energia)**. [cite: 7495] [cite_start]Ela importa múltiplos arquivos `.dat`, organiza as entidades em abas, permite a edição em massa e exporta a configuração de volta para múltiplos arquivos `.dat` de forma controlada. [cite: 7495]
+O SageBonis é uma ferramenta em LibreOffice Calc projetada para otimizar a edição da base de dados do **SAGE (Sistema Aberto de Gerenciamento de Energia)**. Ela importa múltiplos arquivos `.dat`, organiza as entidades em abas, permite a edição em massa e exporta a configuração de volta para múltiplos arquivos `.dat` de forma controlada.
 
-[cite_start]A partir desta versão, o script lê dinamicamente as configurações de ordenação, cores e validação das abas "MaisUsadas" e "EntidadesValoresAtributos". [cite: 7495]
+A partir desta versão, o script lê dinamicamente as configurações de ordenação, cores e validação das abas "MaisUsadas" e "EntidadesValoresAtributos".
 
-[cite_start]Adicionado a aba cores para facilitar a aplicação de temas de cores. Correção de importação de comentarios. [cite: 7495]
+Adicionada a aba de cores para facilitar a aplicação de temas. Correção de importação de comentários.
 
 ## Guia Rápido
 
@@ -32,9 +32,7 @@ Copie o arquivo `ImportadorSAGE.py` para a pasta de scripts do seu usuário no L
 
     1.  Abra o terminal e execute o comando para copiar o arquivo (ajuste o caminho de origem se necessário):
 
-        Bash
-
-        ```
+        ```bash
         cp ImportadorSAGE.py ~/.config/libreoffice/4/user/Scripts/python/
         ```
 
@@ -52,7 +50,7 @@ Copie o arquivo `ImportadorSAGE.py` para a pasta de scripts do seu usuário no L
 
 1.  **Importar:**
     - Coloque todos os seus arquivos `.dat` em uma pasta.
-    - [cite_start]Abra `SageBonis.ods`. [cite: 7495] [cite_start]Na aba **geral**, cole o caminho completo da pasta no campo correspondente. [cite: 7495]
+    - Abra `SageBonis.ods`. Na aba **geral**, cole o caminho completo da pasta no campo correspondente.
     - Clique no botão **`Importar Arquivos .dat`**. A planilha irá processar os arquivos e criar/preencher as abas, aplicando cores e ordenação de acordo com as configurações da aba `MaisUsadas`.
     - Para importação parcial, preencha o campo na aba `geral` com as entidades desejadas ou selecione a aba da entidade e use o botão **`Importar Parcial`**.
 
@@ -62,9 +60,9 @@ Copie o arquivo `ImportadorSAGE.py` para a pasta de scripts do seu usuário no L
     - Utilize a **coluna "Gera"** para definir como cada linha será tratada na exportação (veja detalhes abaixo).
 
 3.  **Exportar:**
-    - [cite_start]Após a edição, clique no botão **`Exportar para .dat`** para exportar todas as entidades. [cite: 7495]
-    - [cite_start]Para exportar apenas a aba ativa ou a lista de entidades na aba `geral`, use o botão **`Exportar Parcial`**. [cite: 7495]
-    - [cite_start]Os arquivos finais (ex: `pds.dat`) serão salvos na pasta de destino na aba `geral`. [cite: 7495]
+    - Após a edição, clique no botão **`Exportar para .dat`** para exportar todas as entidades.
+    - Para exportar apenas a aba ativa ou a lista de entidades na aba `geral`, use o botão **`Exportar Parcial`**.
+    - Os arquivos finais (ex: `pds.dat`) serão salvos na pasta de destino na aba `geral`.
 
 ## Funcionalidades Dinâmicas
 
@@ -74,14 +72,14 @@ Copie o arquivo `ImportadorSAGE.py` para a pasta de scripts do seu usuário no L
 
 ## A Coluna "Gera"
 
-[cite_start]Esta coluna é o principal controle da exportação. [cite: 7495] [cite_start]Ela indica à macro o que fazer com cada linha de dados. [cite: 7495]
+Esta coluna é o principal controle da exportação. Ela indica à macro o que fazer com cada linha de dados.
 
-- [cite_start]`x`: **Exportar Ativo** - A linha será convertida em um bloco de configuração padrão e ativo no arquivo `.dat` final. [cite: 7495]
-- [cite_start]`c`: **Exportar Comentado** - A linha será convertida em um bloco de configuração, mas todas as suas linhas serão comentadas com um ponto e vírgula (`;`). [cite: 7495] [cite_start]Útil para desativar pontos sem perdê-los. [cite: 7495]
-- [cite_start]`n`: **Exportar como Simples Comentário** - A linha será exportada como uma única linha de comentário. [cite: 7495] [cite_start]O texto do comentário deve estar na coluna ao lado da coluna "Gera". [cite: 7495]
-- [cite_start]`i`: **Include Ativo** - A linha será convertida um include, com o caminho inserido na coluna C. [cite: 7495]
-- [cite_start]`u`: **Include Comentado** - A linha será convertida um include comentado, com o caminho inserido na coluna C. [cite: 7495] [cite_start]Útil para desativar includes sem perdê-los. [cite: 7495]
-- [cite_start]`q`: **Ignora Linha** - A linha será ignorada na exportação. [cite: 7495]
+- `x`: **Exportar Ativo** - A linha será convertida em um bloco de configuração padrão e ativo no arquivo `.dat` final.
+- `c`: **Exportar Comentado** - A linha será convertida em um bloco de configuração, mas todas as suas linhas serão comentadas com um ponto e vírgula (`;`). Útil para desativar pontos sem perdê-los.
+- `n`: **Exportar como Simples Comentário** - A linha será exportada como uma única linha de comentário. O texto do comentário deve estar na coluna ao lado da coluna "Gera".
+- `i`: **Include Ativo** - A linha será convertida em um include, com o caminho inserido na coluna C.
+- `u`: **Include Comentado** - A linha será convertida em um include comentado, com o caminho inserido na coluna C. Útil para desativar includes sem perdê-los.
+- `q`: **Ignora Linha** - A linha será ignorada na exportação.
 
 Se a célula na coluna "Gera" estiver vazia, a linha será ignorada durante a exportação.
 

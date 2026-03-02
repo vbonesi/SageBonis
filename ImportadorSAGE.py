@@ -61,6 +61,10 @@ COR_LINHA_IMPAR = 15790320  # Cinza muito claro (0xF0F0F0)
 FLAGS_LIMPAR_TUDO = 1048575
 LIMITE_CARACTERES_VALIDACAO = 250 # Manteremos para a próxima etapa
 
+# --- Codificação dos Arquivos DAT do SAGE ---
+ENCODING_EXPORTACAO_SAGE = 'latin-1'  # ISO-8859-1 (padrão esperado pelo SAGE)
+ENCODINGS_IMPORTACAO_SAGE = ('latin-1', 'utf-8')  # Aceita os dois formatos na importação
+
 # --- Expressões Regulares ---
 REGEX_INCLUDE = re.compile(r'^\s*#\s*include\s+(.*)', re.IGNORECASE)
 REGEX_INCLUDE_COMENTADO = re.compile(r'^\s*;\s*#\s*include\s+(.*)', re.IGNORECASE)
@@ -295,12 +299,26 @@ def write_to_sheet(doc, sheet_name, pontos_importados, modo, config):
 # =================== LÓGICA DE PARSING =========================
 # ===============================================================
 def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
-    try:
-        with open(file_path, 'r', encoding='latin-1', errors='ignore') as f:
-            lines = f.readlines()
-    except IOError as e:
-        print(f"Erro ao ler o arquivo {file_path}: {e}")
-        return
+    lines = None
+    for encoding in ENCODINGS_IMPORTACAO_SAGE:
+        try:
+            with open(file_path, 'r', encoding=encoding) as f:
+                lines = f.readlines()
+            break
+        except UnicodeDecodeError:
+            continue
+        except IOError as e:
+            print(f"Erro ao ler o arquivo {file_path}: {e}")
+            return
+
+    if lines is None:
+        # Fallback resiliente para evitar falha total em arquivos com bytes inválidos.
+        try:
+            with open(file_path, 'r', encoding=ENCODING_EXPORTACAO_SAGE, errors='ignore') as f:
+                lines = f.readlines()
+        except IOError as e:
+            print(f"Erro ao ler o arquivo {file_path}: {e}")
+            return
         
     i = 0
     # Inicializa a chave de entidade com o nome do arquivo (como fallback)
@@ -548,7 +566,7 @@ def _exportar_folha(sheet, export_folder):
             # --- FIM DA LÓGICA DE BACKUP ---
 
             os.makedirs(os.path.dirname(full_output_path), exist_ok=True)
-            with open(full_output_path, 'w', encoding='utf-8') as f:
+            with open(full_output_path, 'w', encoding=ENCODING_EXPORTACAO_SAGE) as f:
                 f.write("\n\n".join(file_content_list)); f.write("\n")
         except IOError as e:
             return f"Falha ao escrever {relative_path}: {e}"

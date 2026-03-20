@@ -2,6 +2,7 @@
 
 import os
 import re
+import time
 
 # ===============================================================
 # ================ MACRO SAGE - VERSÃO 0.9.1 ====================
@@ -68,6 +69,183 @@ ENCODINGS_IMPORTACAO_SAGE = ('latin-1', 'utf-8')  # Aceita os dois formatos na i
 # --- Expressões Regulares ---
 REGEX_INCLUDE = re.compile(r'^\s*#\s*include\s+(.*)', re.IGNORECASE)
 REGEX_INCLUDE_COMENTADO = re.compile(r'^\s*;\s*#\s*include\s+(.*)', re.IGNORECASE)
+REGEX_INICIO_BLOCO_COMENTADO = re.compile(r'^\s*;\s*([A-Z_]+)\s*$', re.IGNORECASE)
+
+# --- Debug/Diagnóstico de Importação ---
+DEBUG_IMPORTACAO = False
+LOG_IMPORTACAO_RESUMO = True
+LOG_IMPORTACAO_AVISOS = True
+WATCHDOG_MAX_ITERACOES_SEM_PROGRESSO = 1000
+
+
+def _log_importacao(level, message, force=False):
+    """Logger simples e opcional para diagnóstico da importação."""
+    if force:
+        print(f"[IMPORTACAO:{level}] {message}")
+        return
+    if level == 'DEBUG' and DEBUG_IMPORTACAO:
+        print(f"[IMPORTACAO:{level}] {message}")
+        return
+    if level == 'INFO' and LOG_IMPORTACAO_RESUMO:
+        print(f"[IMPORTACAO:{level}] {message}")
+        return
+    if level in ['WARN', 'ERROR'] and LOG_IMPORTACAO_AVISOS:
+        print(f"[IMPORTACAO:{level}] {message}")
+
+
+def _classificar_linha_dat(raw_line, entidades_validas):
+    """Classifica a linha do arquivo DAT para manter o parser determinístico."""
+    original_line = raw_line.strip('\r\n')
+    stripped_line = original_line.strip()
+
+    if not stripped_line:
+        return {'type': 'blank', 'original': original_line, 'stripped': stripped_line}
+
+    include_comentado_match = REGEX_INCLUDE_COMENTADO.match(original_line)
+    if include_comentado_match:
+        return {
+            'type': 'include_commented',
+            'original': original_line,
+            'stripped': stripped_line,
+            'value': include_comentado_match.group(1).strip()
+        }
+
+    include_match = REGEX_INCLUDE.match(original_line)
+    if include_match:
+        return {
+            'type': 'include',
+            'original': original_line,
+            'stripped': stripped_line,
+            'value': include_match.group(1).strip()
+        }
+
+    if stripped_line.upper() in entidades_validas:
+        return {
+            'type': 'entity_start',
+            'original': original_line,
+            'stripped': stripped_line,
+            'entity': stripped_line.upper()
+        }
+
+    commented_block_match = REGEX_INICIO_BLOCO_COMENTADO.match(original_line)
+    if commented_block_match and commented_block_match.group(1).upper() in entidades_validas:
+        return {
+            'type': 'commented_entity_start',
+            'original': original_line,
+            'stripped': stripped_line,
+            'entity': commented_block_match.group(1).upper()
+        }
+
+    if stripped_line.startswith(';'):
+        return {
+            'type': 'comment',
+            'original': original_line,
+            'stripped': stripped_line,
+            'value': original_line.lstrip(';').lstrip()
+        }
+
+    if '=' in stripped_line:
+        key, value = stripped_line.split('=', 1)
+        return {
+            'type': 'attribute',
+            'original': original_line,
+            'stripped': stripped_line,
+            'key': key.strip(),
+            'value': value.strip()
+        }
+
+    return {'type': 'invalid', 'original': original_line, 'stripped': stripped_line}
+
+
+def _classificar_linha_bloco_comentado(raw_line, entidades_validas):
+    """
+    Classifica linhas quando estamos dentro de um bloco comentado.
+    O conteúdo útil está sempre após o primeiro ';'.
+    """
+    original_line = raw_line.strip('\r\n')
+    stripped_line = original_line.strip()
+
+    if not stripped_line:
+        return {'type': 'blank', 'original': original_line, 'stripped': stripped_line}
+
+    if not stripped_line.startswith(';'):
+        return {'type': 'block_end', 'original': original_line, 'stripped': stripped_line}
+
+    inner_line = stripped_line[1:].strip()
+    if not inner_line:
+        return {'type': 'comment', 'original': original_line, 'stripped': stripped_line, 'value': ''}
+
+    if inner_line.upper() in entidades_validas:
+        return {
+            'type': 'commented_entity_start',
+            'original': original_line,
+            'stripped': stripped_line,
+            'entity': inner_line.upper()
+        }
+
+    if REGEX_INCLUDE_COMENTADO.match(stripped_line):
+        return {'type': 'block_end', 'original': original_line, 'stripped': stripped_line}
+
+    if '=' in inner_line:
+        key, value = inner_line.split('=', 1)
+        return {
+            'type': 'attribute',
+            'original': original_line,
+            'stripped': stripped_line,
+            'key': key.strip(),
+            'value': value.strip()
+        }
+
+    return {'type': 'comment', 'original': original_line, 'stripped': stripped_line, 'value': inner_line}
+
+
+def _iniciar_bloco(entidade_nome, tipo_bloco, relative_path, comentarios_iniciais=None):
+    bloco = {
+        'type': tipo_bloco,
+        'identifier': entidade_nome,
+        'attributes': {},
+        'comments': [],
+        'origem': relative_path
+    }
+    if comentarios_iniciais:
+        bloco['comments'].extend(comentarios_iniciais)
+    return bloco
+
+
+def _finalizar_bloco(current_block, all_data, relative_path, stats, line_no):
+    if not current_block:
+        return
+
+    ponto = {
+        'type': current_block['type'],
+        'identifier': current_block['identifier'],
+        'attributes': current_block['attributes'],
+        'origem': relative_path
+    }
+
+    if current_block['comments']:
+        ponto['comment'] = "\n".join(current_block['comments'])
+
+    if not current_block['attributes']:
+        stats['warnings'] += 1
+        _log_importacao(
+            'WARN',
+            f"{relative_path}:{line_no} bloco {current_block['identifier']} finalizado sem atributos.",
+            force=True
+        )
+
+    if current_block['attributes'] and 'ID' not in current_block['attributes']:
+        stats['warnings'] += 1
+        _log_importacao(
+            'WARN',
+            f"{relative_path}:{line_no} bloco {current_block['identifier']} finalizado sem ID.",
+            force=True
+        )
+
+    if current_block['attributes'] or current_block['comments']:
+        chave = current_block['identifier'].lower()
+        all_data.setdefault(chave, []).append(ponto)
+        stats['entities_imported'] += 1
 
 # ===============================================================
 # =================== CLASSE DE CONFIGURAÇÃO ====================
@@ -183,9 +361,11 @@ def _executar_importacao(doc, base_folder_path, lista_entidades, modo_importacao
     # ALTERAÇÃO: Carrega as configurações da planilha
     config = SageConfig(doc)
     all_data = {}
+    prioridade_entidades = {entidade: idx for idx, entidade in enumerate(config.ordem_entidades)}
     
     # (A lógica de varrer os arquivos permanece a mesma)
     for root, _, files in os.walk(base_folder_path):
+        entidades_validas_set = {os.path.splitext(f)[0].upper() for f in files if f.lower().endswith('.dat')}
         for file_name in files:
             if not file_name.lower().endswith('.dat'):
                 continue
@@ -194,14 +374,13 @@ def _executar_importacao(doc, base_folder_path, lista_entidades, modo_importacao
                 continue
             full_path = os.path.join(root, file_name)
             relative_path = os.path.relpath(full_path, base_folder_path)
-            entidades_validas_set = {os.path.splitext(f)[0].upper() for f in os.listdir(root) if f.lower().endswith('.dat')}
             parse_dat_file(full_path, relative_path, all_data, entidades_validas_set)
 
     # ALTERAÇÃO: Ordena as entidades a serem escritas com base na configuração
     entidades_importadas = all_data.keys()
     abas_ordenadas = sorted(
         entidades_importadas,
-        key=lambda e: config.ordem_entidades.index(e) if e in config.ordem_entidades else float('inf')
+        key=lambda e: prioridade_entidades.get(e, float('inf'))
     )
 
     # Lógica de escrita na planilha
@@ -237,26 +416,37 @@ def write_to_sheet(doc, sheet_name, pontos_importados, modo, config):
     if cor_aba is not None and cor_aba != -1:
         sheet.TabColor = cor_aba
     todos_atributos = {attr for p in pontos_importados if 'attributes' in p for attr in p['attributes']}
+    ordem_atributos_aba = config.ordem_atributos.get(sheet_name.lower(), [])
+    prioridade_atributos = {attr: idx for idx, attr in enumerate(ordem_atributos_aba)}
     atributos_ordenados = sorted(
         list(todos_atributos),
-        key=lambda a: config.ordem_atributos.get(sheet_name.lower(), []).index(a) if a in config.ordem_atributos.get(sheet_name.lower(), []) else float('inf')
+        key=lambda a: prioridade_atributos.get(a, float('inf'))
     )
     cabecalhos = [CABEÇALHO_COLUNA_ORIGEM, CABEÇALHO_COLUNA_CONTROLE, CABEÇALHO_COLUNA_DADOS] + atributos_ordenados
+    header_to_col = {header: idx for idx, header in enumerate(cabecalhos)}
     
-    # --- Preenchimento dos Dados (sem alterações) ---
-    for i, header_text in enumerate(cabecalhos):
-        sheet.getCellByPosition(i, 0).setString(header_text)
-    for row_idx, ponto in enumerate(pontos_importados, start=1):
-        sheet.getCellByPosition(0, row_idx).setString(ponto.get('origem', ''))
-        sheet.getCellByPosition(1, row_idx).setString(ponto['type'])
+    # --- Preenchimento dos Dados (agora em lote para reduzir chamadas UNO) ---
+    data_matrix = [cabecalhos]
+    for ponto in pontos_importados:
+        row_data = [''] * len(cabecalhos)
+        row_data[0] = ponto.get('origem', '')
+        row_data[1] = ponto['type']
         if ponto['type'] in [CODIGO_COMENTARIO_SIMPLES, CODIGO_INCLUDE, CODIGO_INCLUDE_COMENTADO]:
-            sheet.getCellByPosition(2, row_idx).setString(ponto.get('data', ''))
+            row_data[2] = ponto.get('data', '')
         elif ponto['type'] in [CODIGO_BLOCO_ATIVO, CODIGO_BLOCO_COMENTADO]:
-            sheet.getCellByPosition(2, row_idx).setString(ponto.get('comment', ''))
+            row_data[2] = ponto.get('comment', '')
         if 'attributes' in ponto:
             for attr_key, attr_value in ponto['attributes'].items():
-                try: col_idx = cabecalhos.index(attr_key); sheet.getCellByPosition(col_idx, row_idx).setString(attr_value)
-                except ValueError: pass
+                col_idx = header_to_col.get(attr_key)
+                if col_idx is not None:
+                    row_data[col_idx] = attr_value
+        data_matrix.append(row_data)
+
+    if data_matrix:
+        num_rows = len(data_matrix) - 1
+        num_cols = len(cabecalhos) - 1
+        target_range = sheet.getCellRangeByPosition(0, 0, num_cols, num_rows)
+        target_range.setDataArray(tuple(tuple(str(cell) for cell in row) for row in data_matrix))
 
     # --- PACOTE DE POLIMENTO VISUAL SIMPLIFICADO ---
     cursor = sheet.createCursor()
@@ -299,6 +489,7 @@ def write_to_sheet(doc, sheet_name, pontos_importados, modo, config):
 # =================== LÓGICA DE PARSING =========================
 # ===============================================================
 def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
+    start_time = time.perf_counter()
     lines = None
     for encoding in ENCODINGS_IMPORTACAO_SAGE:
         try:
@@ -321,109 +512,176 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
             return
         
     i = 0
-    # Inicializa a chave de entidade com o nome do arquivo (como fallback)
     current_entidade_chave = os.path.splitext(os.path.basename(file_path))[0].lower()
     pending_comments = []
-    
+    current_block = None
+    stats = {
+        'lines_total': len(lines),
+        'entities_imported': 0,
+        'comments': 0,
+        'ignored_lines': 0,
+        'invalid_lines': 0,
+        'warnings': 0
+    }
+    last_i = -1
+    iteracoes_sem_progresso = 0
+
+    _log_importacao('DEBUG', f"Iniciando parse de {relative_path} com {len(lines)} linhas.")
+
     while i < len(lines):
-        line = lines[i].strip()
-        original_line = lines[i].strip('\r\n')
-        i += 1
-        
-        if not line: continue
-        
-        # -------------------------------------------------------------
-        # 1. TRATAMENTO DE INCLUDES (Comentado e Ativo)
-        # -------------------------------------------------------------
-        include_comentado_match = REGEX_INCLUDE_COMENTADO.match(original_line)
-        if include_comentado_match:
-            caminho_do_include = include_comentado_match.group(1).strip()
-            ponto = {'type': CODIGO_INCLUDE_COMENTADO, 'data': caminho_do_include, 'origem': relative_path}
-            all_data.setdefault(current_entidade_chave, []).append(ponto)
-            continue
-            
-        include_match = REGEX_INCLUDE.match(original_line)
-        if include_match:
-            caminho_do_include = include_match.group(1).strip()
-            ponto = {'type': CODIGO_INCLUDE, 'data': caminho_do_include, 'origem': relative_path}
-            all_data.setdefault(current_entidade_chave, []).append(ponto)
-            continue
-            
-        # -------------------------------------------------------------
-        # 2. TRATAMENTO DE BLOCO ATIVO (CGS, COR, etc.)
-        # -------------------------------------------------------------
-        if line.upper() in entidades_validas: 
-            entidade_nome = line.upper() # Pega o nome do bloco (ex: 'COR')
-            current_entidade_chave = entidade_nome.lower() # Atualiza a chave para 'cor'
-            
-            ponto = {'type': CODIGO_BLOCO_ATIVO, 'identifier': entidade_nome, 'attributes': {}, 'origem': relative_path}
-            if pending_comments:
-                ponto['comment'] = "\n".join(pending_comments)
-                pending_comments = []
-            
-            # INICIA A LEITURA DAS LINHAS DENTRO DO BLOCO
-            comentarios_bloco = []
-            while i < len(lines):
-                next_line = lines[i].strip()
-                original_next_line = lines[i].strip('\r\n')
-                
-                # CONDIÇÃO DE QUEBRA DE BLOCO
-                if not next_line or next_line.upper() in entidades_validas or REGEX_INCLUDE.match(lines[i]) or REGEX_INCLUDE_COMENTADO.match(lines[i]):
-                    break 
-                
-                # TRATAMENTO DE COMENTÁRIO SIMPLES DENTRO DO BLOCO (Ex: ;[NHS] PINT=...)
-                if next_line.startswith(';'):
-                    comentario_limpo = original_next_line.lstrip(';').lstrip()
-                    comentarios_bloco.append(comentario_limpo)
-                    i += 1 
-                    continue
-                
-                # TRATAMENTO DE ATRIBUTO NORMAL (Ex: ID= JDM:...)
-                if '=' in next_line: 
-                    key, value = next_line.split('=', 1)
-                    ponto['attributes'][key.strip()] = value.strip()
-                
+        if i == last_i:
+            iteracoes_sem_progresso += 1
+            if iteracoes_sem_progresso >= WATCHDOG_MAX_ITERACOES_SEM_PROGRESSO:
+                raise RuntimeError(
+                    f"Watchdog de importação disparado em {relative_path} na linha {i + 1}: iterações sem avanço."
+                )
+        else:
+            iteracoes_sem_progresso = 0
+            last_i = i
+
+        raw_line = lines[i]
+        line_no = i + 1
+
+        if current_block and current_block['type'] == CODIGO_BLOCO_COMENTADO:
+            line_info = _classificar_linha_bloco_comentado(raw_line, entidades_validas)
+        else:
+            line_info = _classificar_linha_dat(raw_line, entidades_validas)
+
+        _log_importacao(
+            'DEBUG',
+            f"{relative_path}:{line_no} bloco={current_block['identifier'] if current_block else '-'} tipo={line_info['type']}"
+        )
+
+        if current_block:
+            if line_info['type'] in ['entity_start', 'commented_entity_start', 'include', 'include_commented', 'block_end']:
+                _finalizar_bloco(current_block, all_data, relative_path, stats, line_no)
+                current_block = None
+                continue
+
+            if line_info['type'] == 'blank':
+                stats['ignored_lines'] += 1
                 i += 1
-            
-            if comentarios_bloco:
-                ponto['comment'] = "\n".join(comentarios_bloco)
-            # Adiciona o Ponto Ativo à lista
-            if ponto['attributes']:
-                all_data.setdefault(current_entidade_chave, []).append(ponto)
+                continue
+
+            if line_info['type'] == 'comment':
+                current_block['comments'].append(line_info.get('value', ''))
+                stats['comments'] += 1
+                i += 1
+                continue
+
+            if line_info['type'] == 'attribute':
+                current_block['attributes'][line_info['key']] = line_info['value']
+                i += 1
+                continue
+
+            stats['invalid_lines'] += 1
+            stats['warnings'] += 1
+            _log_importacao(
+                'WARN',
+                f"{relative_path}:{line_no} linha inválida dentro do bloco {current_block['identifier']}: {line_info['original']}",
+                force=True
+            )
+            i += 1
             continue
-            
-        # -------------------------------------------------------------
-        # 3. TRATAMENTO DE BLOCO COMENTADO OU COMENTÁRIO SIMPLES (FORA)
-        # -------------------------------------------------------------
-        if line.startswith(';'):
-            match = re.match(r'^; *([A-Z_]+)', line, re.IGNORECASE)
-            
-            if match and match.group(1).upper() in entidades_validas:
-                # Lógica para Bloco Comentado (Ex: ;CGS / ;COR)
-                entidade_nome_comentado = match.group(1).upper()
-                ponto = {'type': CODIGO_BLOCO_COMENTADO, 'identifier': entidade_nome_comentado, 'attributes': {}, 'origem': relative_path}
-                comentarios_textuais = []
-                
-                # Assume que o bloco comentado é da última entidade ativa conhecida
-                chave_a_usar = entidade_nome_comentado.lower() 
-                
-                while i < len(lines) and lines[i].strip().startswith(';'):
-                    attr_line = lines[i].strip()[1:].strip()
-                    if '=' in attr_line:
-                        key, value = attr_line.split('=', 1)
-                        ponto['attributes'][key.strip()] = value.strip()
-                    elif attr_line:
-                        comentarios_textuais.append(attr_line)
-                    i += 1
-                
-                if comentarios_textuais:
-                    ponto['comment'] = "\n".join(comentarios_textuais)
-                all_data.setdefault(chave_a_usar, []).append(ponto)
-            else:
-                # Lógica para Comentário Simples (FORA de qualquer bloco)
-                comentario_limpo = original_line.lstrip(';').lstrip()
-                pending_comments.append(comentario_limpo)
+
+        if line_info['type'] == 'blank':
+            stats['ignored_lines'] += 1
+            i += 1
             continue
+
+        if line_info['type'] == 'include_commented':
+            ponto = {'type': CODIGO_INCLUDE_COMENTADO, 'data': line_info['value'], 'origem': relative_path}
+            all_data.setdefault(current_entidade_chave, []).append(ponto)
+            if pending_comments:
+                stats['warnings'] += 1
+                _log_importacao(
+                    'WARN',
+                    f"{relative_path}:{line_no} comentários pendentes descartados antes de include comentado.",
+                    force=True
+                )
+                pending_comments = []
+            i += 1
+            continue
+
+        if line_info['type'] == 'include':
+            ponto = {'type': CODIGO_INCLUDE, 'data': line_info['value'], 'origem': relative_path}
+            all_data.setdefault(current_entidade_chave, []).append(ponto)
+            if pending_comments:
+                stats['warnings'] += 1
+                _log_importacao(
+                    'WARN',
+                    f"{relative_path}:{line_no} comentários pendentes descartados antes de include.",
+                    force=True
+                )
+                pending_comments = []
+            i += 1
+            continue
+
+        if line_info['type'] == 'entity_start':
+            entidade_nome = line_info['entity']
+            current_entidade_chave = entidade_nome.lower()
+            current_block = _iniciar_bloco(
+                entidade_nome,
+                CODIGO_BLOCO_ATIVO,
+                relative_path,
+                comentarios_iniciais=pending_comments
+            )
+            pending_comments = []
+            i += 1
+            continue
+
+        if line_info['type'] == 'commented_entity_start':
+            entidade_nome = line_info['entity']
+            current_entidade_chave = entidade_nome.lower()
+            current_block = _iniciar_bloco(
+                entidade_nome,
+                CODIGO_BLOCO_COMENTADO,
+                relative_path,
+                comentarios_iniciais=pending_comments
+            )
+            pending_comments = []
+            i += 1
+            continue
+
+        if line_info['type'] == 'comment':
+            pending_comments.append(line_info.get('value', ''))
+            stats['comments'] += 1
+            i += 1
+            continue
+
+        if line_info['type'] == 'attribute':
+            stats['warnings'] += 1
+            stats['invalid_lines'] += 1
+            _log_importacao(
+                'WARN',
+                f"{relative_path}:{line_no} atributo fora de bloco ignorado: {line_info['original']}",
+                force=True
+            )
+            i += 1
+            continue
+
+        stats['warnings'] += 1
+        stats['invalid_lines'] += 1
+        _log_importacao(
+            'WARN',
+            f"{relative_path}:{line_no} linha não reconhecida ignorada: {line_info['original']}",
+            force=True
+        )
+        i += 1
+
+    if current_block:
+        _finalizar_bloco(current_block, all_data, relative_path, stats, len(lines))
+
+    elapsed = time.perf_counter() - start_time
+    _log_importacao(
+        'INFO',
+        (
+            f"Arquivo {relative_path} processado em {elapsed:.3f}s. "
+            f"linhas={stats['lines_total']} entidades={stats['entities_imported']} "
+            f"comentarios={stats['comments']} ignoradas={stats['ignored_lines']} "
+            f"invalidas={stats['invalid_lines']} avisos={stats['warnings']}"
+        )
+    )
 
 # ===============================================================
 # ================= FUNÇÕES DE EXPORTAÇÃO =======================
@@ -536,18 +794,25 @@ def _exportar_folha(sheet, export_folder):
         elif control_code == CODIGO_COMENTARIO_SIMPLES:
             bloco_final = f';{dado_principal}'
         elif control_code in [CODIGO_BLOCO_ATIVO, CODIGO_BLOCO_COMENTADO]:
-            point_lines = [sheet_name.upper()]
+            comment_lines = [line for line in dado_principal.splitlines()]
+            attribute_lines = []
             for col_idx, header in enumerate(headers):
                 if header in [CABEÇALHO_COLUNA_ORIGEM, CABEÇALHO_COLUNA_CONTROLE, CABEÇALHO_COLUNA_DADOS]:
                     continue
                 value = str(row_data[col_idx]) if len(row_data) > col_idx else ""
-                if value: point_lines.append(f"\t{header} = {value}")
-            if len(point_lines) > 1:
-                bloco_texto = "\n".join(point_lines)
+                if value:
+                    attribute_lines.append(f"\t{header} = {value}")
+
+            if comment_lines or attribute_lines:
                 if control_code == CODIGO_BLOCO_COMENTADO:
-                    bloco_final = "\n".join([f";{line}" for line in bloco_texto.split('\n')])
+                    point_lines = [f";{sheet_name.upper()}"]
+                    point_lines.extend([f";{line}" for line in comment_lines])
+                    point_lines.extend([f";{line}" for line in attribute_lines])
                 else:
-                    bloco_final = bloco_texto
+                    point_lines = [sheet_name.upper()]
+                    point_lines.extend([f";{line}" for line in comment_lines])
+                    point_lines.extend(attribute_lines)
+                bloco_final = "\n".join(point_lines)
         if bloco_final is not None:
             dados_agrupados_por_arquivo[origem_path].append(bloco_final)
             

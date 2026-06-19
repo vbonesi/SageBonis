@@ -36,3 +36,16 @@ backup_*/          # diretórios de backup que o AutomaToolbox cria
 
 /*.zip             # releases gerados localmente
 
+###############################################################################
+# 6. Artefatos de extração do .ods (descartáveis — o .ods é a fonte)
+###############################################################################
+temp_ods/
+temp_ods_content.xml
+SageBonis.ods.tmp  # arquivo temporário do sync_macro.py inject
+
+
+###############################################################################
+# 7. Python
+###############################################################################
+__pycache__/
+*.pyc

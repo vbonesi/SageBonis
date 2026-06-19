@@ -5,7 +5,7 @@ import re
 import time
 
 # ===============================================================
-# ================ MACRO SAGE - VERSÃO 0.9.1 ====================
+# ================ MACRO SAGE - VERSÃO 0.9.3 ====================
 # ===============================================================
 # Este script é utilizado como macro no LibreOffice Calc para importar e exportar arquivos .dat
 # do Sistema Aberto de Gerenciamento de Energia (SAGE).
@@ -16,6 +16,20 @@ import time
 # Adicionado a aba cores para facilitar a aplicação de temas de cores.
 # Correção de importação de comentarios
 #
+# Alterações da versão 0.9.2 por Felipe Santos:
+# - Compatibilidade com LibreOffice Flatpak usando macro embutida no documento.
+# - Correção do nome da aba Geral e busca de abas tolerante a maiúsculas/minúsculas.
+# - Tratamento mais seguro para erros de configuração.
+# - A planilha SageBonis.ods agora pode carregar este script a partir do próprio documento,
+#   usando URLs de macro com location=document.
+# - Foram adicionados menu e barra de ferramentas SageBonis dentro do arquivo ODS.
+#
+# Alterações da versão 0.9.3:
+# - Reincorporada a sanitização para latin-1 (_sanitizar_para_latin1) na exportação,
+#   evitando UnicodeEncodeError quando há caracteres Unicode (aspas curvas, travessões,
+#   etc.) que não existem no ISO-8859-1 esperado pelo SAGE.
+# - Resultado da reconciliação entre a macro embutida no .ods (0.9.2) e o histórico do repo.
+#
 # Desenvolvido para rodar com a planilha SageBonis.ods
 # Duvidas/Bugs/Sugestões - (11) 95456-4510 - Victor Bonesi - https://github.com/vbonesi/SageBonis
 
@@ -24,7 +38,10 @@ import time
 # ===============================================================
 
 # --- Nomes de Abas ---
-NOME_ABA_GERAL = "geral"
+# Importante: o LibreOffice diferencia maiúsculas/minúsculas em getByName().
+# A planilha possui a aba "Geral" com G maiúsculo; usar "geral" causava falha
+# nas rotinas de importação/exportação antes mesmo de ler os caminhos.
+NOME_ABA_GERAL = "Geral"
 NOME_ABA_MAIS_USADAS = "MaisUsadas"
 NOME_ABA_VALIDACAO = "EntidadeAtributoValor"
 NOME_ABA_OPMSK = "opmsk"
@@ -33,7 +50,7 @@ NOME_ABA_CORES = "Cores"
 # --- Lista de Abas a Ignorar ---
 FOLHAS_IGNORADAS = [NOME_ABA_GERAL, NOME_ABA_MAIS_USADAS, NOME_ABA_VALIDACAO, NOME_ABA_OPMSK, NOME_ABA_CORES]
 
-# --- Posições das Células na Aba "geral" ---
+# --- Posições das Células na Aba "Geral" ---
 CELULA_CAMINHO_IMPORTACAO = (0, 3)  # A4
 CELULA_STATUS_IMPORTACAO = (1, 3)   # B4
 CELULA_CAMINHO_EXPORTACAO = (0, 6)  # A7
@@ -75,7 +92,7 @@ _UNICODE_PARA_LATIN1 = str.maketrans({
     '“': '"',    # aspas duplas esquerda
     '”': '"',    # aspas duplas direita
     '…': '...',  # reticências
-    ' ': ' ',    # espaço não-quebrável
+    ' ': ' ',    # espaço não-quebrável
     '•': '-',    # bullet
 })
 
@@ -94,6 +111,26 @@ DEBUG_IMPORTACAO = False
 LOG_IMPORTACAO_RESUMO = True
 LOG_IMPORTACAO_AVISOS = True
 WATCHDOG_MAX_ITERACOES_SEM_PROGRESSO = 1000
+
+
+def _get_sheet(doc, sheet_name):
+    """
+    Obtém uma aba pelo nome, aceitando diferença de maiúsculas/minúsculas.
+
+    Esta função foi adicionada para deixar a macro mais resistente a variações
+    nos nomes das abas. Sem ela, qualquer diferença como "Geral" vs "geral"
+    faz o LibreOffice lançar exceção em getByName().
+    """
+    sheets = doc.getSheets()
+    if sheets.hasByName(sheet_name):
+        return sheets.getByName(sheet_name)
+
+    wanted = sheet_name.lower()
+    for sheet in sheets:
+        if sheet.getName().lower() == wanted:
+            return sheet
+
+    raise KeyError(f"Aba '{sheet_name}' não encontrada.")
 
 
 def _log_importacao(level, message, force=False):
@@ -289,7 +326,7 @@ class SageConfig:
     def _carregar_mais_usadas(self):
         """Lê a aba 'MaisUsadas' para obter ordem, cores e atributos prioritários."""
         try:
-            sheet = self.doc.getSheets().getByName(NOME_ABA_MAIS_USADAS)
+            sheet = _get_sheet(self.doc, NOME_ABA_MAIS_USADAS)
             cursor = sheet.createCursor()
             cursor.gotoEndOfUsedArea(False)
             data_range = cursor.getRangeAddress()
@@ -319,16 +356,21 @@ class SageConfig:
 
 def importar_dats(*args):
     doc = XSCRIPTCONTEXT.getDocument() # type: ignore
-    # (O código interno desta função não muda)
+    # Mantém a variável inicializada para que o bloco except não tente escrever
+    # status em uma aba que falhou ao ser localizada.
+    geral_sheet = None
     try:
-        geral_sheet = doc.getSheets().getByName(NOME_ABA_GERAL)
+        geral_sheet = _get_sheet(doc, NOME_ABA_GERAL)
         path_cell = geral_sheet.getCellByPosition(*CELULA_CAMINHO_IMPORTACAO)
         folder_path = path_cell.getString()
         if not os.path.isdir(folder_path):
             geral_sheet.getCellByPosition(*CELULA_STATUS_IMPORTACAO).setString("ERRO: O caminho especificado não é uma pasta válida.")
             return
     except Exception as e:
-        geral_sheet.getCellByPosition(*CELULA_STATUS_IMPORTACAO).setString(f"ERRO: Falha ao ler configurações. {e}") # type: ignore
+        if geral_sheet:
+            geral_sheet.getCellByPosition(*CELULA_STATUS_IMPORTACAO).setString(f"ERRO: Falha ao ler configurações. {e}")
+        else:
+            print(f"ERRO: Falha ao localizar a aba '{NOME_ABA_GERAL}'. {e}")
         return
 
     geral_sheet.getCellByPosition(*CELULA_STATUS_IMPORTACAO).setString("Processando importação total...")
@@ -338,20 +380,25 @@ def importar_dats(*args):
 
 def importar_parcial(*args):
     doc = XSCRIPTCONTEXT.getDocument() # type: ignore
-    # (O código interno desta função não muda)
     controller = doc.getCurrentController()
     active_sheet = controller.getActiveSheet()
     active_sheet_name = active_sheet.getName()
+    # A aba Geral pode não ser encontrada se o arquivo for alterado manualmente;
+    # por isso o tratamento de erro precisa funcionar mesmo sem geral_sheet.
+    geral_sheet = None
     
     try:
-        geral_sheet = doc.getSheets().getByName(NOME_ABA_GERAL)
+        geral_sheet = _get_sheet(doc, NOME_ABA_GERAL)
         path_cell = geral_sheet.getCellByPosition(*CELULA_CAMINHO_IMPORTACAO)
         folder_path = path_cell.getString()
         if not os.path.isdir(folder_path):
             geral_sheet.getCellByPosition(*CELULA_STATUS_IMPORTACAO).setString("ERRO: O caminho especificado não é uma pasta válida.")
             return
     except Exception as e:
-        geral_sheet.getCellByPosition(*CELULA_STATUS_IMPORTACAO).setString(f"ERRO: Falha ao ler configurações. {e}") # type: ignore
+        if geral_sheet:
+            geral_sheet.getCellByPosition(*CELULA_STATUS_IMPORTACAO).setString(f"ERRO: Falha ao ler configurações. {e}")
+        else:
+            print(f"ERRO: Falha ao localizar a aba '{NOME_ABA_GERAL}'. {e}")
         return
 
     entidades_a_importar = []
@@ -417,7 +464,7 @@ def write_to_sheet(doc, sheet_name, pontos_importados, modo, config):
     """
     # --- Bloco de Limpeza e Criação de Aba (sem alterações) ---
     if modo == 'UPDATE' and doc.getSheets().hasByName(sheet_name):
-        sheet = doc.getSheets().getByName(sheet_name)
+        sheet = _get_sheet(doc, sheet_name)
         cursor = sheet.createCursor()
         cursor.gotoEndOfUsedArea(False)
         range_to_clear = sheet.getCellRangeByPosition(0, 0, cursor.getRangeAddress().EndColumn, cursor.getRangeAddress().EndRow)
@@ -427,7 +474,7 @@ def write_to_sheet(doc, sheet_name, pontos_importados, modo, config):
             doc.getSheets().removeByName(sheet_name)
         new_sheet = doc.createInstance("com.sun.star.sheet.Spreadsheet")
         doc.getSheets().insertByName(sheet_name, new_sheet)
-        sheet = doc.getSheets().getByName(sheet_name)
+        sheet = _get_sheet(doc, sheet_name)
 
     # --- Aplicação de Cores de Aba e Ordenação de Colunas (sem alterações) ---
     cor_aba = config.cores_entidades.get(sheet_name.lower())
@@ -707,16 +754,21 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
 
 def exportar_dats(*args):
     doc = XSCRIPTCONTEXT.getDocument() # type: ignore
-    # ALTERAÇÃO: Usa a lista de folhas ignoradas
+    # Mesma proteção das rotinas de importação: evita erro secundário no except
+    # quando a aba Geral não existe ou foi renomeada.
+    geral_sheet = None
     try:
-        geral_sheet = doc.getSheets().getByName(NOME_ABA_GERAL)
+        geral_sheet = _get_sheet(doc, NOME_ABA_GERAL)
         export_path_cell = geral_sheet.getCellByPosition(*CELULA_CAMINHO_EXPORTACAO)
         export_folder = export_path_cell.getString()
         if not os.path.isdir(export_folder):
             geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString("ERRO: O caminho de destino não é uma pasta válida.")
             return
     except Exception as e:
-        geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString(f"ERRO: Falha ao ler configurações. {e}") # type: ignore
+        if geral_sheet:
+            geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString(f"ERRO: Falha ao ler configurações. {e}")
+        else:
+            print(f"ERRO: Falha ao localizar a aba '{NOME_ABA_GERAL}'. {e}")
         return
 
     geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString("Processando exportação total...")
@@ -732,20 +784,25 @@ def exportar_dats(*args):
 
 def exportar_parcial(*args):
     doc = XSCRIPTCONTEXT.getDocument() # type: ignore
-    # (O código interno desta função não muda)
     controller = doc.getCurrentController()
     active_sheet = controller.getActiveSheet()
     active_sheet_name = active_sheet.getName()
+    # Exportação parcial também depende da aba Geral para ler pasta/lista.
+    # Inicializar com None permite emitir diagnóstico seguro em caso de falha.
+    geral_sheet = None
     
     try:
-        geral_sheet = doc.getSheets().getByName(NOME_ABA_GERAL)
+        geral_sheet = _get_sheet(doc, NOME_ABA_GERAL)
         export_path_cell = geral_sheet.getCellByPosition(*CELULA_CAMINHO_EXPORTACAO)
         export_folder = export_path_cell.getString()
         if not os.path.isdir(export_folder):
             geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString("ERRO: O caminho de destino não é uma pasta válida.")
             return
     except Exception as e:
-        geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString(f"ERRO: Falha ao ler configurações. {e}") # type: ignore
+        if geral_sheet:
+            geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString(f"ERRO: Falha ao ler configurações. {e}")
+        else:
+            print(f"ERRO: Falha ao localizar a aba '{NOME_ABA_GERAL}'. {e}")
         return
 
     abas_a_exportar = []
@@ -757,8 +814,10 @@ def exportar_parcial(*args):
             geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString("AVISO: Nenhuma entidade listada para exportação parcial.")
             return
         for nome in nomes_entidades:
-            if doc.getSheets().hasByName(nome):
-                abas_a_exportar.append(doc.getSheets().getByName(nome))
+            try:
+                abas_a_exportar.append(_get_sheet(doc, nome))
+            except KeyError:
+                pass
     else:
         # Garante que a aba ativa não seja uma aba ignorada
         if active_sheet_name.lower() not in [ign.lower() for ign in FOLHAS_IGNORADAS]:
@@ -849,8 +908,7 @@ def _exportar_folha(sheet, export_folder):
             # --- FIM DA LÓGICA DE BACKUP ---
 
             os.makedirs(os.path.dirname(full_output_path), exist_ok=True)
-            conteudo = "\n\n".join(file_content_list) + "\n"
-            conteudo = _sanitizar_para_latin1(conteudo)
+            conteudo = _sanitizar_para_latin1("\n\n".join(file_content_list) + "\n")
             with open(full_output_path, 'w', encoding=ENCODING_EXPORTACAO_SAGE) as f:
                 f.write(conteudo)
         except IOError as e:
@@ -912,7 +970,7 @@ def atualizar_amostras_cores(*args):
             print(f"ERRO: A aba de tema '{NOME_ABA_TEMA_CORES}' não foi encontrada.")
             return
 
-        sheet = sheets.getByName(NOME_ABA_TEMA_CORES)
+        sheet = _get_sheet(doc, NOME_ABA_TEMA_CORES)
         
         # 1. Determina a última linha preenchida para otimizar a leitura
         cursor = sheet.createCursor()

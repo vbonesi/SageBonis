@@ -1,20 +1,29 @@
 # SageBonis - Editor Rápido para Base de Dados SAGE
 
-**Versão atual:** 0.9.1
+**Versão atual:** 0.9.3
 
 O SageBonis é uma ferramenta em LibreOffice Calc projetada para otimizar a edição da base de dados do **SAGE (Sistema Aberto de Gerenciamento de Energia)**. Ela importa múltiplos arquivos `.dat`, organiza as entidades em abas, permite a edição em massa e exporta a configuração de volta para múltiplos arquivos `.dat` de forma controlada.
 
-A partir desta versão, o script lê dinamicamente as configurações de ordenação, cores e validação das abas "MaisUsadas" e "EntidadesValoresAtributos".
+A partir da versão 0.9.x, o script lê dinamicamente as configurações de ordenação, cores e validação das abas "MaisUsadas" e "EntidadesValoresAtributos".
 
-Adicionada a aba de cores para facilitar a aplicação de temas. Correção de importação de comentários.
+**Novidades recentes:**
+
+- **0.9.2** — A macro agora pode vir **embutida no próprio arquivo `SageBonis.ods`** (executada com `location=document`), dispensando a instalação manual. Compatível com LibreOffice Flatpak. Busca de abas tolerante a maiúsculas/minúsculas e tratamento de erros mais seguro. Menu e barra de ferramentas `SageBonis` próprios dentro do ODS.
+- **0.9.3** — Reincorporada a sanitização para ISO-8859-1 na exportação, evitando erros quando há caracteres Unicode (aspas curvas, travessões, etc.) que não existem no encoding esperado pelo SAGE.
 
 ## Guia Rápido
 
 ### Passo 1: Instalar a Macro
 
-Para que os botões da planilha funcionem, você precisa instalar o script `ImportadorSAGE.py`.
+Para que os botões da planilha funcionem, a macro `ImportadorSAGE.py` precisa estar disponível. Há três caminhos:
 
-#### Método 1: Copiando o Arquivo (Recomendado)
+#### Método 0: Macro embutida no `.ods` (Mais simples)
+
+A partir da versão 0.9.2, o arquivo `SageBonis.ods` **já traz a macro embutida** (em `Scripts/python/ImportadorSAGE.py`, executada com `location=document`). Basta abrir a planilha e, quando o LibreOffice perguntar, **habilitar as macros do documento**. Não é preciso copiar nada para a pasta do usuário.
+
+> Para confiar nas macros do documento sem o aviso a cada abertura, ajuste em `Ferramentas > Opções > LibreOffice > Segurança > Segurança de macros`.
+
+#### Método 1: Copiando o Arquivo
 
 Copie o arquivo `ImportadorSAGE.py` para a pasta de scripts do seu usuário no LibreOffice.
 
@@ -108,6 +117,24 @@ Para agilizar seu fluxo de trabalho, você pode associar as macros a atalhos de 
     - `exportar_dats` -> `Ctrl + Shift + W`
     - `exportar_parcial` -> `Ctrl + Shift + E`
 8.  Clique em `OK` para salvar as configurações.
+
+## Para Desenvolvedores: sincronizar a macro embutida
+
+Como o `.ods` é um arquivo ZIP, ele guarda sua própria cópia da macro em
+`Scripts/python/ImportadorSAGE.py`. Essa cópia pode divergir do
+`ImportadorSAGE.py` da raiz do projeto. O utilitário `sync_macro.py` mantém os
+dois em sincronia **sem precisar abrir o LibreOffice**:
+
+```bash
+python sync_macro.py status    # mostra o diff entre o .py e a macro embutida
+python sync_macro.py extract   # macro do .ods  -> ImportadorSAGE.py  (puxar p/ disco)
+python sync_macro.py inject    # ImportadorSAGE.py -> macro do .ods    (empurrar p/ planilha)
+```
+
+Fluxo recomendado: edite `ImportadorSAGE.py`, rode `python sync_macro.py inject`
+(ele cria um `.ods.bak` automático e preserva a estrutura do ODF) e versione os
+dois arquivos juntos no mesmo commit. O `ImportadorSAGE.py` da raiz é a fonte da
+verdade.
 
 ## Objetivos futuros (roadmap)
 

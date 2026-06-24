@@ -60,3 +60,16 @@ reincorporada na exportação. O `ImportadorSAGE.py` da raiz e a macro embutida 
 - Fonte da verdade da lógica = `ImportadorSAGE.py` da raiz.
 - Após editar a macro, rodar `python sync_macro.py inject` e commitar `.py` + `.ods` juntos.
 - `temp_ods/` e `temp_ods_content.xml` são ignorados pelo git (artefatos de extração).
+
+## Estratégia: duas trilhas (ver PLANEJAMENTO.md)
+O projeto seguirá com **duas variantes no mesmo repo**:
+- **Simples (atual, raiz)** — import/export rápido, sem atrito. **Manter intocada e
+  estável**; não empilhar funcionalidade aqui.
+- **Completa (nova, forkada, em pasta própria)** — recursos avançados portados de
+  duas macros VBA de referência (GE e Eletronorte‑2): verificador de base, unificação
+  de pontos (Digital/Analógico/Comando → fan‑out), assistente de protocolo/IED.
+
+Princípio de design: recursos novos são **dirigidos por config** (abas), não
+hard‑coded, para não engessar o padrão de um cliente. Meta de longo prazo: convergir
+para uma planilha "modo duplo" — mas só quando a Completa amadurecer (critérios no
+[PLANEJAMENTO.md](PLANEJAMENTO.md)). Detalhes, prioridades e referências lá.

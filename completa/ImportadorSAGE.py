@@ -1173,25 +1173,39 @@ def _criar_aba_refs_exemplo(doc):
     _escrever_matriz(sheet, matriz, negrito_cabecalho=True)
 
 
-def _check_integridade_referencial(doc, regras, analise):
-    """Para cada regra ativa, verifica se o valor de origem existe no destino."""
-    cache_destino = {}  # (ent_d.lower, attr_d.lower) -> set de IDs (ou None se inválido)
+def _buscar_entidade(entidades, nome):
+    """Lookup case-insensitive no mapa {nome: (headers, linhas)} -> valor ou None."""
+    if nome in entidades:
+        return entidades[nome]
+    alvo = str(nome).strip().lower()
+    for k, v in entidades.items():
+        if k.strip().lower() == alvo:
+            return v
+    return None
+
+
+def _check_integridade_referencial(entidades, regras, analise):
+    """Para cada regra ativa, verifica se o valor de origem existe no destino.
+
+    'entidades' é o mapa {nome: (headers, linhas)} já lido das abas — assim esta
+    lógica é pura (não depende do LibreOffice) e pode ser exercitada pelo testador
+    standalone (completa/testar_verificacao.py)."""
+    cache_destino = {}  # (ent_d.lower, attr_d.lower) -> set de valores (ou None)
     for ent_o, attr_o, ent_d, attr_d in regras:
         chave = (ent_d.lower(), attr_d.lower())
         if chave not in cache_destino:
-            cache_destino[chave] = _carregar_ids_destino(doc, ent_d, attr_d)
+            cache_destino[chave] = _carregar_ids_destino(entidades, ent_d, attr_d)
         destino_ids = cache_destino[chave]
         if destino_ids is None:
             analise.add(SEV_AVISO, ent_o, "-", attr_o, "",
                         "Regra ignorada: destino %s.%s nao encontrado" % (ent_d, attr_d))
             continue
-        if not _aba_existe_ci(doc, ent_o):
+        origem = _buscar_entidade(entidades, ent_o)
+        if origem is None:
             analise.add(SEV_AVISO, ent_o, "-", attr_o, "",
                         "Regra ignorada: entidade de origem nao existe")
             continue
-        headers, linhas = _ler_entidade(_get_sheet(doc, ent_o))
-        if headers is None:
-            continue
+        headers, linhas = origem
         col_o = _idx_coluna(headers, attr_o)
         col_gera = _idx_coluna(headers, CABEÇALHO_COLUNA_CONTROLE)
         if col_o < 0:
@@ -1207,13 +1221,12 @@ def _check_integridade_referencial(doc, regras, analise):
                             "Referencia nao encontrada em %s.%s" % (ent_d, attr_d))
 
 
-def _carregar_ids_destino(doc, ent_d, attr_d):
+def _carregar_ids_destino(entidades, ent_d, attr_d):
     """Conjunto de valores do atributo destino (qualquer linha); None se inválido."""
-    if not _aba_existe_ci(doc, ent_d):
+    destino = _buscar_entidade(entidades, ent_d)
+    if destino is None:
         return None
-    headers, linhas = _ler_entidade(_get_sheet(doc, ent_d))
-    if headers is None:
-        return set()
+    headers, linhas = destino
     col = _idx_coluna(headers, attr_d)
     if col < 0:
         return None
@@ -1271,15 +1284,21 @@ def _escrever_relatorio_analise(doc, analise):
         pass
 
 
-def verificar_base(*args):
-    """Macro: roda o linter de integridade e escreve o relatório na aba 'Análise'."""
-    doc = XSCRIPTCONTEXT.getDocument()  # type: ignore
-    analise = _Analise()
-
-    # Abas que NÃO são entidades (config/relatório) ficam de fora da varredura.
+def _abas_nao_entidade():
+    """Conjunto (lower) das abas que não são entidades: config + relatório."""
     ignoradas = set(n.lower() for n in FOLHAS_IGNORADAS)
     ignoradas.update({NOME_ABA_ANALISE.lower(), NOME_ABA_VERIFICACAO_REFS.lower()})
+    return ignoradas
 
+
+def _coletar_entidades(doc):
+    """Lê todas as abas de entidade -> {nome: (headers, linhas)}.
+
+    É entidade a aba que não é de config/relatório e tem a coluna de controle 'Gera'.
+    Centralizar aqui evita reler cada aba várias vezes e dá um mapa em memória que as
+    checagens (puras) consomem."""
+    ignoradas = _abas_nao_entidade()
+    entidades = {}
     sheets = doc.getSheets()
     for i in range(sheets.getCount()):
         sheet = sheets.getByIndex(i)
@@ -1289,15 +1308,30 @@ def verificar_base(*args):
         headers, linhas = _ler_entidade(sheet)
         if headers is None:
             continue
-        # Só trata como entidade se tiver a coluna de controle "Gera".
         if _idx_coluna(headers, CABEÇALHO_COLUNA_CONTROLE) < 0:
             continue
-        _check_ids(nome, headers, linhas, analise)
+        entidades[nome] = (headers, linhas)
+    return entidades
 
+
+def _rodar_checagens(entidades, regras):
+    """Executa todas as checagens (lógica PURA) e devolve a _Analise preenchida.
+
+    Compartilhado entre a macro (verificar_base) e o testador standalone."""
+    analise = _Analise()
+    for nome, (headers, linhas) in entidades.items():
+        _check_ids(nome, headers, linhas, analise)
+    _check_integridade_referencial(entidades, regras, analise)
+    return analise
+
+
+def verificar_base(*args):
+    """Macro: roda o linter de integridade e escreve o relatório na aba 'Análise'."""
+    doc = XSCRIPTCONTEXT.getDocument()  # type: ignore
+    entidades = _coletar_entidades(doc)
     # Integridade referencial — dirigida pela aba de config (criada se faltar).
     regras = _carregar_regras_refs(doc)
-    _check_integridade_referencial(doc, regras, analise)
-
+    analise = _rodar_checagens(entidades, regras)
     _escrever_relatorio_analise(doc, analise)
 
 

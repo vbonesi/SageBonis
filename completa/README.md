@@ -35,6 +35,12 @@ Ajuste as regras conforme o padrão da **sua** base e mude `Ativa` para `S` nas 
 quiser ligar. Só regras ativas são checadas. (Por isso a 1ª execução não gera erros
 de referência — você ativa o que faz sentido.)
 
+> ⚠️ **Base parcial:** ao checar relacionamentos numa base **incompleta**, é normal
+> aparecerem `ERRO`s de "Referência não encontrada" — o destino pode estar numa parte
+> da base que não foi importada (ex.: TACs de cálculo como `CALC`/`CALC_DIN`). Não é
+> bug: numa base completa esses casos somem. Ative os relacionamentos preferencialmente
+> ao verificar a base inteira.
+
 ## Instalação e uso
 Igual à Simples: abra `SageBonis.ods` e habilite as macros do documento (a macro vem
 embutida). Atribua a função `verificar_base` a um botão ou atalho, como as demais.

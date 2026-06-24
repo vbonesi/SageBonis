@@ -138,7 +138,14 @@ verdade.
 
 ## Objetivos futuros (roadmap)
 
+> **Estratégia de duas trilhas:** esta planilha (a "Simples") será mantida enxuta e
+> estável — foco em importar/exportar rápido. Em paralelo, uma variante **Completa**
+> (forkada, no mesmo repo) receberá os recursos avançados abaixo. O plano detalhado,
+> com prioridades e critérios de convergência, está em [PLANEJAMENTO.md](PLANEJAMENTO.md).
+
+- **Verificador de base** (linter): aba "Análise" com checagens de integridade referencial (IDs duplicados, sigla da SE, referências cruzadas entre entidades).
 - **Unificar abas de entidades** em grupos mais compactos (ex.: digital, analógico, comando, comunicações, sistemas, infos, cores, ocorrências, etc.) para reduzir o número de abas e acelerar a configuração de uma SE completa.
+- **Assistente de protocolo/IED:** gerar o esqueleto padrão de aquisição a partir de protocolo (DNP3/101/104/61850) e tipo.
 - **Importar uma base existente** para esse modelo unificado (converter DAT → planilhas do SageBonis) para reaproveitar bases já prontas.
 - **Criar uma aba “simul”** para geração de scripts de simulação, mesmo que o formato ainda esteja em definição.
 

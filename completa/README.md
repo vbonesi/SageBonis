@@ -111,10 +111,34 @@ unificado (ex.: adicionar uma 2ª origem redundante a um ponto que já existe). 
 reconstrução de melhor esforço, não um inverso perfeito — confira o resultado antes
 de confiar cegamente, principalmente o Método inferido dos canais.
 
+### Ganhos rápidos
+
+**Troca de ID global — `trocar_id_global`**
+Aba `TrocaId` (`IDAntigo | IDNovo | Ativa`, criada vazia na 1ª execução): renomeia um
+ID onde ele é a própria chave e propaga a troca por **toda** coluna que o referencia,
+usando o mesmo grafo de relacionamentos do verificador (`REGRAS_REFS_PADRAO`) — ex.:
+renomear um `PDS` atualiza `PDD.PDS`, `RCA.PARC`, etc. automaticamente. Suporta várias
+trocas em lote numa só execução (linhas processadas em ordem — uma troca pode
+encadear na seguinte). ID não encontrado ou ambíguo (existe em mais de uma entidade)
+não altera nada e fica registrado como tal. Relatório em `RelatorioTrocaId`.
+
+**Estatística — `estatistica_base`**
+Conta linhas totais e ativas (`Gera = x`) por entidade, com uma linha `TOTAL` no
+fim. Relatório em `Estatistica`.
+
+**Gestão de includes — `gerir_includes`**
+Aba `SubstituirIncludes` (`Buscar | Substituir | Ativa`, criada vazia na 1ª execução):
+aplica as substituições ativas no caminho de **toda** linha de include (`Gera = i` ou
+`u`), em qualquer entidade — corrige em lote sem precisar editar célula por célula.
+Sempre escreve o estado atual de todos os includes (já com as trocas aplicadas) em
+`RelatorioIncludes`, então também serve só pra listar (deixe `SubstituirIncludes`
+vazia/inativa).
+
 ## Instalação e uso
 Igual à Simples: abra `SageBonis.ods` e habilite as macros do documento (a macro vem
-embutida). Atribua as funções `verificar_base`, `unificar_pontos` e `extrair_pontos`
-a botões ou atalhos, como as demais.
+embutida). Atribua as funções `verificar_base`, `unificar_pontos`, `extrair_pontos`,
+`trocar_id_global`, `estatistica_base` e `gerir_includes` a botões ou atalhos, como
+as demais.
 
 ## Sincronizar a macro com o .ods
 A partir da raiz do repositório:
@@ -125,5 +149,5 @@ python sync_macro.py status  --ods completa/SageBonis.ods --py completa/Importad
 ```
 
 ## Status
-🚧 Em desenvolvimento. Próximo item do roadmap (ver [PLANEJAMENTO.md](../PLANEJAMENTO.md)):
-assistente de protocolo/IED.
+🚧 Em desenvolvimento. Único item do roadmap ainda pendente (ver
+[PLANEJAMENTO.md](../PLANEJAMENTO.md)): assistente de protocolo/IED.

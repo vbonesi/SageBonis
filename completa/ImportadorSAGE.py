@@ -2153,7 +2153,290 @@ def extrair_pontos(*args):
 
 
 # ===============================================================
+# ============= TRILHA COMPLETA: GANHOS RÁPIDOS ==================
+# ===============================================================
+# Três recursos de baixo esforço/alto retorno do PLANEJAMENTO.md: troca de ID global
+# (com propagação de referências), estatística de pontos por entidade, e gestão de
+# includes (listar + corrigir em lote). Cada um é read/write direto nas abas de
+# entidade já existentes -- nenhum toca em arquivo .dat.
+
+def _valor_bruto(row, headers, nome_coluna):
+    """Como _valor, mas sem default -- devolve '' se ausente (uso interno aqui onde
+    'row' pode ser lista OU tupla, ambos suportados por _idx_coluna/indexação)."""
+    col = _idx_coluna(headers, nome_coluna)
+    if col < 0 or col >= len(row):
+        return ""
+    return str(row[col]).strip()
+
+
+# --- Troca de ID global ---------------------------------------------------
+
+NOME_ABA_TROCA_ID = "TrocaId"
+NOME_ABA_RELATORIO_TROCA_ID = "RelatorioTrocaId"
+CABECALHOS_TROCA_ID = ["IDAntigo", "IDNovo", "Ativa"]
+
+
+def _construir_mapa_referencias_por_destino():
+    """{ENTIDADE_DESTINO: [(entidade_origem, atributo_origem), ...]} a partir de
+    REGRAS_REFS_PADRAO -- quem referencia essa entidade e por qual atributo. É o
+    inverso do grafo de FK usado pelo verificador; aqui serve pra saber onde propagar
+    uma troca de ID (ex.: renomear um PDS precisa achar todo PDD.PDS/RCA.PARC/... que
+    aponta pra ele)."""
+    mapa = {}
+    for ent_o, attr_o, ent_d_txt, _attr_d in REGRAS_REFS_PADRAO:
+        for ent_d in _parse_entidades_destino(ent_d_txt):
+            mapa.setdefault(ent_d.upper(), []).append((ent_o, attr_o))
+    return mapa
+
+
+def _preparar_entidades_mutaveis(entidades_brutas):
+    """{nome: (headers, [linha_lista, ...])} -- converte as linhas (tuplas imutáveis
+    vindas de _ler_entidade/getDataArray) em listas, pra poder alterar célula a célula."""
+    return {nome: (headers, [list(r) for r in linhas]) for nome, (headers, linhas) in entidades_brutas.items()}
+
+
+def _resolver_nome_entidade(entidades, nome):
+    """Nome EXATO da chave em 'entidades' (preserva o case real do nome da aba) que
+    corresponde a 'nome' (case-insensitive); None se não existir. Necessário porque
+    mapa_referencias/REGRAS_REFS_PADRAO guardam nomes em MAIÚSCULAS, mas as abas reais
+    costumam estar em minúsculas (ex.: "pds") -- sem isso, 'tocadas' ficaria com o case
+    do mapa em vez do case real da aba, e o write-back (entidades[nome]) quebraria."""
+    if nome in entidades:
+        return nome
+    alvo = str(nome).strip().lower()
+    for k in entidades:
+        if k.strip().lower() == alvo:
+            return k
+    return None
+
+
+def _entidade_do_id(entidades, id_valor):
+    """Nome da entidade onde 'id_valor' aparece na coluna ID (None se não achar, ou se
+    achar em mais de uma -- ambíguo demais pra trocar sem confirmação do usuário)."""
+    achadas = []
+    for nome, (headers, linhas) in entidades.items():
+        col_id = _idx_coluna(headers, "ID")
+        if col_id < 0:
+            continue
+        if any(_valor_bruto(row, headers, "ID") == id_valor for row in linhas):
+            achadas.append(nome)
+    return achadas[0] if len(achadas) == 1 else None
+
+
+def _trocar_id_em_entidades(entidades, id_antigo, id_novo, mapa_referencias):
+    """Lógica PURA: troca id_antigo->id_novo na entidade onde ele é a própria chave
+    (coluna ID) e em toda coluna que a referencia (mapa_referencias). Muta as linhas de
+    'entidades' (listas, ver _preparar_entidades_mutaveis) IN-PLACE. Devolve
+    (entidades_tocadas: set[str], relatorio: list[str])."""
+    tocadas = set()
+    relatorio = []
+    entidade_origem = _entidade_do_id(entidades, id_antigo)
+    if entidade_origem is None:
+        relatorio.append("ID '%s' não encontrado (ou ambíguo em mais de uma entidade) -- nada alterado" % id_antigo)
+        return tocadas, relatorio
+
+    headers, linhas = entidades[entidade_origem]
+    col_id = _idx_coluna(headers, "ID")
+    for row in linhas:
+        if len(row) > col_id and str(row[col_id]).strip() == id_antigo:
+            row[col_id] = id_novo
+            tocadas.add(entidade_origem)
+    relatorio.append("%s.ID: '%s' -> '%s'" % (entidade_origem, id_antigo, id_novo))
+
+    for ent_ref, attr_ref in mapa_referencias.get(entidade_origem.upper(), []):
+        nome_real = _resolver_nome_entidade(entidades, ent_ref)
+        if nome_real is None:
+            continue
+        headers_ref, linhas_ref = entidades[nome_real]
+        col_ref = _idx_coluna(headers_ref, attr_ref)
+        if col_ref < 0:
+            continue
+        n = 0
+        for row in linhas_ref:
+            if len(row) > col_ref and str(row[col_ref]).strip() == id_antigo:
+                row[col_ref] = id_novo
+                n += 1
+        if n:
+            tocadas.add(nome_real)
+            relatorio.append("%s.%s: %d referência(s) atualizada(s)" % (nome_real, attr_ref, n))
+    return tocadas, relatorio
+
+
+def _escrever_relatorio_simples(doc, nome_aba, cabecalho, linhas_texto):
+    """Cria/limpa 'nome_aba' e escreve um relatório de 1 coluna (cabecalho + linhas)."""
+    if _aba_existe_ci(doc, nome_aba):
+        sheet = _get_sheet(doc, nome_aba)
+        cursor = sheet.createCursor()
+        cursor.gotoEndOfUsedArea(False)
+        addr = cursor.getRangeAddress()
+        sheet.getCellRangeByPosition(0, 0, addr.EndColumn, addr.EndRow).clearContents(FLAGS_LIMPAR_TUDO)
+    else:
+        new_sheet = doc.createInstance("com.sun.star.sheet.Spreadsheet")
+        doc.getSheets().insertByName(nome_aba, new_sheet)
+        sheet = _get_sheet(doc, nome_aba)
+    matriz = [cabecalho] + [[linha] for linha in (linhas_texto or ["Nenhuma alteração ativa a processar."])]
+    _escrever_matriz(sheet, matriz, negrito_cabecalho=True)
+
+
+def trocar_id_global(*args):
+    """Macro: lê a aba 'TrocaId' (criada vazia na 1ª execução) e, para cada linha
+    ativa (IDAntigo, IDNovo), renomeia o ID naquela entidade e propaga a troca por
+    toda coluna que referencia essa entidade (grafo de REGRAS_REFS_PADRAO). Suporta
+    várias trocas em lote (linhas processadas em ordem -- uma troca pode encadear na
+    seguinte). Escreve o relatório em 'RelatorioTrocaId'."""
+    doc = XSCRIPTCONTEXT.getDocument()  # type: ignore
+    _garantir_aba_config(doc, NOME_ABA_TROCA_ID, CABECALHOS_TROCA_ID)
+
+    entidades = _preparar_entidades_mutaveis(_coletar_entidades(doc))
+    mapa_referencias = _construir_mapa_referencias_por_destino()
+
+    headers_troca, linhas_troca = _ler_entidade(_get_sheet(doc, NOME_ABA_TROCA_ID))
+    relatorio_geral = []
+    entidades_tocadas = set()
+    if headers_troca:
+        col_ativa = _idx_coluna(headers_troca, "Ativa")
+        for row in (linhas_troca or []):
+            ativa = str(row[col_ativa]).strip().lower() if col_ativa >= 0 and len(row) > col_ativa else ""
+            if ativa not in _VALORES_ATIVO:
+                continue
+            id_antigo = _valor_bruto(row, headers_troca, "IDAntigo")
+            id_novo = _valor_bruto(row, headers_troca, "IDNovo")
+            if not id_antigo or not id_novo:
+                continue
+            tocadas, relatorio = _trocar_id_em_entidades(entidades, id_antigo, id_novo, mapa_referencias)
+            entidades_tocadas.update(tocadas)
+            relatorio_geral.extend(relatorio)
+
+    for nome in entidades_tocadas:
+        headers, linhas = entidades[nome]
+        matriz = [headers] + [[str(c) for c in r] for r in linhas]
+        _escrever_matriz(_get_sheet(doc, nome.upper()), matriz, negrito_cabecalho=True)
+    _escrever_relatorio_simples(doc, NOME_ABA_RELATORIO_TROCA_ID, ["Alteração"], relatorio_geral)
+
+
+# --- Estatística -----------------------------------------------------------
+
+NOME_ABA_ESTATISTICA = "Estatistica"
+
+
+def _calcular_estatisticas(entidades):
+    """[(nome_entidade, total_linhas, total_ativas), ...] ordenado por nome. Lógica
+    PURA -- 'entidades' é o mesmo mapa {nome:(headers,linhas)} do verificador."""
+    stats = []
+    for nome, (headers, linhas) in entidades.items():
+        col_gera = _idx_coluna(headers, CABEÇALHO_COLUNA_CONTROLE)
+        ativas = sum(1 for row in linhas if _is_ponto_ativo(row, col_gera))
+        stats.append((nome, len(linhas), ativas))
+    return sorted(stats, key=lambda t: t[0].lower())
+
+
+def estatistica_base(*args):
+    """Macro: conta linhas (total e ativas, Gera=x) por entidade e escreve na aba
+    'Estatistica', com uma linha TOTAL no fim."""
+    doc = XSCRIPTCONTEXT.getDocument()  # type: ignore
+    stats = _calcular_estatisticas(_coletar_entidades(doc))
+    if _aba_existe_ci(doc, NOME_ABA_ESTATISTICA):
+        sheet = _get_sheet(doc, NOME_ABA_ESTATISTICA)
+        cursor = sheet.createCursor()
+        cursor.gotoEndOfUsedArea(False)
+        addr = cursor.getRangeAddress()
+        sheet.getCellRangeByPosition(0, 0, addr.EndColumn, addr.EndRow).clearContents(FLAGS_LIMPAR_TUDO)
+    else:
+        new_sheet = doc.createInstance("com.sun.star.sheet.Spreadsheet")
+        doc.getSheets().insertByName(NOME_ABA_ESTATISTICA, new_sheet)
+        sheet = _get_sheet(doc, NOME_ABA_ESTATISTICA)
+    matriz = [["Entidade", "Total de linhas", "Linhas ativas (Gera=x)"]]
+    for nome, total, ativas in stats:
+        matriz.append([nome.upper(), str(total), str(ativas)])
+    matriz.append(["TOTAL", str(sum(t[1] for t in stats)), str(sum(t[2] for t in stats))])
+    _escrever_matriz(sheet, matriz, negrito_cabecalho=True)
+
+
+# --- Gestão de includes -----------------------------------------------------
+
+NOME_ABA_SUBSTITUIR_INCLUDES = "SubstituirIncludes"
+NOME_ABA_RELATORIO_INCLUDES = "RelatorioIncludes"
+CABECALHOS_SUBSTITUIR_INCLUDES = ["Buscar", "Substituir", "Ativa"]
+
+_TIPOS_INCLUDE = (CODIGO_INCLUDE, CODIGO_INCLUDE_COMENTADO)
+
+
+def _substituir_em_includes(entidades, buscar, substituir):
+    """Substitui a substring 'buscar' por 'substituir' no path (coluna
+    Comentario/Include) de toda linha de include (Gera=i ou u), em qualquer entidade.
+    Muta 'entidades' IN-PLACE. Devolve (entidades_tocadas, quantidade_substituida)."""
+    tocadas = set()
+    n = 0
+    for nome, (headers, linhas) in entidades.items():
+        col_gera = _idx_coluna(headers, CABEÇALHO_COLUNA_CONTROLE)
+        col_dados = _idx_coluna(headers, CABEÇALHO_COLUNA_DADOS)
+        if col_gera < 0 or col_dados < 0:
+            continue
+        for row in linhas:
+            codigo = str(row[col_gera]).strip().lower() if len(row) > col_gera else ""
+            if codigo not in _TIPOS_INCLUDE:
+                continue
+            atual = str(row[col_dados]) if len(row) > col_dados else ""
+            if buscar and buscar in atual:
+                row[col_dados] = atual.replace(buscar, substituir)
+                tocadas.add(nome)
+                n += 1
+    return tocadas, n
+
+
+def _listar_includes(entidades):
+    """[(entidade, linha_planilha, path)] de toda linha de include (Gera=i ou u), em
+    qualquer entidade. Lógica PURA."""
+    saida = []
+    for nome, (headers, linhas) in entidades.items():
+        col_gera = _idx_coluna(headers, CABEÇALHO_COLUNA_CONTROLE)
+        col_dados = _idx_coluna(headers, CABEÇALHO_COLUNA_DADOS)
+        if col_gera < 0 or col_dados < 0:
+            continue
+        for i, row in enumerate(linhas):
+            codigo = str(row[col_gera]).strip().lower() if len(row) > col_gera else ""
+            if codigo in _TIPOS_INCLUDE:
+                saida.append((nome, i + 2, str(row[col_dados]).strip() if len(row) > col_dados else ""))
+    return saida
+
+
+def gerir_includes(*args):
+    """Macro: aplica as substituições ativas da aba 'SubstituirIncludes' (criada vazia
+    na 1ª execução) em toda linha de include de qualquer entidade, e sempre escreve o
+    estado atual (path de cada include, já com as trocas aplicadas) em
+    'RelatorioIncludes' -- serve tanto pra listar quanto pra corrigir em lote."""
+    doc = XSCRIPTCONTEXT.getDocument()  # type: ignore
+    _garantir_aba_config(doc, NOME_ABA_SUBSTITUIR_INCLUDES, CABECALHOS_SUBSTITUIR_INCLUDES)
+
+    entidades = _preparar_entidades_mutaveis(_coletar_entidades(doc))
+    headers_sub, linhas_sub = _ler_entidade(_get_sheet(doc, NOME_ABA_SUBSTITUIR_INCLUDES))
+    entidades_tocadas = set()
+    if headers_sub:
+        col_ativa = _idx_coluna(headers_sub, "Ativa")
+        for row in (linhas_sub or []):
+            ativa = str(row[col_ativa]).strip().lower() if col_ativa >= 0 and len(row) > col_ativa else ""
+            if ativa not in _VALORES_ATIVO:
+                continue
+            buscar = _valor_bruto(row, headers_sub, "Buscar")
+            substituir = _valor_bruto(row, headers_sub, "Substituir")
+            if not buscar:
+                continue
+            tocadas, _n = _substituir_em_includes(entidades, buscar, substituir)
+            entidades_tocadas.update(tocadas)
+
+    for nome in entidades_tocadas:
+        headers, linhas = entidades[nome]
+        matriz = [headers] + [[str(c) for c in r] for r in linhas]
+        _escrever_matriz(_get_sheet(doc, nome.upper()), matriz, negrito_cabecalho=True)
+
+    linhas_relatorio = ["%s (linha %d): %s" % (ent, linha, path)
+                        for ent, linha, path in _listar_includes(entidades)]
+    _escrever_relatorio_simples(doc, NOME_ABA_RELATORIO_INCLUDES, ["Include"], linhas_relatorio)
+
+
+# ===============================================================
 # ================= EXPOSIÇÃO PARA LIBREOFFICE ==================
 # ===============================================================
 g_exportedScripts = (importar_dats, exportar_dats, importar_parcial, exportar_parcial,
-                     atualizar_amostras_cores, verificar_base, unificar_pontos, extrair_pontos)
+                     atualizar_amostras_cores, verificar_base, unificar_pontos, extrair_pontos,
+                     trocar_id_global, estatistica_base, gerir_includes)

@@ -60,9 +60,41 @@ de referência — você ativa o que faz sentido.)
 > 81 regras curadas, apague a aba `VerificacaoRefs` e rode `verificar_base` de novo (isso inclui
 > o `SageBonis.ods` deste próprio repositório, que ainda tem as 3 regras antigas).
 
+### Unificação de pontos (fan-out) — `unificar_pontos`
+Gera as entidades relacionadas (PDF/PDS/PDD, PAF/PAS/PAD, CGF/CGS) a partir de uma
+definição única de ponto físico, em vez de escrever cada entidade manualmente. Escreve
+direto nas abas de entidade existentes por **upsert** (casa por ID): regenerar depois
+de ajustar a config atualiza as linhas, não duplica, e preserva colunas/linhas que não
+vêm daqui (ex.: pontos importados de `.dat` reais na mesma aba).
+
+Abas de config (criadas automaticamente, vazias, na 1ª execução):
+
+- **`PontoDigital`** / **`PontoAnalogico`** — uma linha por **origem física** de um
+  ponto (`ID_Logico, ID_Fisico, NOME, NV2, KCONV(s), TAC, OCR, Gera`). O `ID_Fisico` é
+  quem você decide — endereçamento por protocolo (61850, DNP3, 101/104...) é escopo do
+  futuro assistente de protocolo/IED; aqui só entra o fan-out a partir dele.
+  - **Redundância**: várias linhas com o **mesmo `ID_Logico`** = múltiplas origens do
+    mesmo ponto lógico. 1 origem → PDF/PAF direto (`TPFIL=NLFL`); 2+ origens → um
+    PDF/PAF por origem + `RFC` em cadeia (fan-in "ou válido") + PDS/PAS com
+    `TPFIL=FIL5`. Não assume nenhuma topologia fixa de IED (P/D/virtual, bit OPMSK
+    12...) — só o número de origens que você declarar.
+  - **Comando** (só `PontoDigital`): coluna `Comando=S` gera CGF/CGS com o **mesmo ID**
+    do PDS (regra fixa do SAGE: comando e status compartilham o ID). Se 2+ origens
+    tiverem `Comando=S`, gera um CGF por origem, todos referenciando o mesmo CGS.
+- **`ComandoAvulso`** — comandos **sem** ponto de status próprio (ex.: um `COM_SAGE`
+  genérico ligado a um TAC local, como algumas bases já usam). Cada linha tem seu
+  próprio `ID` de CGS/CGF; várias linhas podem repetir o mesmo `TAC`/`PAC` (o ponto
+  genérico) — é justamente o caso de vários comandos ligados ao mesmo ponto.
+- **`CanaisDistribuicao`** — um canal de saída por linha (`Nome, TDD, Metodo
+  [Prefixo/Sufixo/Substituir], Valor1, Valor2, Ativo`). Substitui os "4 slots fixos"
+  que macros de referência (GE) hard-codificam por quantos canais fizerem sentido.
+- **`DistribuicaoPontos`** — liga um `ID_Logico` a 1+ canais (`ID_Logico, Canal,
+  Ativo`). Um ponto sem nenhuma linha aqui simplesmente não gera distribuição.
+
 ## Instalação e uso
 Igual à Simples: abra `SageBonis.ods` e habilite as macros do documento (a macro vem
-embutida). Atribua a função `verificar_base` a um botão ou atalho, como as demais.
+embutida). Atribua as funções `verificar_base` e `unificar_pontos` a botões ou
+atalhos, como as demais.
 
 ## Sincronizar a macro com o .ods
 A partir da raiz do repositório:
@@ -73,5 +105,5 @@ python sync_macro.py status  --ods completa/SageBonis.ods --py completa/Importad
 ```
 
 ## Status
-🚧 Em desenvolvimento. Próximos itens do roadmap (ver [PLANEJAMENTO.md](../PLANEJAMENTO.md)):
-unificação de pontos (Digital/Analógico/Comando → fan-out) e assistente de protocolo/IED.
+🚧 Em desenvolvimento. Próximo item do roadmap (ver [PLANEJAMENTO.md](../PLANEJAMENTO.md)):
+assistente de protocolo/IED.

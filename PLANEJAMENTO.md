@@ -80,6 +80,20 @@ Um gerador faz o **fan‑out** para as entidades relacionadas (Digital → PDS/P
 Analógico → PAS/PAF/PAD; Comando → CGS/CGF), aplicando naming por protocolo
 (101/104/DNP3) e método de ID configurável (Prefixo/Sufixo/Substituir).
 
+**Entregue** (estado atual e detalhes em [completa/README.md](completa/README.md)):
+abas `PontoDigital`/`PontoAnalogico` (uma linha por origem física; múltiplas linhas
+com o mesmo ID lógico = redundância genérica, resolvida por `RFC` em cadeia, sem
+assumir a topologia fixa P/D/virtual do pySAGE); `Comando=S` gera CGF/CGS com o mesmo
+ID do PDS; `ComandoAvulso` cobre comandos sem status próprio (ponto genérico tipo
+`COM_SAGE`, vários comandos no mesmo TAC/PAC); `CanaisDistribuicao` +
+`DistribuicaoPontos` substituem os "4 slots fixos" da macro GE por N canais
+configuráveis, com Método (Prefixo/Sufixo/Substituir) por canal. Escrita por upsert
+(casa por ID nas abas de entidade já existentes; regenerar não duplica).
+
+**Ainda pendente** desta frente: endereçamento automático do `ID_Fisico`/`NV2` por
+protocolo (101/104/DNP3/61850) — hoje o usuário informa esses campos prontos; migrar
+para o **Assistente de Protocolo/IED** (item 3), que já nasce dependente disso.
+
 **Por que importa:** é exatamente o item de roadmap "unificar abas de entidades em
 grupos compactos". A GE é o **blueprint pronto** dele. Esforço médio‑alto.
 

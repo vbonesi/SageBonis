@@ -58,11 +58,15 @@ as ideias** em Python, dirigidas por configuração (ver [Princípios](#princíp
 ### 1. Verificador / linter de base  ·  origem: Eletronorte‑2  ·  prioridade 🥇
 Aba "Análise" que roda checagens de **integridade referencial cruzada** e reporta
 em log com severidade (Erro/OK/Info), entidade, linha, atributo, valor, descrição.
-Checagens iniciais:
-- ID duplicado dentro da entidade;
-- prefixo do ID = sigla da SE;
-- referências cruzadas existem (ex.: TAC/OCR/PDS citado em PDF/PDD existe na origem);
-- (extensão natural) comprimento/validação de campo via aba `EntidadeAtributoValor`.
+
+**Entregue** (estado atual e detalhes em [completa/README.md](completa/README.md)): ID
+duplicado/vazio; referências cruzadas (agora com **81 regras pré-populadas**, curadas via
+SkillSAGE, e suporte a FK "ambígua" — múltiplas entidades de destino por regra); comprimento
+de ID acima do limite conhecido da entidade; valor fora do domínio conhecido (reaproveita a
+aba `EntidadeAtributoValor`, que já existia mas estava sem consumidor).
+
+**Ainda pendente** desta frente: prefixo do ID = sigla da SE (precisa de config indicando
+qual é a sigla "correta" para a base carregada — não é universal como as demais checagens).
 
 **Por que primeiro:** maior ROI, menor risco (read‑only, não toca no formato de
 exportação), e o Python leva vantagem real sobre o VBA (índices `dict`/`set` com

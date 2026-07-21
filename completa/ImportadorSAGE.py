@@ -1042,14 +1042,126 @@ CABECALHOS_REFS = ["EntidadeOrigem", "AtributoOrigem", "EntidadeDestino", "Atrib
 # Valores aceitos na coluna "Ativa" da aba VerificacaoRefs.
 _VALORES_ATIVO = ('s', 'sim', 'x', '1', 'true', 'v')
 
-# Regras de exemplo gravadas na aba de config na 1ª execução (inativas por padrão,
-# para não gerar falso-positivo antes de o usuário confirmar que se aplicam à base).
-# Formato: (EntidadeOrigem, AtributoOrigem, EntidadeDestino, AtributoDestino)
-REGRAS_REFS_EXEMPLO = [
-    ("PDS", "TAC", "TAC", "ID"),
-    ("PDD", "PDS", "PDS", "ID"),
-    ("PAS", "TAC", "TAC", "ID"),
-]
+# Delimitador para múltiplos destinos numa regra de integridade referencial -- modela FK
+# "ambígua" do SAGE (ex.: PDF.PNT pode ser um PDS na aquisição OU um PDD na distribuição).
+_DELIM_MULTI_DESTINO = "|"
+
+
+def _parse_entidades_destino(texto):
+    """'PDS|PDD' -> ('PDS', 'PDD'); 'PDS' -> ('PDS',). Espaços em volta do delimitador são ok."""
+    return tuple(p.strip() for p in str(texto).split(_DELIM_MULTI_DESTINO) if p.strip())
+
+
+# Regras de integridade referencial gravadas na aba de config na 1ª execução (todas INATIVAS
+# por padrão -- o usuário ativa as que fazem sentido para a sua base). Curadas a partir do
+# levantamento de entidades/relacionamentos do projeto SkillSAGE (fk_graph.csv, ~85 arestas
+# derivadas dos manuais CEPEL + bases reais), excluindo relações para entidades-CATÁLOGO do
+# SAGE (TN1/TN2/TCV/TTP): são valores pré-definidos pelo CEPEL sem aba própria na planilha, e
+# portanto não há o que checar aqui (ver a checagem de domínio, _check_dominios, para esses
+# casos -- ex.: NV2.TN2 validado contra a lista de valores válidos, não contra uma aba "TN2").
+# Formato de cada linha: "EntidadeOrigem  AtributoOrigem  EntidadeDestino[|EntidadeDestino2...]"
+# -- o atributo de destino é sempre "ID" (é assim que toda FK do SAGE funciona: aponta a chave
+# primária da entidade referenciada).
+_REGRAS_REFS_PADRAO_TXT = """
+INP      NOH     NOH
+INP      PRO     PRO
+NOCT     NOH     NOH
+NOCT     CTX     CTX
+PRCT     PRO     PRO
+PRCT     CTX     CTX
+PRCT     AOR     AOR
+SXP      PRO     PRO
+SXP      SEV     SEV
+OCR      SEVER   SEV
+OCR      GRPOCR  GRPOCR
+OCR      TELA    TELA
+GSD      NO1     NOH
+GSD      NO2     NOH
+GSD      SITE    SITE
+CXU      GSD     GSD
+ENU      CXU     CXU
+UTR      CNF     CNF
+UTR      CXU     CXU
+MUL      CNF     CNF
+MUL      GSD     GSD
+ENM      MUL     MUL
+CNM      MUL     MUL
+CNF      LSC     LSC
+NV1      CNF     CNF
+NV2      NV1     NV1
+PDF      NV2     NV2
+PDF      PNT     PDS|PDD
+PAF      NV2     NV2
+PAF      PNT     PAS|PAD
+CGF      NV2     NV2
+CGF      CNF     CNF
+CGF      CGS     CGS
+PTF      NV2     NV2
+PTF      PNT     PTS
+PIF      NV2     NV2
+PIF      PNT     PIS
+LSC      GSD     GSD
+LSC      MAP     MAP
+INS      AOR     AOR
+INS      PTC     PTC
+INS      TELA    TELA
+TAC      INS     INS
+TAC      LSC     LSC
+PAS      TAC     TAC
+PAS      TCL     TCL
+PAS      OCR     OCR
+PAS      PTC     PTC
+PDS      TAC     TAC
+PDS      TCL     TCL
+PDS      OCR     OCR
+PTS      TAC     TAC
+PTS      OCR     OCR
+CGS      TAC     TAC
+CGS      PINT    PDS|PAS
+CGS      PAC     PDS|PAS
+CGS      TIPOE   TCTL
+RCA      PARC    PDS|PAS|PTS
+RCA      PNT     PDS|PAS|PTS
+RFC      PARC    PDF|PAF|PTF
+RFC      PNT     PDS|PAS|PTS
+RFI      PNT     PDF|PAF|PTF
+TDD      LSC     LSC
+PDD      PDS     PDS
+PDD      TDD     TDD
+PAD      PAS     PAS
+PAD      TDD     TDD
+PTD      PTS     PTS
+PTD      TDD     TDD
+E2M      IDPTO   OCR|PAS|PDS|PTS
+E2M      MAP     MAP
+GRCMP    GRUPO   GRUPO
+GRCMP    PNT     PDS|PAS|CGS|GRUPO
+GRCMP    ACAO    ACAO
+GRUPO    PNT     PDS|PAS|PTS|CGS|GRUPO
+GRUPO    COR     COR
+GR2ACT   ACAO    ACAO
+GR2ACT   GRACT   GRACT
+AUTOZ    AOR     AOR
+AUTOZ    GRACT   GRACT
+AUTOZ    PAPEL   PAPEL
+"""
+
+
+def _montar_regras_refs_padrao():
+    """Parseia _REGRAS_REFS_PADRAO_TXT -> [(EntOrigem, AtrOrigem, EntDestino, 'ID'), ...].
+    EntDestino fica como string (possivelmente "A|B") -- só vira tupla ao ser lida de volta da
+    aba, em _carregar_regras_refs, o mesmo caminho usado para regras editadas pelo usuário."""
+    regras = []
+    for linha in _REGRAS_REFS_PADRAO_TXT.strip().splitlines():
+        partes = linha.split()
+        if len(partes) != 3:
+            continue
+        ent_o, attr_o, ent_d = partes
+        regras.append((ent_o, attr_o, ent_d, "ID"))
+    return regras
+
+
+REGRAS_REFS_PADRAO = _montar_regras_refs_padrao()
 
 # Ordem de severidade para ordenar o relatório (erros primeiro).
 _ORDEM_SEV = {SEV_ERRO: 0, SEV_AVISO: 1, SEV_INFO: 2, SEV_OK: 3}
@@ -1142,6 +1254,123 @@ def _check_ids(sheet_name, headers, linhas, analise):
             vistos[valor] = linha_planilha
 
 
+# Restrição de tamanho de ID por entidade -- fonte: SkillSAGE (_PADRAO/convencao_nomenclatura.md,
+# "Restrição SAGE"), ainda não conferida contra o manual CEPEL oficial correspondente. Por isso a
+# checagem usa AVISO, não ERRO: um limite errado aqui não deveria travar a confiança na ferramenta.
+LIMITES_TAMANHO_ID = {
+    "GSD": 8, "LSC": 8,
+    "TAC": 12,
+    "CNF": 16, "NV1": 16, "UTR": 16, "ENU": 16,
+    "NV2": 40,
+    "PDS": 32,
+}
+
+
+def _check_tamanho_id(sheet_name, headers, linhas, analise):
+    """ID mais longo que o limite conhecido da entidade (ver LIMITES_TAMANHO_ID)."""
+    limite = LIMITES_TAMANHO_ID.get(sheet_name.strip().upper())
+    if limite is None:
+        return
+    col_gera = _idx_coluna(headers, CABEÇALHO_COLUNA_CONTROLE)
+    col_id = _idx_coluna(headers, "ID")
+    if col_id < 0:
+        return
+    for i, row in enumerate(linhas):
+        if not _is_ponto_ativo(row, col_gera):
+            continue
+        valor = str(row[col_id]).strip() if len(row) > col_id else ""
+        if valor and len(valor) > limite:
+            analise.add(SEV_AVISO, sheet_name, i + 2, "ID", valor,
+                        "ID com %d caracteres, acima do limite conhecido (%d) para %s" %
+                        (len(valor), limite, sheet_name))
+
+
+# Pares entidade.atributo do dominios.csv (SkillSAGE) ainda ausentes na aba EntidadeAtributoValor
+# desta planilha (conferido em 2026-07: a aba já cobre ~106 pares, é mais completa que o SkillSAGE
+# na maioria dos casos -- só estes 5 faltavam). Só entram se a aba ainda não tiver a própria regra
+# para o mesmo par -- nunca sobrescrevem o que o usuário já tem.
+_DOMINIOS_SUPLEMENTARES = {
+    ("cgf", "KCONV"): {"SBOw TERM", "SBOw", "DIR TERM", "NUL_1_D", "NUL_D", "CO_1"},
+    ("grupo", "APLIC"): {"VTelas", "OUTROS"},
+    ("tctl", "ID"): {"CTCL", "BLOQ", "HABD", "LIGD", "RSTC", "AUMD"},
+    ("tn2", "TIPO"): {"ADAQ", "AAAQ", "ADUP", "CSIM", "CDUP", "AANL", "ALAT", "AMCD", "APFL",
+                       "AA32", "ASTP", "ASIM", "CREL", "CSTP"},
+    ("utr", "ORDEM"): {"PRI", "REV"},
+}
+
+
+def _mesclar_dominios_suplementares(dominios):
+    """Preenche pares entidade.atributo do _DOMINIOS_SUPLEMENTARES que a aba ainda não tem."""
+    for chave, valores in _DOMINIOS_SUPLEMENTARES.items():
+        dominios.setdefault(chave, valores)
+
+
+def _carregar_dominios(doc):
+    """Lê a aba 'EntidadeAtributoValor' (já existente na planilha; formato largo
+    Entidade|Atributo|Valor1..N) -> {(entidade.lower, atributo.upper): set(valores)}.
+
+    Diferente de VerificacaoRefs, esta aba NÃO é criada aqui se faltar -- ela já é uma aba de
+    config estabelecida da Trilha Completa (usada no passado para validação de dropdown; ver
+    comentário em SageConfig). Se a aba não existir, a checagem de domínio simplesmente não roda."""
+    dominios = {}
+    if not _aba_existe_ci(doc, NOME_ABA_VALIDACAO):
+        return dominios
+    sheet = _get_sheet(doc, NOME_ABA_VALIDACAO)
+    headers, linhas = _ler_entidade(sheet)
+    if not linhas:
+        return dominios
+    for row in linhas:
+        if len(row) < 3:
+            continue
+        entidade = str(row[0]).strip().lower()
+        atributo = str(row[1]).strip().upper()
+        if not entidade or not atributo:
+            continue
+        valores = {str(v).strip() for v in row[2:] if str(v).strip()}
+        if valores:
+            dominios[(entidade, atributo)] = valores
+    _mesclar_dominios_suplementares(dominios)
+    return dominios
+
+
+# Colunas de controle/metadado da planilha (existem em toda aba de entidade) -- nunca são
+# atributos SAGE de verdade, então ficam fora da checagem de domínio mesmo que colidam (ex.:
+# a coluna de controle "Origem", que guarda o arquivo de include da linha, não tem nada a ver
+# com o atributo real "PAS.ORIGEM" do SAGE -- SCADA/MONRES/RCALC/PDO -- apesar do mesmo nome).
+_COLUNAS_CONTROLE = frozenset(
+    c.strip().lower() for c in
+    (CABEÇALHO_COLUNA_CONTROLE, CABEÇALHO_COLUNA_ORIGEM, CABEÇALHO_COLUNA_DADOS)
+)
+
+
+def _check_dominios(sheet_name, headers, linhas, dominios, analise):
+    """Valor de atributo fora do domínio conhecido (aba EntidadeAtributoValor).
+
+    Severidade AVISO: a aba pode não cobrir todos os valores reais de uma base específica,
+    então um "fora do domínio" aqui é um sinal para revisar, não necessariamente um erro."""
+    if not dominios:
+        return
+    entidade = sheet_name.strip().lower()
+    colunas_com_regra = [
+        (i, (entidade, str(h).strip().upper()))
+        for i, h in enumerate(headers)
+        if str(h).strip().lower() not in _COLUNAS_CONTROLE
+        and (entidade, str(h).strip().upper()) in dominios
+    ]
+    if not colunas_com_regra:
+        return
+    col_gera = _idx_coluna(headers, CABEÇALHO_COLUNA_CONTROLE)
+    for i, row in enumerate(linhas):
+        if not _is_ponto_ativo(row, col_gera):
+            continue
+        linha_planilha = i + 2
+        for col, chave in colunas_com_regra:
+            valor = str(row[col]).strip() if len(row) > col else ""
+            if valor and valor not in dominios[chave]:
+                analise.add(SEV_AVISO, sheet_name, linha_planilha, chave[1], valor,
+                            "Valor fora do dominio conhecido (%s)" % "/".join(sorted(dominios[chave])))
+
+
 def _carregar_regras_refs(doc):
     """Lê regras ATIVAS da aba VerificacaoRefs; cria a aba com exemplos se faltar."""
     if not _aba_existe_ci(doc, NOME_ABA_VERIFICACAO_REFS):
@@ -1155,7 +1384,9 @@ def _carregar_regras_refs(doc):
     for row in linhas:
         if len(row) < 5:
             continue
-        ent_o, attr_o, ent_d, attr_d = (str(row[k]).strip() for k in range(4))
+        ent_o, attr_o = str(row[0]).strip(), str(row[1]).strip()
+        ent_d = _parse_entidades_destino(row[2])
+        attr_d = str(row[3]).strip()
         ativa = str(row[4]).strip().lower()
         if ent_o and attr_o and ent_d and attr_d and ativa in _VALORES_ATIVO:
             regras.append((ent_o, attr_o, ent_d, attr_d))
@@ -1168,7 +1399,7 @@ def _criar_aba_refs_exemplo(doc):
     doc.getSheets().insertByName(NOME_ABA_VERIFICACAO_REFS, new_sheet)
     sheet = _get_sheet(doc, NOME_ABA_VERIFICACAO_REFS)
     matriz = [CABECALHOS_REFS]
-    for ent_o, attr_o, ent_d, attr_d in REGRAS_REFS_EXEMPLO:
+    for ent_o, attr_o, ent_d, attr_d in REGRAS_REFS_PADRAO:
         matriz.append([ent_o, attr_o, ent_d, attr_d, "N"])  # N = inativa
     _escrever_matriz(sheet, matriz, negrito_cabecalho=True)
 
@@ -1185,20 +1416,23 @@ def _buscar_entidade(entidades, nome):
 
 
 def _check_integridade_referencial(entidades, regras, analise):
-    """Para cada regra ativa, verifica se o valor de origem existe no destino.
+    """Para cada regra ativa, verifica se o valor de origem existe em algum dos destinos.
 
     'entidades' é o mapa {nome: (headers, linhas)} já lido das abas — assim esta
     lógica é pura (não depende do LibreOffice) e pode ser exercitada pelo testador
-    standalone (completa/testar_verificacao.py)."""
-    cache_destino = {}  # (ent_d.lower, attr_d.lower) -> set de valores (ou None)
-    for ent_o, attr_o, ent_d, attr_d in regras:
-        chave = (ent_d.lower(), attr_d.lower())
+    standalone (completa/testar_verificacao.py). 'ents_d' é sempre uma tupla de 1+
+    entidades (ver _parse_entidades_destino) -- suporta FK ambígua do SAGE (ex.:
+    PDF.PNT pode ser um PDS ou um PDD; a validação usa a UNIÃO dos IDs de ambos)."""
+    cache_destino = {}  # (ents_d ordenado+lower, attr_d.lower) -> set de valores (ou None)
+    for ent_o, attr_o, ents_d, attr_d in regras:
+        chave = (tuple(sorted(e.lower() for e in ents_d)), attr_d.lower())
         if chave not in cache_destino:
-            cache_destino[chave] = _carregar_ids_destino(entidades, ent_d, attr_d)
+            cache_destino[chave] = _carregar_ids_destino(entidades, ents_d, attr_d)
         destino_ids = cache_destino[chave]
+        destino_desc = "/".join(ents_d)
         if destino_ids is None:
             analise.add(SEV_AVISO, ent_o, "-", attr_o, "",
-                        "Regra ignorada: destino %s.%s nao encontrado" % (ent_d, attr_d))
+                        "Regra ignorada: destino %s.%s nao encontrado" % (destino_desc, attr_d))
             continue
         origem = _buscar_entidade(entidades, ent_o)
         if origem is None:
@@ -1218,19 +1452,28 @@ def _check_integridade_referencial(entidades, regras, analise):
             valor = str(row[col_o]).strip() if len(row) > col_o else ""
             if valor and valor not in destino_ids:
                 analise.add(SEV_ERRO, ent_o, i + 2, attr_o, valor,
-                            "Referencia nao encontrada em %s.%s" % (ent_d, attr_d))
+                            "Referencia nao encontrada em %s.%s" % (destino_desc, attr_d))
 
 
-def _carregar_ids_destino(entidades, ent_d, attr_d):
-    """Conjunto de valores do atributo destino (qualquer linha); None se inválido."""
-    destino = _buscar_entidade(entidades, ent_d)
-    if destino is None:
-        return None
-    headers, linhas = destino
-    col = _idx_coluna(headers, attr_d)
-    if col < 0:
-        return None
-    return {str(r[col]).strip() for r in linhas if len(r) > col and str(r[col]).strip()}
+def _carregar_ids_destino(entidades, ents_d, attr_d):
+    """União dos valores do atributo destino em qualquer uma das entidades de 'ents_d'.
+
+    Uma entidade individual que não existe (ou não tem o atributo) simplesmente não
+    contribui valores -- só retorna None se NENHUMA das entidades listadas resolver
+    (mesma semântica do valida_fk.py do SkillSAGE para FKs ambíguas)."""
+    valores = set()
+    encontrou_alguma = False
+    for ent_d in ents_d:
+        destino = _buscar_entidade(entidades, ent_d)
+        if destino is None:
+            continue
+        headers, linhas = destino
+        col = _idx_coluna(headers, attr_d)
+        if col < 0:
+            continue
+        encontrou_alguma = True
+        valores.update(str(r[col]).strip() for r in linhas if len(r) > col and str(r[col]).strip())
+    return valores if encontrou_alguma else None
 
 
 # --- Escrita do relatório ---
@@ -1314,13 +1557,16 @@ def _coletar_entidades(doc):
     return entidades
 
 
-def _rodar_checagens(entidades, regras):
+def _rodar_checagens(entidades, regras, dominios=None):
     """Executa todas as checagens (lógica PURA) e devolve a _Analise preenchida.
 
     Compartilhado entre a macro (verificar_base) e o testador standalone."""
     analise = _Analise()
+    dominios = dominios or {}
     for nome, (headers, linhas) in entidades.items():
         _check_ids(nome, headers, linhas, analise)
+        _check_tamanho_id(nome, headers, linhas, analise)
+        _check_dominios(nome, headers, linhas, dominios, analise)
     _check_integridade_referencial(entidades, regras, analise)
     return analise
 
@@ -1331,7 +1577,9 @@ def verificar_base(*args):
     entidades = _coletar_entidades(doc)
     # Integridade referencial — dirigida pela aba de config (criada se faltar).
     regras = _carregar_regras_refs(doc)
-    analise = _rodar_checagens(entidades, regras)
+    # Domínios de valores válidos — lidos da aba já existente 'EntidadeAtributoValor'.
+    dominios = _carregar_dominios(doc)
+    analise = _rodar_checagens(entidades, regras, dominios)
     _escrever_relatorio_analise(doc, analise)
 
 

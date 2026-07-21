@@ -118,13 +118,38 @@ def montar_regras(mod, abas):
     for row in aba[1:]:
         if len(row) < 5:
             continue
-        ent_o, attr_o, ent_d, attr_d = (str(row[k]).strip() for k in range(4))
+        ent_o, attr_o = str(row[0]).strip(), str(row[1]).strip()
+        ent_d = mod._parse_entidades_destino(row[2])
+        attr_d = str(row[3]).strip()
         if not (ent_o and attr_o and ent_d and attr_d):
             continue
         total += 1
         if str(row[4]).strip().lower() in mod._VALORES_ATIVO:
             regras.append((ent_o, attr_o, ent_d, attr_d))
     return regras, total
+
+
+def montar_dominios(mod, abas):
+    """Lê a aba EntidadeAtributoValor do .ods (mesma semântica de mod._carregar_dominios)."""
+    aba = None
+    for nome, linhas in abas.items():
+        if nome.lower() == mod.NOME_ABA_VALIDACAO.lower():
+            aba = linhas
+            break
+    dominios = {}
+    if aba and len(aba) >= 2:
+        for row in aba[1:]:
+            if len(row) < 3:
+                continue
+            entidade = str(row[0]).strip().lower()
+            atributo = str(row[1]).strip().upper()
+            if not entidade or not atributo:
+                continue
+            valores = {str(v).strip() for v in row[2:] if str(v).strip()}
+            if valores:
+                dominios[(entidade, atributo)] = valores
+    mod._mesclar_dominios_suplementares(dominios)
+    return dominios
 
 
 def imprimir_relatorio(mod, analise):
@@ -156,16 +181,18 @@ def main():
     abas = parse_ods(caminho)
     entidades = montar_entidades(mod, abas)
     regras, total_regras = montar_regras(mod, abas)
+    dominios = montar_dominios(mod, abas)
 
     print("Arquivo: %s" % caminho)
     print("Entidades encontradas (%d): %s" % (len(entidades), ", ".join(sorted(entidades))))
     print("Regras de relacionamento: %d ativa(s) de %d." % (len(regras), total_regras))
     if regras:
-        for r in regras:
-            print("   ativa -> %s.%s deve existir em %s.%s" % r)
+        for ent_o, attr_o, ent_d, attr_d in regras:
+            print("   ativa -> %s.%s deve existir em %s.%s" % (ent_o, attr_o, "/".join(ent_d), attr_d))
+    print("Dominios carregados: %d par(es) entidade.atributo." % len(dominios))
     print()
 
-    analise = mod._rodar_checagens(entidades, regras)
+    analise = mod._rodar_checagens(entidades, regras, dominios)
     imprimir_relatorio(mod, analise)
 
 

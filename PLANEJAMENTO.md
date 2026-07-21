@@ -105,11 +105,17 @@ A partir de **IED + protocolo (DNP3/101/104/61850) + tipo**, gera o esqueleto pa
 de aquisição/distribuição (ex.: para DNP3, as linhas ASIM/APFL/ADUP/CSIM/CDUP).
 Escopo bem definido; depende de modelar NV1/NV2.
 
-### Ganhos rápidos (baixo esforço, alto retorno)
-- **Troca de ID global** — renomear um ponto e propagar a todas as referências
-  (origem: `fTrocaIdPDS` do Eletronorte‑2).
-- **Estatística** — contagem de pontos por entidade/seleção.
-- **Gestão de includes** — listar/substituir/corrigir diretórios de include.
+### Ganhos rápidos (baixo esforço, alto retorno) — ✅ entregues
+- **Troca de ID global** (`trocar_id_global`) — renomeia um ponto e propaga a todas as
+  referências (usa o mesmo grafo `REGRAS_REFS_PADRAO` do verificador); origem:
+  `fTrocaIdPDS` do Eletronorte‑2. Suporta lote/encadeamento; ID ambíguo ou inexistente
+  não altera nada.
+- **Estatística** (`estatistica_base`) — contagem de linhas totais/ativas por
+  entidade.
+- **Gestão de includes** (`gerir_includes`) — lista todos os includes e aplica
+  substituições em lote no caminho (aba `SubstituirIncludes`).
+
+Detalhes de cada um em [completa/README.md](completa/README.md).
 
 ## Princípios de design
 

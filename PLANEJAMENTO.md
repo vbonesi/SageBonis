@@ -88,7 +88,10 @@ ID do PDS; `ComandoAvulso` cobre comandos sem status próprio (ponto genérico t
 `COM_SAGE`, vários comandos no mesmo TAC/PAC); `CanaisDistribuicao` +
 `DistribuicaoPontos` substituem os "4 slots fixos" da macro GE por N canais
 configuráveis, com Método (Prefixo/Sufixo/Substituir) por canal. Escrita por upsert
-(casa por ID nas abas de entidade já existentes; regenerar não duplica).
+(casa por ID nas abas de entidade já existentes; regenerar não duplica). Também
+entregue: `extrair_pontos`, o espelho reverso — reconstrói as 5 abas de config a
+partir de uma base **já importada** (com inferência automática de Método por
+Prefixo/Sufixo), fechando o ciclo pra bases reais existentes, não só pontos novos.
 
 **Ainda pendente** desta frente: endereçamento automático do `ID_Fisico`/`NV2` por
 protocolo (101/104/DNP3/61850) — hoje o usuário informa esses campos prontos; migrar

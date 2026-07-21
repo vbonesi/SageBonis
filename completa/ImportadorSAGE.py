@@ -1840,16 +1840,20 @@ def _mesclar_saidas(*saidas):
     return combinado
 
 
-def _mesclar_linhas_upsert(headers, linhas_atuais, linhas_novas):
+def _mesclar_linhas_upsert(headers, linhas_atuais, linhas_novas, colunas_chave=("ID",)):
     """Lógica PURA do upsert: recebe headers/linhas já lidos de uma aba + as linhas
-    novas a aplicar, devolve (headers_finais, linhas_finais) com o upsert por ID feito
-    (atualiza a linha existente com aquele ID; cria uma linha nova, marcada Gera=x e
-    Origem=UnificacaoPontos, se o ID ainda não existir). Não toca UNO -- é a parte
+    novas a aplicar, devolve (headers_finais, linhas_finais) com o upsert feito casando
+    por 'colunas_chave' (atualiza a linha existente com aquela chave; cria uma linha
+    nova, marcada Gera=x e Origem=UnificacaoPontos quando essas colunas existirem, se
+    a chave ainda não existir). 'colunas_chave' aceita mais de uma coluna (chave
+    composta -- ex.: ("ID_Logico","Canal") para tabelas de ligação N:N como
+    DistribuicaoPontos, que não têm uma coluna "ID" única). Não toca UNO -- é a parte
     testável fora do LibreOffice (mesmo espírito de _rodar_checagens no verificador)."""
     headers = list(headers)
     linhas_atuais = [list(r) for r in linhas_atuais]
-    if _idx_coluna(headers, "ID") < 0:
-        headers.append("ID")
+    for col in colunas_chave:
+        if _idx_coluna(headers, col) < 0:
+            headers.append(col)
     for linha in linhas_novas:
         for atributo in linha:
             if _idx_coluna(headers, atributo) < 0:
@@ -1858,21 +1862,25 @@ def _mesclar_linhas_upsert(headers, linhas_atuais, linhas_novas):
         if len(r) < len(headers):
             r.extend([""] * (len(headers) - len(r)))
 
-    col_id = _idx_coluna(headers, "ID")
+    idx_chave = [_idx_coluna(headers, c) for c in colunas_chave]
     col_gera = _idx_coluna(headers, CABEÇALHO_COLUNA_CONTROLE)
     col_origem = _idx_coluna(headers, CABEÇALHO_COLUNA_ORIGEM)
-    index_por_id = {}
+
+    def _chave_da_linha(r):
+        return tuple(str(r[i]).strip() if i < len(r) else "" for i in idx_chave)
+
+    index_por_chave = {}
     for i, r in enumerate(linhas_atuais):
-        valor = str(r[col_id]).strip() if len(r) > col_id else ""
-        if valor:
-            index_por_id[valor] = i
+        chave = _chave_da_linha(r)
+        if all(chave):
+            index_por_chave[chave] = i
 
     for linha in linhas_novas:
-        id_valor = str(linha.get("ID", "")).strip()
-        if not id_valor:
+        chave = tuple(str(linha.get(c, "")).strip() for c in colunas_chave)
+        if not all(chave):
             continue
-        if id_valor in index_por_id:
-            r = linhas_atuais[index_por_id[id_valor]]
+        if chave in index_por_chave:
+            r = linhas_atuais[index_por_chave[chave]]
         else:
             r = [""] * len(headers)
             if col_gera >= 0:
@@ -1880,15 +1888,15 @@ def _mesclar_linhas_upsert(headers, linhas_atuais, linhas_novas):
             if col_origem >= 0:
                 r[col_origem] = ORIGEM_GERADO
             linhas_atuais.append(r)
-            index_por_id[id_valor] = len(linhas_atuais) - 1
+            index_por_chave[chave] = len(linhas_atuais) - 1
         for atributo, valor in linha.items():
             idx = _idx_coluna(headers, atributo)
             r[idx] = "" if valor is None else str(valor)
     return headers, linhas_atuais
 
 
-def _upsert_linhas_entidade(doc, sheet_name, linhas_novas):
-    """Insere ou atualiza linhas na aba de entidade 'sheet_name', casando por ID (ver
+def _upsert_linhas_entidade(doc, sheet_name, linhas_novas, colunas_chave=("ID",)):
+    """Insere ou atualiza linhas na aba 'sheet_name', casando por 'colunas_chave' (ver
     _mesclar_linhas_upsert). Cria a aba (com o cabeçalho padrão Origem/Gera/Comentario-
     Include) se faltar; se já existir, preserva todas as colunas e linhas não tocadas
     (nunca reescreve a aba a partir do zero como o importador faz em write_to_sheet) --
@@ -1907,7 +1915,7 @@ def _upsert_linhas_entidade(doc, sheet_name, linhas_novas):
         headers = [CABEÇALHO_COLUNA_ORIGEM, CABEÇALHO_COLUNA_CONTROLE, CABEÇALHO_COLUNA_DADOS]
         linhas_atuais = []
 
-    headers_final, linhas_final = _mesclar_linhas_upsert(headers, linhas_atuais, linhas_novas)
+    headers_final, linhas_final = _mesclar_linhas_upsert(headers, linhas_atuais, linhas_novas, colunas_chave)
     matriz = [headers_final] + [[str(c) for c in r] for r in linhas_final]
     _escrever_matriz(sheet, matriz, negrito_cabecalho=True)
 
@@ -1943,8 +1951,209 @@ def unificar_pontos(*args):
         _upsert_linhas_entidade(doc, entidade.upper(), linhas)
 
 
+# ---------------------------------------------------------------
+# ---- Extração reversa: entidades existentes -> abas de config ----
+# ---------------------------------------------------------------
+# Espelho de unificar_pontos: reconstrói PontoDigital/PontoAnalogico/ComandoAvulso/
+# CanaisDistribuicao/DistribuicaoPontos a partir de pontos já importados de .dat reais
+# (PDS/PDF/PAS/PAF/CGS/CGF/PDD/PAD). Sem isso, o modelo unificado só serviria pra
+# pontos novos -- uma base real já existente nunca apareceria em PontoDigital.
+#
+# É uma reconstrução de melhor esforço, não um inverso perfeito: quando uma
+# transformação de distribuição não é reconhecidamente Prefixo/Sufixo (ver
+# _inferir_metodo), ou quando há mais canais de comando (CGF) do que origens físicas
+# declaradas, alguns campos ficam para o usuário completar/conferir manualmente.
+
+def _linhas_ativas_como_dicts(headers, linhas):
+    """[{atributo: valor}, ...] só das linhas ativas (Gera=x). headers/linhas podem
+    ser None (entidade ausente) -- devolve [] nesse caso."""
+    if not headers:
+        return []
+    col_gera = _idx_coluna(headers, CABEÇALHO_COLUNA_CONTROLE)
+    saida = []
+    for row in linhas or []:
+        if not _is_ponto_ativo(row, col_gera):
+            continue
+        saida.append({h: (str(row[i]).strip() if i < len(row) else "") for i, h in enumerate(headers)})
+    return saida
+
+
+def _extrair_ponto_digital(entidades):
+    """Lógica PURA: linhas de PontoDigital a partir de PDS/PDF/CGS/CGF já lidos
+    (entidades = {"pds": (headers,linhas), ...}, entidades ausentes viram (None,None)).
+    Cada PDS ativo vira 1+ linhas (uma por PDF cujo PNT aponta pra ele); PDS sem PDF
+    correspondente ainda gera 1 linha (só com os campos do PDS, usando o próprio
+    ID_Logico como ID_Fisico provisório) -- preserva o ponto pro usuário completar."""
+    headers_pds, linhas_pds = entidades.get("pds", (None, None))
+    if not headers_pds:
+        return []
+    pds_dicts = _linhas_ativas_como_dicts(headers_pds, linhas_pds)
+    pdf_dicts = _linhas_ativas_como_dicts(*entidades.get("pdf", (None, None)))
+    cgs_dicts = _linhas_ativas_como_dicts(*entidades.get("cgs", (None, None)))
+    cgf_dicts = _linhas_ativas_como_dicts(*entidades.get("cgf", (None, None)))
+
+    pdf_por_pnt = {}
+    for pdf in pdf_dicts:
+        pdf_por_pnt.setdefault(pdf.get("PNT", ""), []).append(pdf)
+    cgs_por_id = {cgs["ID"]: cgs for cgs in cgs_dicts if cgs.get("ID")}
+    cgf_por_cgs = {}
+    for cgf in cgf_dicts:
+        cgf_por_cgs.setdefault(cgf.get("CGS", ""), []).append(cgf)
+
+    saida = []
+    for pds in pds_dicts:
+        id_logico = pds.get("ID", "")
+        if not id_logico:
+            continue
+        origens = pdf_por_pnt.get(id_logico) or [{}]
+        cgfs = cgf_por_cgs.get(id_logico, []) if id_logico in cgs_por_id else []
+        for i, pdf in enumerate(origens):
+            linha = {
+                "ID_Logico": id_logico,
+                "ID_Fisico": pdf.get("ID", "") or id_logico,
+                "NOME": pdf.get("DESC1") or pds.get("NOME", ""),
+                "NV2": pdf.get("NV2", ""),
+                "KCONV": pdf.get("KCONV", ""),
+                "TAC": pds.get("TAC", ""),
+                "OCR": pds.get("OCR", ""),
+                "Comando": "S" if id_logico in cgs_por_id else "N",
+            }
+            if id_logico in cgs_por_id:
+                # Casa a i-ésima origem com o i-ésimo CGF; sobrando menos CGF que
+                # origens, reaproveita o primeiro (caso comum: 1 canal de comando
+                # para N origens redundantes -- ver nota em completa/README.md).
+                cgf = cgfs[i] if i < len(cgfs) else (cgfs[0] if cgfs else None)
+                if cgf:
+                    linha["ID_Fisico_Comando"] = cgf.get("ID", "")
+                    linha["KCONV_Comando"] = cgf.get("KCONV", "")
+            saida.append(linha)
+    return saida
+
+
+def _extrair_ponto_analogico(entidades):
+    """Mesma lógica de _extrair_ponto_digital, para PAS/PAF (sem comando)."""
+    headers_pas, linhas_pas = entidades.get("pas", (None, None))
+    if not headers_pas:
+        return []
+    pas_dicts = _linhas_ativas_como_dicts(headers_pas, linhas_pas)
+    paf_dicts = _linhas_ativas_como_dicts(*entidades.get("paf", (None, None)))
+    paf_por_pnt = {}
+    for paf in paf_dicts:
+        paf_por_pnt.setdefault(paf.get("PNT", ""), []).append(paf)
+
+    saida = []
+    for pas in pas_dicts:
+        id_logico = pas.get("ID", "")
+        if not id_logico:
+            continue
+        for paf in (paf_por_pnt.get(id_logico) or [{}]):
+            saida.append({
+                "ID_Logico": id_logico,
+                "ID_Fisico": paf.get("ID", "") or id_logico,
+                "NOME": paf.get("DESC1") or pas.get("NOME", ""),
+                "NV2": paf.get("NV2", ""),
+                "KCONV1": paf.get("KCONV1", ""), "KCONV2": paf.get("KCONV2", ""),
+                "KCONV3": paf.get("KCONV3", ""),
+                "TAC": pas.get("TAC", ""), "OCR": pas.get("OCR", ""),
+            })
+    return saida
+
+
+def _extrair_comandos_avulsos(entidades, ids_logicos_com_ponto):
+    """CGS cujo ID não corresponde a nenhum PDS/PAS (comando "solto", ex.: COM_SAGE)."""
+    cgs_dicts = _linhas_ativas_como_dicts(*entidades.get("cgs", (None, None)))
+    if not cgs_dicts:
+        return []
+    cgf_dicts = _linhas_ativas_como_dicts(*entidades.get("cgf", (None, None)))
+    cgf_por_cgs = {}
+    for cgf in cgf_dicts:
+        cgf_por_cgs.setdefault(cgf.get("CGS", ""), []).append(cgf)
+
+    saida = []
+    for cgs in cgs_dicts:
+        id_cgs = cgs.get("ID", "")
+        if not id_cgs or id_cgs in ids_logicos_com_ponto:
+            continue
+        cgf = next(iter(cgf_por_cgs.get(id_cgs, [])), {})
+        saida.append({
+            "ID": id_cgs, "ID_Fisico": cgf.get("ID", ""),
+            "NOME": cgs.get("NOME", ""), "NV2": cgf.get("NV2", ""),
+            "KCONV": cgf.get("KCONV", ""), "TAC": cgs.get("TAC", ""),
+            "PAC": cgs.get("PAC", ""), "PINT": cgs.get("PINT", ""),
+            "TIPOE": cgs.get("TIPOE", ""), "TPCTL": cgs.get("TPCTL", ""),
+        })
+    return saida
+
+
+def _inferir_metodo(id_logico, id_transformado):
+    """Tenta inferir (Metodo, Valor1) de um par (ID lógico, ID já transformado numa
+    distribuição existente). Reconhece Prefixo/Sufixo com confiança (basta conferir se
+    um é sufixo/prefixo literal do outro); quando não dá pra inferir, devolve
+    ("Substituir", None) -- o usuário confere/completa Valor1/Valor2 manualmente."""
+    if not id_transformado or id_transformado == id_logico:
+        return None, None
+    if id_transformado.endswith(id_logico):
+        return "Prefixo", id_transformado[:-len(id_logico)]
+    if id_transformado.startswith(id_logico):
+        return "Sufixo", id_transformado[len(id_logico):]
+    return "Substituir", None
+
+
+def _extrair_canais_e_distribuicao(entidades):
+    """(linhas_canais, linhas_distribuicao) a partir de PDD/PAD já existentes. Um canal
+    novo por TDD distinto encontrado (Metodo/Valor1 inferidos do 1º par visto para
+    aquele TDD); linhas de DistribuicaoPontos ligam cada ID lógico ao TDD/canal."""
+    canais_vistos = {}
+    distribuicao = []
+    for ent, attr_pnt in (("pdd", "PDS"), ("pad", "PAS")):
+        for row in _linhas_ativas_como_dicts(*entidades.get(ent, (None, None))):
+            id_logico, tdd = row.get(attr_pnt, ""), row.get("TDD", "")
+            if not id_logico or not tdd:
+                continue
+            if tdd not in canais_vistos:
+                metodo, valor1 = _inferir_metodo(id_logico, row.get("ID", ""))
+                canais_vistos[tdd] = {"Nome": tdd, "TDD": tdd, "Metodo": metodo or "",
+                                      "Valor1": valor1 or "", "Valor2": "", "Ativo": "S"}
+            distribuicao.append({"ID_Logico": id_logico, "Canal": tdd, "Ativo": "S"})
+    return list(canais_vistos.values()), distribuicao
+
+
+def extrair_pontos(*args):
+    """Macro: espelho de unificar_pontos -- reconstrói PontoDigital/PontoAnalogico/
+    ComandoAvulso/CanaisDistribuicao/DistribuicaoPontos a partir das entidades já
+    importadas (PDS/PDF/PAS/PAF/CGS/CGF/PDD/PAD). Fecha o ciclo pra bases já
+    existentes; rodar antes de editar/estender uma base real pelo modelo unificado."""
+    doc = XSCRIPTCONTEXT.getDocument()  # type: ignore
+    entidades = {}
+    for nome in ("pds", "pdf", "pas", "paf", "cgs", "cgf", "pdd", "pad"):
+        if _aba_existe_ci(doc, nome.upper()):
+            entidades[nome] = _ler_entidade(_get_sheet(doc, nome.upper()))
+
+    for nome_aba, cabecalhos in (
+        (NOME_ABA_PONTO_DIGITAL, CABECALHOS_PONTO_DIGITAL),
+        (NOME_ABA_PONTO_ANALOGICO, CABECALHOS_PONTO_ANALOGICO),
+        (NOME_ABA_COMANDO_AVULSO, CABECALHOS_COMANDO_AVULSO),
+        (NOME_ABA_CANAIS_DISTRIBUICAO, CABECALHOS_CANAIS_DISTRIBUICAO),
+        (NOME_ABA_DISTRIBUICAO_PONTOS, CABECALHOS_DISTRIBUICAO_PONTOS),
+    ):
+        _garantir_aba_config(doc, nome_aba, cabecalhos)
+
+    linhas_pd = _extrair_ponto_digital(entidades)
+    linhas_pa = _extrair_ponto_analogico(entidades)
+    ids_com_ponto = {l["ID_Logico"] for l in linhas_pd} | {l["ID_Logico"] for l in linhas_pa}
+    linhas_ca = _extrair_comandos_avulsos(entidades, ids_com_ponto)
+    linhas_canais, linhas_dist = _extrair_canais_e_distribuicao(entidades)
+
+    _upsert_linhas_entidade(doc, NOME_ABA_PONTO_DIGITAL, linhas_pd, colunas_chave=("ID_Fisico",))
+    _upsert_linhas_entidade(doc, NOME_ABA_PONTO_ANALOGICO, linhas_pa, colunas_chave=("ID_Fisico",))
+    _upsert_linhas_entidade(doc, NOME_ABA_COMANDO_AVULSO, linhas_ca, colunas_chave=("ID",))
+    _upsert_linhas_entidade(doc, NOME_ABA_CANAIS_DISTRIBUICAO, linhas_canais, colunas_chave=("Nome",))
+    _upsert_linhas_entidade(doc, NOME_ABA_DISTRIBUICAO_PONTOS, linhas_dist,
+                            colunas_chave=("ID_Logico", "Canal"))
+
+
 # ===============================================================
 # ================= EXPOSIÇÃO PARA LIBREOFFICE ==================
 # ===============================================================
 g_exportedScripts = (importar_dats, exportar_dats, importar_parcial, exportar_parcial,
-                     atualizar_amostras_cores, verificar_base, unificar_pontos)
+                     atualizar_amostras_cores, verificar_base, unificar_pontos, extrair_pontos)

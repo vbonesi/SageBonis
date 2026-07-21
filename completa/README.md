@@ -91,10 +91,30 @@ Abas de config (criadas automaticamente, vazias, na 1ª execução):
 - **`DistribuicaoPontos`** — liga um `ID_Logico` a 1+ canais (`ID_Logico, Canal,
   Ativo`). Um ponto sem nenhuma linha aqui simplesmente não gera distribuição.
 
+#### Extração reversa (bases já existentes) — `extrair_pontos`
+`unificar_pontos` sozinho só ajuda com **pontos novos**: uma base real já importada
+(PDF/PDS/PAF/PAS/CGF/CGS vindos de `.dat`) não aparece em `PontoDigital`/
+`PontoAnalogico` automaticamente. `extrair_pontos` é o espelho — lê as entidades já
+existentes e povoa (upsert, mesma regra de não duplicar) as 5 abas de config:
+
+- PDS/PAS com origens (PDF/PAF cujo `PNT` aponta pra eles) → linhas em
+  `PontoDigital`/`PontoAnalogico` (1 origem = 1 linha; N origens = redundância);
+- CGS com o mesmo ID de um PDS/PAS → marca `Comando=S` na origem correspondente;
+- CGS **sem** PDS/PAS correspondente → vai pra `ComandoAvulso`;
+- PDD/PAD → um canal por `TDD` distinto em `CanaisDistribuicao` (com **Método
+  inferido automaticamente** quando é Prefixo/Sufixo simples — compara o ID original
+  com o transformado; quando não dá pra inferir com confiança, fica `Substituir` sem
+  `Valor1`/`Valor2`, pra você conferir) + a ligação em `DistribuicaoPontos`.
+
+Rode `extrair_pontos` **antes** de estender uma base já existente pelo modelo
+unificado (ex.: adicionar uma 2ª origem redundante a um ponto que já existe). É uma
+reconstrução de melhor esforço, não um inverso perfeito — confira o resultado antes
+de confiar cegamente, principalmente o Método inferido dos canais.
+
 ## Instalação e uso
 Igual à Simples: abra `SageBonis.ods` e habilite as macros do documento (a macro vem
-embutida). Atribua as funções `verificar_base` e `unificar_pontos` a botões ou
-atalhos, como as demais.
+embutida). Atribua as funções `verificar_base`, `unificar_pontos` e `extrair_pontos`
+a botões ou atalhos, como as demais.
 
 ## Sincronizar a macro com o .ods
 A partir da raiz do repositório:

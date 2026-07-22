@@ -1658,15 +1658,44 @@ def _valor(row, headers, nome_coluna, default=""):
 
 
 def _garantir_aba_config(doc, nome_aba, cabecalhos):
-    """Cria a aba de config só com o cabeçalho se ela ainda não existir. Nunca
-    sobrescreve uma aba já existente (mesma cautela de _criar_aba_refs_exemplo)."""
-    if _aba_existe_ci(doc, nome_aba):
+    """Cria a aba de config só com o cabeçalho se ela ainda não existir. Se já
+    existir, garante que todos os cabeçalhos canônicos estejam presentes --
+    adiciona ao final os que faltarem, sem tocar nos dados nem nas colunas já
+    existentes (achado real: a aba IEDs já tinha sido criada, vazia, antes de
+    SNMP ganhar 3 colunas novas -- sem isso, gerar_ied() não teria onde
+    escrever VERSAO/HOST/COMMUNITY numa aba criada por uma versão anterior do
+    código; o mesmo vale pra qualquer CABECALHOS_* que cresça depois que o
+    usuário já rodou a macro uma vez numa base real). Nunca reescreve ou
+    reordena colunas já existentes."""
+    if not _aba_existe_ci(doc, nome_aba):
+        new_sheet = doc.createInstance("com.sun.star.sheet.Spreadsheet")
+        doc.getSheets().insertByName(nome_aba, new_sheet)
+        sheet = _get_sheet(doc, nome_aba)
+        _escrever_matriz(sheet, [cabecalhos], negrito_cabecalho=True)
+        sheet.TabColor = COR_ABA_CONFIG
         return
-    new_sheet = doc.createInstance("com.sun.star.sheet.Spreadsheet")
-    doc.getSheets().insertByName(nome_aba, new_sheet)
+
     sheet = _get_sheet(doc, nome_aba)
-    _escrever_matriz(sheet, [cabecalhos], negrito_cabecalho=True)
-    sheet.TabColor = COR_ABA_CONFIG
+    headers_atuais, linhas_atuais = _ler_entidade(sheet)
+    if headers_atuais is None:
+        # aba existe mas só tem (no máximo) a linha de cabeçalho, sem dados --
+        # _ler_entidade exige 2+ linhas pra não retornar None.
+        cursor = sheet.createCursor()
+        cursor.gotoEndOfUsedArea(False)
+        addr = cursor.getRangeAddress()
+        primeira_linha = [] if addr.EndColumn < 0 else [
+            str(c) for c in sheet.getCellRangeByPosition(0, 0, addr.EndColumn, 0).getDataArray()[0]]
+        headers_atuais = primeira_linha if any(h.strip() for h in primeira_linha) else []
+        linhas_atuais = []
+
+    faltantes = [c for c in cabecalhos if c not in headers_atuais]
+    if not faltantes:
+        return
+    headers_novos = headers_atuais + faltantes
+    matriz = [headers_novos] + [
+        [str(c) for c in r] + [""] * (len(headers_novos) - len(r)) for r in (linhas_atuais or [])
+    ]
+    _escrever_matriz(sheet, matriz, negrito_cabecalho=True)
 
 
 def _agrupar_por_id_logico(linhas, headers):
@@ -2520,6 +2549,7 @@ CABECALHOS_IEDS = [
     "ID", "Protocolo", "Direcao", "Nome", "GSD", "INS", "MAP", "NSRV1", "NSRV2",
     "PlPr", "LiPr", "PlRe", "LiRe", "IGNERS", "SINCR", "INVAL", "TZBR", "DnpLvl", "PROTO",
     "ApTitle", "AeQ", "PS", "SS", "TS", "IDAD", "KEEP", "NREP", "TOUT", "MPDU", "OPMSK", "GOOSE",
+    "VERSAO", "HOST", "COMMUNITY",
     "AQANL", "AQPOL", "AQTOT", "INTGR", "NFAIL", "SFAIL", "FAILP", "FAILR",
     "NTENT", "RESPT", "TDESC", "TRANS", "VLUTR", "Redundante", "Gera",
 ]
@@ -2612,6 +2642,37 @@ PARAMS_PROTOCOLO = {
         "grupos_leitura": [("ADAQ", "PDF", "Digital"), ("AAAQ", "PAF", "Analógica")],
         "grupos_comando": [("CSIM", "CGF", "Comando Simples")],
     },
+    # SNMP confirmado contra 2 bases reais INDEPENDENTES (par/CTEEP -- 13 IEDs;
+    # jdm/CHESF, a base "mais madura" do acervo), 100% consistentes entre si.
+    # Cabe no caminho padrão de _gerar_infra_ied (LSC.TIPO segue "Direcao" como
+    # os 4 protocolos "clássicos", tem CXU/UTR/ENU normalmente), só com 3
+    # diferenças pontuais, cada uma com seu próprio ponto de extensão em vez de
+    # uma função à parte (ao contrário do 61850, que precisou de mais):
+    # - "cnf_campos" -- CNF.CONFIG não tem PlPr/LiPr/PlRe/LiRe (SNMP não é um
+    #   protocolo de enlace mestre/escravo com endereço de link); usa
+    #   VERSAO (SNMPv2c confirmado nos 2 exemplos)/HOST (IP do
+    #   equipamento monitorado, sem default -- é site-specific)/COMMUNITY
+    #   (confirmado "public" -- o community string default do próprio SNMP).
+    # - "tn1_fixo" -- TN1 sempre "SNM1", sem prefixo A/C/D/O (confirmado 13/13 +
+    #   todos os exemplos de jdm).
+    # - "grupos_comando": () -- SNMP não tem grupo de comando (0/13 exemplos
+    #   reais; é protocolo só de monitoramento, sem controle). "grupos_leitura"
+    #   também só tem 1 tipo confirmado (ASIM digital -- status up/down de
+    #   equipamento de rede/TI); se precisar de valores analógicos via SNMP
+    #   (ex.: um MIB com Gauge32), adicione o grupo manualmente, não confirmado
+    #   contra base real.
+    # - "enutr_por_ordem" -- ENUTR sai 1 (PRI) / 0 (REV) nos 2 exemplos reais,
+    #   diferente do "9" fixo usado pelos outros 4 protocolos.
+    # SNMP é só aquisição por escopo (protocolo de monitoramento, não modela
+    # comando/distribuição) -- os 2 exemplos reais confirmam isso (só TIPO=AA).
+    "SNMP": {
+        "tcv": "CNVI", "ttp": "TSNMP",
+        "grupos_leitura": [("ASIM", "PDF", "Digital")],
+        "grupos_comando": (),
+        "cnf_campos": ("VERSAO", "HOST", "COMMUNITY"),
+        "tn1_fixo": "SNM1",
+        "enutr_por_ordem": {"PRI": "1", "REV": "0"},
+    },
 }
 # TAC padrão -- 1 registro só, TPAQS=ASAC, sem sufixo no ID/NOME. Usado por
 # 104/101/DNP3; MODBUS sobrescreve com 2 registros (ver acima).
@@ -2626,6 +2687,11 @@ _DEFAULTS_IED = {
     # endereçamento MMS específico do site/IED, sem default sensato possível.
     "AeQ": "1", "PS": "1 / 1", "SS": "1", "TS": "1", "IDAD": "600",
     "KEEP": "5", "NREP": "3", "TOUT": "10", "MPDU": "0", "OPMSK": "228521", "GOOSE": "0",
+    # VERSAO/COMMUNITY confirmados idênticos em 2 bases reais de SNMP
+    # independentes (SNMPv2c, community "public" -- o default do próprio
+    # protocolo). "HOST" fica de fora -- é o IP do equipamento monitorado,
+    # sem default sensato possível.
+    "VERSAO": "2c", "COMMUNITY": "public",
     "AQANL": "1000", "AQPOL": "1000", "AQTOT": "0",
     "NFAIL": "2", "SFAIL": "200", "FAILP": "0", "FAILR": "0",
     "NTENT": "4", "RESPT": "1500", "TDESC": "15", "TRANS": "12", "VLUTR": "0",
@@ -2659,11 +2725,18 @@ def _prefixo_tn1(tn1_sufixo, direcao, papel):
 
 
 def _montar_config_cnf(linha, headers, params, aquisicao):
-    """Monta o CONFIG do CNF: PlPr/LiPr/PlRe/LiRe sempre presentes; os campos
-    extras de params["cnf_extra"] só entram na aquisição, antes ou depois
-    conforme params["cnf_extra_pos"] (achado real: a ordem varia por protocolo --
-    104/101 põem os extras antes, DNP3 depois. SAGE deve ler como pares soltos,
-    então a ordem provavelmente não importa de fato, mas seguimos o observado)."""
+    """Monta o CONFIG do CNF. Caminho padrão (104/101/DNP3/MODBUS): PlPr/LiPr/
+    PlRe/LiRe sempre presentes; os campos extras de params["cnf_extra"] só
+    entram na aquisição, antes ou depois conforme params["cnf_extra_pos"]
+    (achado real: a ordem varia por protocolo -- 104/101 põem os extras antes,
+    DNP3 depois. SAGE deve ler como pares soltos, então a ordem provavelmente
+    não importa de fato, mas seguimos o observado). Caminho alternativo
+    (params["cnf_campos"], ex.: SNMP): PlPr/LiPr/PlRe/LiRe nem sempre fazem
+    sentido pro protocolo -- quando presente, essa lista SUBSTITUI a base
+    inteira por um conjunto de campos totalmente customizado."""
+    campos_customizados = params.get("cnf_campos")
+    if campos_customizados:
+        return " ".join("%s= %s" % (c, _campo_ied(linha, headers, c)) for c in campos_customizados)
     base = ["PlPr= %s" % _valor(linha, headers, "PlPr"), "LiPr= %s" % _valor(linha, headers, "LiPr"),
             "PlRe= %s" % _valor(linha, headers, "PlRe"), "LiRe= %s" % _valor(linha, headers, "LiRe")]
     if not aquisicao:
@@ -2757,11 +2830,15 @@ def _gerar_infra_ied(linha, headers):
     # UTR = a remota física -- só duplica se houver redundância de equipamento de
     # verdade. ENU = enlace de rede -- sempre em par PRI/REV, mesmo com 1 UTR só
     # (confirmado no exemplo real de distribuição: 1 UTR, 2 ENU).
+    # ENUTR é "9" fixo nos exemplos reais de 104/101/DNP3/MODBUS, mas SNMP
+    # confirmado diferente em 2 bases reais independentes (par E jdm): PRI=1,
+    # REV=0 -- daí "enutr_por_ordem" como override opcional por protocolo.
+    enutr_por_ordem = params.get("enutr_por_ordem")
     redundante = _valor(linha, headers, "Redundante").strip().lower() in _VALORES_ATIVO
     for ordem in (("PRI", "REV") if redundante else ("PRI",)):
         saida["utr"].append({
             "ID": "%s_%s" % (id_ied, ordem), "CNF": id_ied, "CXU": id_ied,
-            "ENUTR": "9", "ORDEM": ordem,
+            "ENUTR": enutr_por_ordem[ordem] if enutr_por_ordem else "9", "ORDEM": ordem,
             "NTENT": _campo_ied(linha, headers, "NTENT"), "RESPT": _campo_ied(linha, headers, "RESPT"),
         })
     for ordem in ("PRI", "REV"):
@@ -2789,12 +2866,18 @@ def _gerar_infra_ied(linha, headers):
     # de (TN2, TPPNT, descrição) -- vem de params["grupos_leitura"]/["grupos_comando"],
     # que variam por protocolo (família 101/104 usa ASIM/ADUP/APFL; DNP3 troca o
     # analógico por AANL; MODBUS usa um conjunto totalmente diferente, sem
-    # ASIM/ADUP -- ver PARAMS_PROTOCOLO).
+    # ASIM/ADUP -- ver PARAMS_PROTOCOLO). Um grupo com lista vazia é pulado
+    # inteiramente (SNMP não tem NV1 de comando -- confirmado 0/13 exemplos
+    # reais, protocolo só de monitoramento). "tn1_fixo" (SNMP: "SNM1") sobrepõe
+    # o prefixo A/C/D/O calculado por _prefixo_tn1 -- confirmado que SNMP usa o
+    # TN1 sempre igual, sem prefixo de papel/direção.
     for papel, ordem_nv1, grupos_tn2 in (
         ("leitura", "1", params["grupos_leitura"]),
         ("comando", "3", params.get("grupos_comando", _GRUPO_COMANDO_PADRAO)),
     ):
-        tn1 = _prefixo_tn1(params["tn1_sufixo"], direcao, papel)
+        if not grupos_tn2:
+            continue
+        tn1 = params.get("tn1_fixo") or _prefixo_tn1(params["tn1_sufixo"], direcao, papel)
         nv1_id = "%s_%s_%s" % (id_ied, tn1, ordem_nv1)
         saida["nv1"].append({
             "ID": nv1_id, "CNF": id_ied, "ORDEM": ordem_nv1, "TN1": tn1,

@@ -293,11 +293,19 @@ Detalhes de cada um em [completa/README.md](completa/README.md).
 ## Critérios de maturidade (para convergir)
 A unificação numa planilha "modo duplo" só deve ser considerada quando a Trilha
 Completa cumprir, no mínimo:
-- [ ] As 3 famílias de funcionalidade acima estáveis e em uso real;
+- [ ] As 3 famílias de funcionalidade acima estáveis e em uso real (estáveis: sim;
+      em uso real no dia a dia: ainda não confirmado);
 - [ ] Recursos avançados **desligáveis** (um "modo simples" que não atrapalhe quem
       só quer importar/exportar rápido);
-- [ ] Regras dirigidas por config (sem padrões de cliente hard‑coded);
-- [ ] Cobertura de teste mínima das funções puras (parser, geradores, verificador);
+- [x] Regras dirigidas por config (sem padrões de cliente hard‑coded) — FK/domínios
+      via `EntidadeAtributoValor`/`VerificacaoRefs`; as formas por protocolo
+      (`PARAMS_PROTOCOLO`) são estruturais (não variam por cliente), então ficam em
+      código mesmo, por design;
+- [x] Cobertura de teste mínima das funções puras (parser, geradores, verificador) —
+      movida do scratchpad temporário pro repo em `completa/tests/` (antes só existia
+      em `/tmp`, perdida entre sessões): 4 smoke tests em memória (~200+ checks) +
+      1 teste UNO real consolidado (harness reutilizável em `uno_harness.py`), todos
+      rodáveis via `python completa/tests/run_all.py`;
 - [ ] Paridade de import/export com a Trilha Simples (mesmo resultado de `.dat`).
 
 ## Referências

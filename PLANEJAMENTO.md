@@ -118,9 +118,11 @@ ou documentação equivalente ao que resolveu o ICCP (ver abaixo).
 **Entregue**: **104**, **101**, **DNP3** e **MODBUS**, confirmados contra bases
 reais (`conv_iccp104`/GRD para 104, aquisição e distribuição; base do próprio
 usuário — SE Miracema/`neoenergia` — para 101, aquisição e distribuição;
-`ctl_dnp_mdb`/DJ9E539 para DNP3 e `mdb_alat_calc`/MDB1 para MODBUS, ambos só
-aquisição — distribuição de ambos extrapolada por consistência, sem base real
-disponível). `PARAMS_PROTOCOLO` generalizado para cobrir as diferenças reais
+`ctl_dnp_mdb`/DJ9E539 para DNP3 aquisição e `mdb_alat_calc`/MDB1 para MODBUS
+aquisição, na entrega inicial — DNP3 teve a distribuição confirmada depois
+contra outra base real, ver nota mais abaixo; MODBUS segue com a distribuição
+extrapolada por consistência, sem base real disponível). `PARAMS_PROTOCOLO`
+generalizado para cobrir as diferenças reais
 entre protocolos: DNP3 usa sufixo "DNP" no TN1 (não "DNP3"), TN2 analógico
 "AANL" (não "APFL"), e campos `TZBR`/`DnpLvl` no `CNF.CONFIG` em vez de
 `IGNERS`/`SINCR`/`INVAL` (nessa ordem: depois de PlPr/LiPr/PlRe/LiRe, ao
@@ -232,6 +234,31 @@ Validado: smoke test em memória (105 checks, incluindo regressão dos 6
 protocolos anteriores) + teste ponta-a-ponta via UNO real, incluindo a
 integração com `unificar_pontos` e confirmação de que o upsert em `mul`/`enm`
 só ADICIONOU linhas (as ~90/~180 linhas reais de 61850 ficaram intactas).
+
+**DNP3-distribuição corrigida com base real** (usuário apontou
+`Drive/Projetos/_scada/DNP3-MDB.zip`, base "ctl"/`COGTXA21` — a mesma base do
+`ctl_dnp_mdb`/`DJ9E539` já usado pra aquisição, só que com o backup completo
+incluindo o lado distribuição). A entrega original do DNP3 tinha a
+distribuição **extrapolada por consistência** com 104/101 (mesmo formato
+"stripped") — a base real revelou que essa suposição estava **errada** em 3
+pontos:
+- `LSC.TTP` é **`UDPF3`** na distribuição, não o `IEC3S` da aquisição (mesmo
+  `TCV=CNVH`) — generalizado via `params["ttp_distribuicao"]`.
+- `CNF.CONFIG` **também** leva `TZBR`/`DnpLvl` na distribuição (`"PlPr= 2
+  LiPr= 5 PlRe= 2 LiRe= 6 TZBR= 0 DnpLvl= 3"`) — diferente do 104/101,
+  confirmados sem esses extras do lado distribuição — generalizado via
+  `params["cnf_extra_tambem_distribuicao"]`.
+- Sai **1 `TDD`** só (mesmo `ID` do `LSC`), sem o split `_DIG`/`_ANA` do
+  104/101/MODBUS — generalizado via `params["tdd_unico"]`.
+- O grupo de comando da distribuição roteia **`CDUP` e `CSIM` juntos**
+  (confirmado no `nv2.dat` real) — a aquisição (`DJ9E539`, revalidada nesta
+  mesma base) só tem `CDUP`, sem `CSIM` — generalizado via
+  `params["grupos_comando_distribuicao"]`.
+
+Todos os 4 pontos de extensão são opcionais (default preserva o comportamento
+dos outros protocolos) — só o DNP3 os usa por ora. Validado: smoke test
+atualizado (108 checks) + teste ponta-a-ponta via UNO real específico pra essa
+correção.
 
 **Ainda pendente**: OPC UA e C37.118 (sem base real nem manual completo o
 bastante); e, como achado desta investigação, revisitar `_gerar_infra_ied_61850`

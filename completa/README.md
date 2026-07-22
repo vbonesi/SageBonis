@@ -166,12 +166,15 @@ Pontos) para gerar os pontos individuais — esta parte só monta a "casca" onde
 pontos vão morar, não cria PDF/PDS/PAF/PAS/CGF/CGS.
 
 **Protocolos disponíveis**: **104**, **101**, **DNP3**, **MODBUS**, **61850**,
-**SNMP** e **ICCP**. 104 e 101 confirmados contra bases reais nos dois sentidos
-(aquisição **e** distribuição); DNP3 e MODBUS confirmados contra base real só
-na **aquisição** — a distribuição de ambos foi extrapolada por consistência
-(mesmo formato "stripped" do 104/101) e pelo código de referência da macro GE,
-sem uma base real de distribuição disponível pra validar; 61850 é bidirecional
-por natureza (ver seção própria abaixo) e foi confirmado contra 12 IEDs reais;
+**SNMP** e **ICCP**. 104, 101 e **DNP3** confirmados contra bases reais nos
+dois sentidos (aquisição **e** distribuição — a distribuição de DNP3 só foi
+confirmada depois, contra uma base real diferente da usada pra aquisição, ver
+seção própria abaixo); MODBUS confirmado contra base real só na **aquisição**
+— a distribuição foi extrapolada por consistência (mesmo formato "stripped"
+do 104/101) e pelo código de referência da macro GE, sem uma base real de
+distribuição disponível pra validar (a extrapolação de DNP3 seguia esse mesmo
+caminho até uma base real ser encontrada — ver nota); 61850 é bidirecional por
+natureza (ver seção própria abaixo) e foi confirmado contra 12 IEDs reais;
 SNMP é só aquisição por natureza (protocolo de monitoramento, não modela
 comando — ver seção própria) e foi confirmado contra 2 bases reais
 independentes; ICCP é bidirecional por natureza igual ao 61850 (ver seção
@@ -221,6 +224,18 @@ lugar).
 > analógico em NV1 distintos; aqui juntamos tudo num único NV1 de leitura (mais um
 > de comando) para manter a aba simples. Reorganize manualmente se precisar
 > replicar exatamente um padrão com mais grupos.
+
+**A distribuição de DNP3 tem 3 diferenças reais da aquisição** (confirmado
+contra uma base real diferente da usada pra aquisição — não é só o formato
+"stripped" do 104/101, extrapolar por analogia teria dado errado):
+- `LSC.TTP` sai **`UDPF3`** na distribuição, não o `IEC3S` da aquisição (mesmo
+  `TCV=CNVH` nos dois lados).
+- `CNF.CONFIG` **também** tem `TZBR`/`DnpLvl` na distribuição — diferente do
+  104/101, confirmados sem esses extras do lado distribuição.
+- Sai **1 `TDD`** só (mesmo `ID` do `LSC`), sem o split `_DIG`/`_ANA` do
+  104/101/MODBUS.
+- O grupo de comando da distribuição roteia **`CDUP` e `CSIM` juntos** — a
+  aquisição só tem `CDUP` (confirmado, sem `CSIM`).
 
 **MODBUS é o mais diferente dos quatro protocolos "clássicos"**: seu grupo de
 leitura não usa ASIM/ADUP/APFL como a família 60870/DNP3 — usa `ALAT` (digital

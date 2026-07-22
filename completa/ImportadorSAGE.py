@@ -2591,17 +2591,29 @@ PARAMS_PROTOCOLO = {
         "grupos_comando": _GRUPO_COMANDO_PADRAO,
         "cnf_extra": ("IGNERS", "SINCR", "INVAL"), "cnf_extra_pos": "antes",
     },
-    # DNP3 confirmado contra base real (SkillSAGE, ctl_dnp_mdb/DJ9E539) -- só a
-    # aquisição; a distribuição segue o mesmo padrão "stripped" do 104/101
-    # (extrapolado por consistência + pelo código de referência da macro GE, sem
-    # base real de distribuição DNP3 disponível -- diferente do 104/101,
-    # confirmados nos dois sentidos contra base real). Também roda tipicamente
-    # por serial (tsr.conf), mesma ressalva do 101.
+    # DNP3 confirmado contra base real nos DOIS sentidos (SkillSAGE,
+    # ctl_dnp_mdb/DJ9E539 pra aquisição; Drive/Projetos/_scada/DNP3-MDB.zip,
+    # base "ctl"/COGTXA21, pra distribuição -- apontada pelo usuário depois que
+    # a 1ª versão desta entrada tinha a distribuição extrapolada por
+    # consistência com 104/101, sem confirmação real). A distribuição NÃO segue
+    # o mesmo padrão "stripped" do 104/101 -- tem 3 diferenças reais, cada uma
+    # com seu ponto de extensão específico pra distribuição:
+    # - "ttp_distribuicao" -- TTP=UDPF3 na distribuição, diferente do IEC3S da
+    #   aquisição (mesmo TCV=CNVH nos dois lados).
+    # - "cnf_extra_tambem_distribuicao" -- TZBR/DnpLvl aparecem TAMBÉM no
+    #   CNF.CONFIG da distribuição (confirmado: "PlPr= 2 LiPr= 5 PlRe= 2 LiRe=
+    #   6 TZBR= 0 DnpLvl= 3"), diferente do 104/101 (extras só na aquisição).
+    # - "tdd_unico" -- 1 TDD só (sem split "_DIG"/"_ANA" como 104/101).
+    # - "grupos_comando_distribuicao" -- o comando da distribuição roteia CDUP
+    #   E CSIM juntos (2 tipos), diferente da aquisição (só CDUP, confirmado
+    #   em DJ9E539).
     "DNP3": {
-        "tcv": "CNVH", "ttp": "IEC3S", "tn1_sufixo": "DNP",
+        "tcv": "CNVH", "ttp": "IEC3S", "ttp_distribuicao": "UDPF3", "tn1_sufixo": "DNP",
         "grupos_leitura": _GRUPO_LEITURA_60870 + [("AANL", "PAF", "Analógica")],
         "grupos_comando": _GRUPO_COMANDO_PADRAO,
-        "cnf_extra": ("TZBR", "DnpLvl"), "cnf_extra_pos": "depois",
+        "grupos_comando_distribuicao": _GRUPO_COMANDO_PADRAO + [("CSIM", "CGF", "Comando Simples")],
+        "cnf_extra": ("TZBR", "DnpLvl"), "cnf_extra_pos": "depois", "cnf_extra_tambem_distribuicao": True,
+        "tdd_unico": True,
     },
     # MODBUS confirmado contra base real (SkillSAGE, mdb_alat_calc/MDB1) -- só a
     # aquisição, sem comando (a base disponível era só de medição/cálculo,
@@ -2784,7 +2796,10 @@ def _montar_config_cnf(linha, headers, params, aquisicao):
     entram na aquisição, antes ou depois conforme params["cnf_extra_pos"]
     (achado real: a ordem varia por protocolo -- 104/101 põem os extras antes,
     DNP3 depois. SAGE deve ler como pares soltos, então a ordem provavelmente
-    não importa de fato, mas seguimos o observado). Caminho alternativo
+    não importa de fato, mas seguimos o observado) -- EXCETO se
+    params["cnf_extra_tambem_distribuicao"] for True (achado real do DNP3,
+    base ctl/COGTXA21: TZBR/DnpLvl aparecem também na distribuição, diferente
+    do 104/101, confirmados SEM extras na distribuição). Caminho alternativo
     (params["cnf_campos"], ex.: SNMP): PlPr/LiPr/PlRe/LiRe nem sempre fazem
     sentido pro protocolo -- quando presente, essa lista SUBSTITUI a base
     inteira por um conjunto de campos totalmente customizado."""
@@ -2793,7 +2808,7 @@ def _montar_config_cnf(linha, headers, params, aquisicao):
         return " ".join("%s= %s" % (c, _campo_ied(linha, headers, c)) for c in campos_customizados)
     base = ["PlPr= %s" % _valor(linha, headers, "PlPr"), "LiPr= %s" % _valor(linha, headers, "LiPr"),
             "PlRe= %s" % _valor(linha, headers, "PlRe"), "LiRe= %s" % _valor(linha, headers, "LiRe")]
-    if not aquisicao:
+    if not aquisicao and not params.get("cnf_extra_tambem_distribuicao"):
         return " ".join(base)
     extras = ["%s= %s" % (campo, _campo_ied(linha, headers, campo))
               for campo in params.get("cnf_extra", ())]
@@ -2919,12 +2934,16 @@ def _gerar_infra_ied(linha, headers):
 
     aquisicao = direcao.strip().lower() == "aquisicao"
 
+    # TTP pode diferir por direção (achado real do DNP3, base ctl/COGTXA21:
+    # distribuição usa TTP=UDPF3, não o IEC3S da aquisição -- diferente do
+    # 104/101, confirmados com o MESMO TTP nos dois lados). TCV não muda.
+    ttp = params["ttp"] if aquisicao else params.get("ttp_distribuicao", params["ttp"])
     saida["lsc"].append({
         "ID": id_ied,
         "NOME": _valor(linha, headers, "Nome") or ("Canal %s %s" % (protocolo, id_ied)),
         "GSD": _valor(linha, headers, "GSD"), "MAP": _campo_ied(linha, headers, "MAP"),
         "NSRV1": _campo_ied(linha, headers, "NSRV1"), "NSRV2": _campo_ied(linha, headers, "NSRV2"),
-        "TCV": params["tcv"], "TTP": params["ttp"], "TIPO": "AA" if aquisicao else "DD",
+        "TCV": params["tcv"], "TTP": ttp, "TIPO": "AA" if aquisicao else "DD",
     })
 
     config_cnf = _montar_config_cnf(linha, headers, params, aquisicao)
@@ -2967,6 +2986,10 @@ def _gerar_infra_ied(linha, headers):
                 "ID": "%s%s" % (id_ied, sufixo_id), "NOME": "%s%s" % (nome_ied, sufixo_nome),
                 "INS": ins, "LSC": id_ied, "TPAQS": tpaqs,
             })
+    elif params.get("tdd_unico"):
+        # achado real do DNP3 (base ctl/COGTXA21): 1 TDD só, sem split
+        # DIG/ANA -- diferente do 104/101, confirmados com os dois.
+        saida["tdd"].append({"ID": id_ied, "LSC": id_ied, "NOME": "Distribuição %s" % id_ied})
     else:
         saida["tdd"].append({"ID": "%s_DIG" % id_ied, "LSC": id_ied,
                               "NOME": "Distribuição Digital %s" % id_ied})
@@ -2981,10 +3004,16 @@ def _gerar_infra_ied(linha, headers):
     # inteiramente (SNMP não tem NV1 de comando -- confirmado 0/13 exemplos
     # reais, protocolo só de monitoramento). "tn1_fixo" (SNMP: "SNM1") sobrepõe
     # o prefixo A/C/D/O calculado por _prefixo_tn1 -- confirmado que SNMP usa o
-    # TN1 sempre igual, sem prefixo de papel/direção.
+    # TN1 sempre igual, sem prefixo de papel/direção. "grupos_comando_distribuicao"
+    # (achado real do DNP3, base ctl/COGTXA21) sobrepõe o grupo de comando SÓ na
+    # distribuição -- lá o comando roteia CDUP E CSIM juntos, diferente da
+    # aquisição (só CDUP, confirmado em DJ9E539).
+    grupo_comando = params.get("grupos_comando", _GRUPO_COMANDO_PADRAO)
+    if not aquisicao:
+        grupo_comando = params.get("grupos_comando_distribuicao", grupo_comando)
     for papel, ordem_nv1, grupos_tn2 in (
         ("leitura", "1", params["grupos_leitura"]),
-        ("comando", "3", params.get("grupos_comando", _GRUPO_COMANDO_PADRAO)),
+        ("comando", "3", grupo_comando),
     ):
         if not grupos_tn2:
             continue

@@ -2824,18 +2824,27 @@ def _gerar_infra_ied_61850(linha, headers, id_ied, params):
     protocolos (ver comentário em PARAMS_PROTOCOLO["61850"]): 1 único LSC faz
     aquisição+distribuição ao mesmo tempo (TIPO="AD" sempre), TAC e TDD saem
     sempre os dois, sem CXU/UTR/ENU (a associação MMS já é a "conexão"), TN1
-    fixo "NLN1". "Direcao" e "Redundante" não são usados aqui -- a redundância
-    real de 61850 é o padrão "IED virtual" (2 CNFs físicos + 1 virtual com bit
-    12 do OPMSK ligado, ver referências), que não é automatizado por não caber
-    no modelo de 1-linha-por-IED desta aba; monte as 3 linhas manualmente
-    (2 físicas + 1 virtual com OPMSK ajustado) se precisar desse padrão."""
+    fixo "NLN1". "Direcao" não é usado aqui. Usa MUL+ENM (achado real, planilha
+    do usuário já tinha 90 MUL/180 ENM de 61850 pré-existentes ao implementar o
+    ICCP -- confirmou que 61850 TAMBÉM usa essa camada, não só o ICCP): 1 MUL
+    por CNF com MUL.ID=MUL.CNF=CNF.ID (mesmo identificador, diferente do ICCP,
+    que usa um sufixo "_AQ" -- 61850 não tem a noção de "domain name" separado
+    por direção), e SEMPRE 2 ENM (90/90 confirmado, não é condicional a
+    "Redundante" como o ICCP -- mais parecido com o ENU sempre-em-par dos
+    protocolos clássicos). "Redundante" continua sem efeito aqui -- a
+    redundância real de 61850 é o padrão "IED virtual" (2 CNFs físicos + 1
+    virtual com bit 12 do OPMSK ligado, ver referências), que não é
+    automatizado por não caber no modelo de 1-linha-por-IED desta aba; monte
+    as 3 linhas manualmente (2 físicas + 1 virtual com OPMSK ajustado) se
+    precisar desse padrão."""
     saida = {"lsc": [], "cnf": [], "cxu": [], "utr": [], "enu": [], "tac": [], "tdd": [],
              "mul": [], "enm": [], "nv1": [], "nv2": []}
     nome_ied = _valor(linha, headers, "Nome") or ("Canal 61850 %s" % id_ied)
+    gsd = _valor(linha, headers, "GSD")
 
     saida["lsc"].append({
         "ID": id_ied, "NOME": nome_ied,
-        "GSD": _valor(linha, headers, "GSD"), "MAP": _campo_ied(linha, headers, "MAP"),
+        "GSD": gsd, "MAP": _campo_ied(linha, headers, "MAP"),
         "NSRV1": _campo_ied(linha, headers, "NSRV1"), "NSRV2": _campo_ied(linha, headers, "NSRV2"),
         "TCV": params["tcv"], "TTP": params["ttp"], "TIPO": "AD", "VERBD": "SCL_AUTO",
     })
@@ -2846,6 +2855,10 @@ def _gerar_infra_ied_61850(linha, headers, id_ied, params):
     saida["tac"].append({"ID": id_ied, "NOME": "Aquisição em IEC61850/MMS - %s" % id_ied,
                           "INS": _valor(linha, headers, "INS"), "LSC": id_ied, "TPAQS": "ASAC"})
     saida["tdd"].append({"ID": id_ied, "LSC": id_ied, "NOME": "Distribuição %s" % id_ied})
+
+    saida["mul"].append({"ID": id_ied, "CNF": id_ied, "GSD": gsd, "ORDEM": "1"})
+    for sufixo in ("1", "2"):
+        saida["enm"].append({"ID": "%s%s" % (id_ied, sufixo), "MUL": id_ied, "ORDEM": sufixo})
 
     nv1_id = "%s_1" % id_ied
     saida["nv1"].append({

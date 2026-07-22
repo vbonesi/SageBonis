@@ -1,0 +1,20 @@
+TCL
+	ID = RDP51_OP
+	DESCR = RDP51 Operacional
+	FORMULA = lia[RDP51].opera
+	NSEQ = 250
+
+TCL
+	ID = RDP52_OP
+	DESCR = RDP52 Operacional
+	FORMULA = lia[RDP52].opera
+	NSEQ = 250
+
+TCL
+	ID = RDP53_OP
+	DESCR = RDP53 Operacional
+	FORMULA = lia[RDP53].opera
+	NSEQ = 250
+
+
+Arquivo gerado automaticamente por pysage-tools versao 3.0.0, feito por Automa Power (VB, YS e MF).

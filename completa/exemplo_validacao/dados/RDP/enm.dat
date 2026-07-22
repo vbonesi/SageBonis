@@ -1,0 +1,32 @@
+ENM
+	ID = RDP511
+	MUL = RDP51
+	ORDEM = 1
+
+ENM
+	ID = RDP512
+	MUL = RDP51
+	ORDEM = 2
+
+ENM
+	ID = RDP521
+	MUL = RDP52
+	ORDEM = 1
+
+ENM
+	ID = RDP522
+	MUL = RDP52
+	ORDEM = 2
+
+ENM
+	ID = RDP531
+	MUL = RDP53
+	ORDEM = 1
+
+ENM
+	ID = RDP532
+	MUL = RDP53
+	ORDEM = 2
+
+
+Arquivo gerado automaticamente por pysage-tools versao 3.0.0, feito por Automa Power (VB, YS e MF).

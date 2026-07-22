@@ -1,0 +1,21 @@
+
+
+PTF
+;------------------------------------------
+ID=	p11-LLN0$ST$Mod
+NV2=	p11_ATTA
+PNT=	p11-LLN0$ST$Mod
+TPPNT=	PTS
+KCONV3=	INC0
+DESC1=	Mode  LLN0
+
+PTF
+;------------------------------------------
+ID=	q21-LLN0$ST$Mod
+NV2=	q21_ATTA
+PNT=	q21-LLN0$ST$Mod
+TPPNT=	PTS
+KCONV3=	INC0
+DESC1=	Mode  LLN0
+
+

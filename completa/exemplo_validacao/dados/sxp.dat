@@ -1,0 +1,518 @@
+#include SNMP/sxp.dat
+
+SXP
+NFALS=	 4
+PRO=	mcast
+SEV=	SNULA
+
+SXP
+NFALS=	 4
+PRO=	mcast
+SEV=	NORML
+
+SXP
+NFALS=	 4
+PRO=	mcast
+SEV=	ADVER
+
+SXP
+NFALS=	 4
+PRO=	mcast
+SEV=	URGEN
+
+SXP
+NFALS=	 4
+PRO=	mcast
+SEV=	FATAL
+
+SXP
+NFALS=	 4
+PRO=	mcast
+SEV=	PANIC
+
+SXP
+NFALS=	 4
+PRO=	gmcd
+SEV=	SNULA
+
+SXP
+NFALS=	 4
+PRO=	gmcd
+SEV=	NORML
+
+SXP
+NFALS=	 4
+PRO=	gmcd
+SEV=	ADVER
+
+SXP
+NFALS=	 4
+PRO=	gmcd
+SEV=	URGEN
+
+SXP
+NFALS=	 4
+PRO=	gmcd
+SEV=	FATAL
+
+SXP
+NFALS=	 4
+PRO=	gmcd
+SEV=	PANIC
+
+SXP
+NFALS=	 4
+PRO=	rarqd
+SEV=	SNULA
+
+SXP
+NFALS=	 4
+PRO=	rarqd
+SEV=	NORML
+
+SXP
+NFALS=	 4
+PRO=	rarqd
+SEV=	ADVER
+
+SXP
+NFALS=	 4
+PRO=	rarqd
+SEV=	URGEN
+
+SXP
+NFALS=	 4
+PRO=	rarqd
+SEV=	FATAL
+
+SXP
+NFALS=	 4
+PRO=	rarqd
+SEV=	PANIC
+
+SXP
+NFALS=	 4
+PRO=	alr
+SEV=	SNULA
+
+SXP
+NFALS=	 4
+PRO=	alr
+SEV=	NORML
+
+SXP
+NFALS=	 4
+PRO=	alr
+SEV=	ADVER
+
+SXP
+NFALS=	 4
+PRO=	alr
+SEV=	URGEN
+
+SXP
+NFALS=	 4
+PRO=	alr
+SEV=	FATAL
+
+SXP
+NFALS=	 4
+PRO=	alr
+SEV=	PANIC
+
+SXP
+NFALS=	 4
+PRO=	sac
+SEV=	SNULA
+
+SXP
+NFALS=	 4
+PRO=	sac
+SEV=	NORML
+
+SXP
+NFALS=	 4
+PRO=	sac
+SEV=	ADVER
+
+SXP
+NFALS=	 4
+PRO=	sac
+SEV=	URGEN
+
+SXP
+NFALS=	 4
+PRO=	sac
+SEV=	FATAL
+
+SXP
+NFALS=	 4
+PRO=	sac
+SEV=	PANIC
+
+SXP
+NFALS=	 4
+PRO=	cnul
+SEV=	SNULA
+
+SXP
+NFALS=	 4
+PRO=	cnul
+SEV=	NORML
+
+SXP
+NFALS=	 4
+PRO=	cnul
+SEV=	ADVER
+
+SXP
+NFALS=	 4
+PRO=	cnul
+SEV=	URGEN
+
+SXP
+NFALS=	 4
+PRO=	cnul
+SEV=	FATAL
+
+SXP
+NFALS=	 4
+PRO=	cnul
+SEV=	PANIC
+
+SXP
+NFALS=	 4
+PRO=	sdd
+SEV=	SNULA
+
+SXP
+NFALS=	 4
+PRO=	sdd
+SEV=	NORML
+
+SXP
+NFALS=	 4
+PRO=	sdd
+SEV=	ADVER
+
+SXP
+NFALS=	 4
+PRO=	sdd
+SEV=	URGEN
+
+SXP
+NFALS=	 4
+PRO=	sdd
+SEV=	FATAL
+
+SXP
+NFALS=	 4
+PRO=	sdd
+SEV=	PANIC
+
+SXP
+NFALS=	 4
+PRO=	calc
+SEV=	SNULA
+
+SXP
+NFALS=	 4
+PRO=	calc
+SEV=	NORML
+
+SXP
+NFALS=	 4
+PRO=	calc
+SEV=	ADVER
+
+SXP
+NFALS=	 4
+PRO=	calc
+SEV=	URGEN
+
+SXP
+NFALS=	 4
+PRO=	calc
+SEV=	FATAL
+
+SXP
+NFALS=	 4
+PRO=	calc
+SEV=	PANIC
+
+SXP
+NFALS=	 4
+PRO=	hist
+SEV=	SNULA
+
+SXP
+NFALS=	 4
+PRO=	hist
+SEV=	NORML
+
+SXP
+NFALS=	 4
+PRO=	hist
+SEV=	ADVER
+
+SXP
+NFALS=	 4
+PRO=	hist
+SEV=	URGEN
+
+SXP
+NFALS=	 4
+PRO=	hist
+SEV=	FATAL
+
+SXP
+NFALS=	 4
+PRO=	hist
+SEV=	PANIC
+
+SXP
+NFALS=	 4
+PRO=	serv
+SEV=	SNULA
+
+SXP
+NFALS=	 4
+PRO=	serv
+SEV=	NORML
+
+SXP
+NFALS=	 4
+PRO=	serv
+SEV=	ADVER
+
+SXP
+NFALS=	 4
+PRO=	serv
+SEV=	URGEN
+
+SXP
+NFALS=	 4
+PRO=	serv
+SEV=	FATAL
+
+SXP
+NFALS=	 4
+PRO=	serv
+SEV=	PANIC
+
+SXP
+NFALS=	 4
+PRO=	RegCond
+SEV=	SNULA
+
+SXP
+NFALS=	 4
+PRO=	RegCond
+SEV=	NORML
+
+SXP
+NFALS=	 4
+PRO=	RegCond
+SEV=	ADVER
+
+SXP
+NFALS=	 4
+PRO=	RegCond
+SEV=	URGEN
+
+SXP
+NFALS=	 4
+PRO=	RegCond
+SEV=	FATAL
+
+SXP
+NFALS=	 4
+PRO=	RegCond
+SEV=	PANIC
+
+SXP
+NFALS=	 4
+PRO=	i61850
+SEV=	SNULA
+
+SXP
+NFALS=	 4
+PRO=	i61850
+SEV=	NORML
+
+SXP
+NFALS=	 4
+PRO=	i61850
+SEV=	ADVER
+
+SXP
+NFALS=	 4
+PRO=	i61850
+SEV=	URGEN
+
+SXP
+NFALS=	 4
+PRO=	i61850
+SEV=	FATAL
+
+SXP
+NFALS=	 4
+PRO=	i61850
+SEV=	PANIC
+
+SXP
+NFALS=	 4
+PRO=	dnp3
+SEV=	ADVER
+
+SXP
+NFALS=	 4
+PRO=	dnp3
+SEV=	FATAL
+
+SXP
+NFALS=	 4
+PRO=	dnp3
+SEV=	NORML
+
+SXP
+NFALS=	 4
+PRO=	dnp3
+SEV=	PANIC
+
+SXP
+NFALS=	 4
+PRO=	dnp3
+SEV=	SNULA
+
+;SXP
+;NFALS= 	4     
+;PRO= 	i101            
+;SEV= 	SNULA
+
+;SXP
+;NFALS= 	4     
+;PRO= 	i101            
+;SEV= 	NORML
+
+;SXP
+;NFALS= 	4     
+;PRO= 	i101            
+;SEV= 	ADVER
+
+;SXP
+;NFALS= 	4     
+;PRO= 	i101            
+;SEV= 	URGEN
+
+;SXP
+;NFALS= 	4     
+;PRO= 	i101            
+;SEV= 	FATAL
+
+;SXP
+;NFALS= 	4     
+;PRO= 	i101            
+;SEV= 	PANIC
+
+SXP
+; **** Arquivo com 78 SXP(s)
+NFALS=	 4
+PRO=	dnp3
+SEV=	URGEN
+
+SXP
+NFALS=		4
+PRO=		DumpBd
+SEV=		SNULA
+
+
+SXP
+NFALS=		4
+PRO=		DumpBd
+SEV=		NORML
+
+
+SXP
+NFALS=		4
+PRO=		DumpBd
+SEV=		ADVER
+
+
+SXP
+NFALS=		4
+PRO=		DumpBd
+SEV=		URGEN
+
+
+SXP
+NFALS=		4
+PRO=		DumpBd
+SEV=		FATAL
+
+
+SXP
+NFALS=		4
+PRO=		DumpBd
+SEV=		PANIC
+
+
+SXP
+NFALS=	 4
+PRO=	modb
+SEV=	ADVER
+
+SXP
+NFALS=	 4
+PRO=	modb
+SEV=	FATAL
+
+SXP
+NFALS=	 4
+PRO=	modb
+SEV=	NORML
+
+SXP
+NFALS=	 4
+PRO=	modb
+SEV=	PANIC
+
+SXP
+NFALS=	 4
+PRO=	modb
+SEV=	SNULA
+
+SXP
+NFALS=	 4
+PRO=	modb
+SEV=	URGEN
+
+SXP
+NFALS=	 4
+PRO=	siccp
+SEV=	ADVER
+
+SXP
+NFALS=	 4
+PRO=	siccp
+SEV=	FATAL
+
+SXP
+NFALS=	 4
+PRO=	siccp
+SEV=	NORML
+
+SXP
+NFALS=	 4
+PRO=	siccp
+SEV=	PANIC
+
+SXP
+NFALS=	 4
+PRO=	siccp
+SEV=	SNULA
+
+SXP
+NFALS=	 4
+PRO=	siccp
+SEV=	URGEN

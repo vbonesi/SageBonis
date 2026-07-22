@@ -1,0 +1,33 @@
+;************ GE GRID SOLUTIONS ************
+;********** Dados da Entidade SXP **********
+;** Arquivo gerado em 13/05/2026 16:17:31 **
+;** Autor: Nicholas
+;** Empresa: Automa
+;********************************************************
+
+
+SXP
+            PRO = gsnmp
+            SEV = ADVER
+
+SXP
+            PRO = gsnmp
+            SEV = FATAL
+
+SXP
+            PRO = gsnmp
+            SEV = NORML
+
+SXP
+            PRO = gsnmp
+            SEV = PANIC
+
+SXP
+            PRO = gsnmp
+            SEV = SNULA
+
+SXP
+            PRO = gsnmp
+            SEV = URGEN
+; *** ARQUIVO COM 6 SXP(S)
+

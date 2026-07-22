@@ -1,0 +1,81 @@
+
+TCV
+DESCR=	Tipo de conversor -> Ausencia de Conversor
+ID=	NLCN
+NSEQ=	 0
+
+TCV
+DESCR=	Conversor SINSC Modo Mestre (CNO)
+ID=	CNVA
+NSEQ=	 1
+
+TCV
+DESCR=	Conversor CONITEL C3x00  (C32)
+ID=	CNVB
+NSEQ=	 2
+
+TCV
+DESCR=	Conversor SINSC Modo Escravo (COS)
+ID=	CNVC
+NSEQ=	 3
+
+TCV
+DESCR=	Conversor Nulo Protocolo SAC (CNUL)
+ID=	CNVD
+NSEQ=	 4
+
+TCV
+DESCR=	Conversor REDAC-70 Westinghouse (RDAC)
+ID=	CNVE
+NSEQ=	 5
+
+TCV
+DESCR=	Conversor L&N IEC/60870-5 (LN57)
+ID=	CNVF
+NSEQ=	 6
+
+TCV
+DESCR=	Conversor IEC/60870-5-101 (I101)
+ID=	CNVG
+NSEQ=	 7
+
+TCV
+DESCR=	Converor do Protocolo DNP V3.00 (DNP3)
+ID=	CNVH
+NSEQ=	 8
+
+TCV
+DESCR=	Converor do Protocolo AB1771/X3.28  (ABB)
+ID=	CNVI
+NSEQ=	 9
+
+TCV
+DESCR=	Converor do Protocolo ModBus (MODB)
+ID=	CNVJ
+NSEQ=	 10
+
+TCV
+DESCR=	Converor do Protocolo ALTUS AL-1000 (ALTS)
+ID=	CNVK
+NSEQ=	 11
+
+TCV
+DESCR=	Converor do Protocolo MicroLab (MLAB)
+ID=	CNVL
+NSEQ=	 12
+
+TCV
+DESCR=	Conversor IEC/60870-5-104 (I104)
+ID=	CNVM
+NSEQ=	 13
+
+TCV
+DESCR=	Conversor TASE2/ICCP-MMS (ICCP)
+ID=	CNVN
+NSEQ=	 14
+
+TCV
+DESCR=	Conversor IEC/61850 (UCA2)
+ID=	CNVO
+NSEQ=	 15
+

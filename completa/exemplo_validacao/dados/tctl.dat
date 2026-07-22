@@ -1,0 +1,684 @@
+
+
+TCTL
+ALR_CLOSE=	Fechar
+ALR_TRIP=	Abrir
+DLG_CLOSE=	Fechar Equipamento
+DLG_TRIP=	Abrir Equipamento
+ID=	CTCL
+NSEQ=	 1
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Bloqueio
+ALR_TRIP=	Desbloqueio
+DLG_CLOSE=	Bloquear
+DLG_TRIP=	Desbloquear
+ID=	BLOQ
+NSEQ=	 2
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Local
+ALR_TRIP=	Remoto
+DLG_CLOSE=	Local
+DLG_TRIP=	Remoto
+ID=	LCRM
+NSEQ=	 3
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Habilita
+ALR_TRIP=	Desabilita
+DLG_CLOSE=	Habilitar
+DLG_TRIP=	Desabilitar
+ID=	HABD
+NSEQ=	 4
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Manual
+ALR_TRIP=	Automático
+DLG_CLOSE=	Manual
+DLG_TRIP=	Automático
+ID=	MANA
+NSEQ=	 5
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Ligado
+ALR_TRIP=	Desligado
+DLG_CLOSE=	Ligar
+DLG_TRIP=	Desligar
+ID=	LIGD
+NSEQ=	 6
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Aumentar
+ALR_TRIP=	Diminuir
+DLG_CLOSE=	Aumentar
+DLG_TRIP=	Diminuir
+ID=	AUMD
+NSEQ=	 7
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Transferir
+ALR_TRIP=	Normalizar
+DLG_CLOSE=	Transferir
+DLG_TRIP=	Normalizar
+ID=	TRNL
+NSEQ=	 8
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	(c)
+ALR_TRIP=	(t)
+DLG_CLOSE=	Executar
+ID=	RSTC
+NSEQ=	 9
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Raise
+ALR_TRIP=	Lower
+DLG_CLOSE=	Aumentar
+DLG_TRIP=	Diminuir
+ID=	PULS
+NSEQ=	 10
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Set Point A
+ALR_TRIP=	Set Point B
+DLG_CLOSE=	Enviar SetPoint
+ID=	STPT
+NSEQ=	 11
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Set Point 2
+ALR_TRIP=	Set Point 2
+DLG_CLOSE=	Enviar SetPoints
+ID=	STP2
+NSEQ=	 12
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Reset Com
+ALR_TRIP=	Reset Com
+DLG_TRIP=	Resetar UTR
+ID=	REST
+NSEQ=	 13
+TIP=	CTL
+
+TCTL
+;-------------- Comandos de Comunicacao --------
+;--- ATENCAO - Nao alterar o campo NSEQ !!!! ---
+ALR_CLOSE=	Ajuste (c)
+ALR_TRIP=	Ajuste (t)
+DLG_TRIP=	Executar
+ID=	RSTT
+NSEQ=	 17
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Reset estat
+ALR_TRIP=	Reset estst
+DLG_CLOSE=	Reset de Estatísticas
+DLG_TRIP=	Reset de Estatísticas
+ID=	LSTAT
+NSEQ=	 18
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Failover
+ALR_TRIP=	Failover
+DLG_TRIP=	Failover de UTR
+ID=	PFUTR
+NSEQ=	 14
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Failover
+ALR_TRIP=	Failover
+DLG_TRIP=	Failover de Enlace
+ID=	PFCAN
+NSEQ=	 19
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Ativa Com
+ALR_TRIP=	Ativa Com
+DLG_TRIP=	Habilitar UTR
+ID=	PHUTR
+NSEQ=	 16
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Desativ Com
+ALR_TRIP=	Desativ Com
+DLG_TRIP=	Desabilitar UTR
+ID=	PDUTR
+NSEQ=	 15
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Ativa Com
+ALR_TRIP=	Ativa Com
+DLG_TRIP=	Habilitar Enlace
+ID=	PHCAN
+NSEQ=	 20
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Desativ Com
+ALR_TRIP=	Desativ Com
+DLG_TRIP=	Desabilitar Enlace
+ID=	PDCAN
+NSEQ=	 21
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Ativa Com
+ALR_TRIP=	Ativa Com
+DLG_TRIP=	Habilitar Secundário
+ID=	PHSEC
+NSEQ=	 22
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Desativ Com
+ALR_TRIP=	Desativ Com
+DLG_TRIP=	Inibir Secundário
+ID=	PDSEC
+NSEQ=	 23
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Ativa Com
+ALR_TRIP=	Ativa Com
+DLG_TRIP=	Ativar Aquisição
+ID=	ATLIA
+NSEQ=	 24
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Desativ Com
+ALR_TRIP=	Desativ Com
+DLG_TRIP=	Desativar Aquisição
+ID=	DTLIA
+NSEQ=	 25
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Ativa Com
+ALR_TRIP=	Ativa Com
+DLG_TRIP=	Ativar Distribuição
+ID=	ATLID
+NSEQ=	 26
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Desativ Com
+ALR_TRIP=	Desativ Com
+DLG_TRIP=	Desativar Distribuição
+ID=	DTLID
+NSEQ=	 27
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Ativa Com
+ALR_TRIP=	Ativa Com
+DLG_TRIP=	Ativar TAC
+ID=	ATTAC
+NSEQ=	 28
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Desativ Com
+ALR_TRIP=	Desativ Com
+DLG_TRIP=	Desativar TAC
+ID=	DTTAC
+NSEQ=	 29
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Ativa Com
+ALR_TRIP=	Ativa Com
+DLG_TRIP=	Ativar Enlace
+ID=	ATENM
+NSEQ=	 30
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Desativ Com
+ALR_TRIP=	Desativ Com
+DLG_TRIP=	Desativar Enlace
+ID=	DTENM
+NSEQ=	 31
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Ativa Com
+ALR_TRIP=	Ativa Com
+DLG_TRIP=	Ativar Canal
+ID=	ATCNM
+NSEQ=	 32
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Desativ Com
+ALR_TRIP=	Desativ Com
+DLG_TRIP=	Desativar Canal
+ID=	DTCNM
+NSEQ=	 33
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Ativa Com
+ALR_TRIP=	Ativa Com
+DLG_TRIP=	Ativar Multiligacao
+ID=	ATMUL
+NSEQ=	 34
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Desativ Com
+ALR_TRIP=	Desativ Com
+DLG_TRIP=	Desativar Multiligacao
+ID=	DTMUL
+NSEQ=	 35
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Ativa Com
+ALR_TRIP=	Ativa Com
+DLG_TRIP=	Ativar Tele-medido
+ID=	ATMSE
+NSEQ=	 36
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Desativ Com
+ALR_TRIP=	Desativ Com
+DLG_TRIP=	Desativar Tele-medido
+ID=	DTMSE
+NSEQ=	 37
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Ativa Com
+ALR_TRIP=	Ativa Com
+DLG_TRIP=	Ativar Grand. Calculada
+ID=	ATCSE
+NSEQ=	 38
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Desativ Com
+ALR_TRIP=	Desativ Com
+DLG_TRIP=	Desativar Grand. Calculada
+ID=	DTCSE
+NSEQ=	 39
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Ativa Com
+ALR_TRIP=	Ativa Com
+DLG_TRIP=	Ativar Tele-sinais
+ID=	ATTSE
+NSEQ=	 40
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Desativ Com
+ALR_TRIP=	Desativ Com
+DLG_TRIP=	Desativar Tele-sinais
+ID=	DTTSE
+NSEQ=	 41
+TIP=	CMD
+
+TCTL
+ALR_CLOSE=	Ativado
+ALR_TRIP=	Desativado
+DLG_CLOSE=	Ativar
+DLG_TRIP=	Desativar
+ID=	USR42
+NSEQ=	 42
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Desativado
+ALR_TRIP=	Ativado
+DLG_CLOSE=	Desativar
+DLG_TRIP=	Ativar
+ID=	USR43
+NSEQ=	 43
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Automático
+ALR_TRIP=	Manual
+DLG_CLOSE=	Automático
+DLG_TRIP=	Manual
+ID=	USR44
+NSEQ=	 44
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Automático
+ALR_TRIP=	Manual
+DLG_CLOSE=	Automático
+DLG_TRIP=	Manual
+ID=	USR45
+NSEQ=	 45
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Ativar F1
+ALR_TRIP=	Ativar F2
+DLG_CLOSE=	Faixa 1
+DLG_TRIP=	Faixa 2
+ID=	USR46
+NSEQ=	 46
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Ativar F1
+ALR_TRIP=	Ativar F2
+DLG_CLOSE=	Faixa 1
+DLG_TRIP=	Faixa 2
+ID=	USR47
+NSEQ=	 47
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Reset
+ALR_TRIP=	Reset
+DLG_CLOSE=	Reset
+ID=	USR48
+NSEQ=	 48
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Close USR49
+ALR_TRIP=	Trip  USR49
+DLG_CLOSE=	Fechar USR49
+DLG_TRIP=	Abrir  USR49
+ID=	USR49
+NSEQ=	 49
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Desativado
+ALR_TRIP=	Ativado
+DLG_CLOSE=	Desativar
+DLG_TRIP=	Ativar
+ID=	USR50
+NSEQ=	 50
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Desativado
+ALR_TRIP=	Ativado
+DLG_CLOSE=	Desativar
+DLG_TRIP=	Ativar
+ID=	USR51
+NSEQ=	 51
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Rearme 86
+ALR_TRIP=	Atuado 86
+DLG_CLOSE=	Rearme 86
+ID=	USR52
+NSEQ=	 52
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Tripolar
+ALR_TRIP=	Tripolar
+DLG_CLOSE=	Ativar Tripolar
+ID=	USR53
+NSEQ=	 53
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Monopolar
+ALR_TRIP=	Monopolar
+DLG_CLOSE=	Ativar Monopolar
+ID=	USR54
+NSEQ=	 54
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Ativado
+ALR_TRIP=	Desativado
+DLG_CLOSE=	Ativar
+DLG_TRIP=	Desativar
+ID=	ATVDT
+NSEQ=	 55
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Desativado
+ALR_TRIP=	Ativado
+DLG_CLOSE=	Desativar
+DLG_TRIP=	Ativar
+ID=	DTATV
+NSEQ=	 56
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Automático
+ALR_TRIP=	Manual
+DLG_CLOSE=	Automático
+DLG_TRIP=	Manual
+ID=	AUTMN
+NSEQ=	 57
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Rearme 86
+ALR_TRIP=	Atuado 86
+DLG_CLOSE=	Rearmar 86
+ID=	REARM
+NSEQ=	 58
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	(c)
+ALR_TRIP=	(t)
+DLG_CLOSE=	Ativar
+ID=	ATIVA
+NSEQ=	 59
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	(c)
+ALR_TRIP=	(t)
+DLG_CLOSE=	Desativar
+ID=	DTIVA
+NSEQ=	 60
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	(c)
+ALR_TRIP=	(t)
+DLG_CLOSE=	Aumentar
+ID=	AUMT
+NSEQ=	 61
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	(c)
+ALR_TRIP=	(t)
+DLG_CLOSE=	Diminuir
+ID=	DIMI
+NSEQ=	 62
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	(c)
+ALR_TRIP=	(t)
+DLG_CLOSE=	Automático
+ID=	AUTO
+NSEQ=	 63
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	(c)
+ALR_TRIP=	(t)
+DLG_CLOSE=	Manual
+ID=	MANU
+NSEQ=	 64
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	(c)
+ALR_TRIP=	(t)
+DLG_CLOSE=	Mestre
+ID=	MESTR
+NSEQ=	 65
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	(c)
+ALR_TRIP=	(t)
+DLG_CLOSE=	Comandado
+ID=	CMDO
+NSEQ=	 66
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	(c)
+ALR_TRIP=	(t)
+DLG_CLOSE=	Individual
+ID=	INDV
+NSEQ=	 67
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	(c)
+ALR_TRIP=	(t)
+DLG_CLOSE=	Selecionar
+ID=	SELEC
+NSEQ=	 68
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Nível 1
+ALR_TRIP=	Nível 2
+DLG_CLOSE=	Nível 1
+DLG_TRIP=	Nível 2
+ID=	NIV12
+NSEQ=	 69
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Nível 2
+ALR_TRIP=	Nível 3
+DLG_CLOSE=	Nível 2
+DLG_TRIP=	Nível 3
+ID=	NIV23
+NSEQ=	 70
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Remoto
+ALR_TRIP=	Local
+DLG_CLOSE=	Remoto
+DLG_TRIP=	Local
+ID=	RMLC
+NSEQ=	 71
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Partir
+ALR_TRIP=	Parar
+DLG_CLOSE=	Partir
+DLG_TRIP=	Parar
+ID=	PATPA
+NSEQ=	 72
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Inserir
+ALR_TRIP=	Remover
+DLG_CLOSE=	Inserir
+DLG_TRIP=	Remover
+ID=	INSR
+NSEQ=	 73
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Chaveamento
+ALR_TRIP=	Desbloqueio
+DLG_CLOSE=	Chavear
+DLG_TRIP=	Desbloquear
+ID=	CHUC
+NSEQ=	 74
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Discreto
+ALR_TRIP=	Discreto
+DLG_CLOSE=	Ctrl Discreto
+ID=	DISCR
+NSEQ=	 75
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Vago
+ALR_TRIP=	Vago
+DLG_TRIP=	Vago
+ID=	VAGO
+NSEQ=	 76
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Colocar
+ALR_TRIP=	Retirar
+DLG_CLOSE=	Colocar
+DLG_TRIP=	Retirar
+ID=	CART
+NSEQ=	 77
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Desligado
+ALR_TRIP=	Ligado
+DLG_CLOSE=	Desligar
+DLG_TRIP=	Ligar
+ID=	DSGD
+NSEQ=	 78
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Bloqueado
+ALR_TRIP=	Rearmado
+DLG_CLOSE=	Bloquear
+DLG_TRIP=	Rearmar
+ID=	BLRE
+NSEQ=	 79
+TIP=	CTL
+
+TCTL
+ALR_CLOSE=	Grupo
+ALR_TRIP=	Individual
+DLG_CLOSE=	Grupo
+DLG_TRIP=	Individual
+ID=	GPIN
+NSEQ=	 80
+TIP=	CTL
+
+TCTL
+ID= 	CTCLI
+TIP= 	CTL
+ALR_CLOSE= Abrir
+ALR_TRIP= Fechar
+DLG_CLOSE= Abrir Equipamento
+DLG_TRIP= Fechar Equipamento
+NSEQ= 81

@@ -1,0 +1,31 @@
+
+
+PTS
+;------------------------------------------
+ID=	p11-LLN0$ST$Mod
+NOME=	Mode  LLN0
+TAC=	p1
+TCL=	NLCL
+LSA=	 32767
+LSE=	 32767
+LSU=	 32767
+ALRIN=	NAO
+CDINIC=	NORMAL
+TPFIL=	NLFL
+   CMT       = EXCLUI_NHS
+
+PTS
+;------------------------------------------
+ID=	q21-LLN0$ST$Mod
+NOME=	Mode  LLN0
+TAC=	q2
+TCL=	NLCL
+LSA=	 32767
+LSE=	 32767
+LSU=	 32767
+ALRIN=	NAO
+CDINIC=	NORMAL
+TPFIL=	NLFL
+   CMT       = EXCLUI_NHS
+
+

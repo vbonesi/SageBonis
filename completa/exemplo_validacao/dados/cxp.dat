@@ -1,0 +1,21 @@
+
+CXP
+CLASSE=	SSC_ClasAlr
+PRO=	alr
+
+CXP
+CLASSE=	SCD_ClasIds
+PRO=	alr
+
+CXP
+CLASSE=	SSC_ClasCat
+PRO=	alr
+
+CXP
+CLASSE=	SCD_ClasCod
+PRO=	i61850
+
+CXP
+CLASSE=	SSC_ClasTnd
+PRO=	hist
+

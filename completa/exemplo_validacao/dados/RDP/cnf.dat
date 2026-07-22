@@ -1,0 +1,17 @@
+CNF
+	CONFIG = ApTitle= 1 1 10 / 1 1 10 AeQ= 1 PS= 1 / 1 SS= 1 TS= 1 IDAD= 600 KEEP= 5 NREP= 3 TOUT= 10 MPDU= 1200 OPMSK= 931 GOOSE= 0
+	ID = RDP51
+	LSC = RDP51
+
+CNF
+	CONFIG = ApTitle= 1 1 10 / 1 1 10 AeQ= 1 PS= 1 / 1 SS= 1 TS= 1 IDAD= 600 KEEP= 5 NREP= 3 TOUT= 10 MPDU= 1200 OPMSK= 931 GOOSE= 0
+	ID = RDP52
+	LSC = RDP52
+
+CNF
+	CONFIG = ApTitle= 1 1 10 / 1 1 10 AeQ= 1 PS= 1 / 1 SS= 1 TS= 1 IDAD= 600 KEEP= 5 NREP= 3 TOUT= 10 MPDU= 1200 OPMSK= 931 GOOSE= 0
+	ID = RDP53
+	LSC = RDP53
+
+
+Arquivo gerado automaticamente por pysage-tools versao 3.0.0, feito por Automa Power (VB, YS e MF).

@@ -1,0 +1,14 @@
+
+LSC
+; ===== 04S1 - LT NS Socorro
+GSD=	EX1
+ID=	EX14S8
+MAP=	EX1
+NOME=	Ligacao MODBUS Qualimetro 04S8
+NSRV1=	localhost
+NSRV2=	localhost
+TCV=	CNVJ
+TIPO=	AA
+TTP=	TMBUS
+VERBD=	14/10/2018
+

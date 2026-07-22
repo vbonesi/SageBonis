@@ -1,0 +1,260 @@
+#include SNMP/pro.dat
+
+
+PRO
+ID=	mcast
+NOME=	Gerente de Difusao Confiavel ISIS
+SCRAT=	mcast_on.rc
+SCRDE=	mcast_off.rc
+TINIC=	 0
+ATIVA=	CAD
+ATVAT=	AUT
+ESSEN=	ESC
+HORAA=	 0
+MONIT=	MON
+NUATV=	 32767
+PERIO=	 0
+TIPPR=	INSS
+
+PRO
+ID=	gmcd
+NOME=	Gerencia de Memoria Distribuida
+SCRAT=	gmcd_on.rc
+SCRDE=	gmcd_off.rc
+TINIC=	 1
+ATIVA=	CAD
+ATVAT=	AUT
+ESSEN=	ESC
+HORAA=	 0
+MONIT=	MON
+NUATV=	 32767
+PERIO=	 0
+TIPPR=	INSS
+
+PRO
+ID=	rarqd
+NOME=	Processo rarqd
+SCRAT=	rarqd_on.rc
+SCRDE=	rarqd_off.rc
+TINIC=	 2
+ATIVA=	CAD
+ATVAT=	AUT
+ESSEN=	ESC
+HORAA=	 0
+MONIT=	MON
+NUATV=	 32767
+PERIO=	 0
+TIPPR=	INSP
+
+PRO
+ID=	alr
+NOME=	Processador de Alarmes e Eventos
+SCRAT=	alr_on.rc
+SCRDE=	alr_off.rc
+TINIC=	 3
+ATIVA=	PRS
+ATVAT=	AUT
+ESSEN=	ESC
+HORAA=	 0
+MONIT=	MON
+NUATV=	 32767
+PERIO=	 0
+TIPPR=	INSS
+
+PRO
+ID=	sac
+NOME=	Servisor de Aquisicao e Controle
+SCRAT=	sac_on.rc
+SCRDE=	sac_off.rc
+TINIC=	 4
+ATIVA=	CAD
+ATVAT=	AUT
+ESSEN=	ESC
+HORAA=	 0
+MONIT=	MON
+NUATV=	 32767
+PERIO=	 0
+TIPPR=	INSP
+
+PRO
+ID=	sdd
+NOME=	Servidor de Distribuicao de Dados Eventos
+SCRAT=	sdd_on.rc
+SCRDE=	sdd_off.rc
+TINIC=	 5
+ATIVA=	CAD
+ATVAT=	AUT
+ESSEN=	ESC
+HORAA=	 0
+MONIT=	MON
+NUATV=	 32767
+PERIO=	 0
+TIPPR=	INSP
+
+PRO
+ID=	cnul
+NOME=	Protocolo Nulo do SAC
+SCRAT=	cnul_on.rc
+SCRDE=	cnul_off.rc
+TINIC=	 6
+ATIVA=	CAD
+ATVAT=	MAN
+ESSEN=	ESC
+HORAA=	 0
+MONIT=	MON
+NUATV=	 32767
+PERIO=	 0
+TIPPR=	INSP
+
+PRO
+ID=	calc
+NOME=	Processador de Calculo
+SCRAT=	calc_on.rc
+SCRDE=	calc_off.rc
+TINIC=	 7
+ATIVA=	CAD
+ATVAT=	AUT
+ESSEN=	ESC
+HORAA=	 0
+MONIT=	MON
+NUATV=	 32767
+PERIO=	 0
+TIPPR=	INSP
+
+PRO
+ID=	hist
+NOME=	Processo de historico
+SCRAT=	hist_on.rc
+SCRDE=	hist_off.rc
+TINIC=	 8
+ATIVA=	PRS
+ATVAT=	AUT
+ESSEN=	ESC
+HORAA=	 0
+MONIT=	MON
+NUATV=	 32767
+PERIO=	 0
+TIPPR=	INSP
+
+PRO
+ID=	serv
+NOME=	Servidor SAGE
+SCRAT=	serv_on.rc
+SCRDE=	serv_off.rc
+TINIC=	 9
+ATIVA=	CAD
+ATVAT=	AUT
+ESSEN=	NES
+HORAA=	 0
+MONIT=	MON
+NUATV=	 32767
+PERIO=	 0
+TIPPR=	INSP
+
+PRO
+ID=	RegCond
+NOME=	Registrador Condicional
+SCRAT=	RegCond_on.rc
+SCRDE=	RegCond_off.rc
+TINIC=	 10
+ATIVA=	PRS
+ATVAT=	MAN
+ESSEN=	NES
+HORAA=	 0
+MONIT=	MON
+NUATV=	 32767
+PERIO=	 0
+TIPPR=	INSP
+
+PRO
+ID=	dnp3
+NOME=	Protocolo DNP V3.0
+SCRAT=	DNP3_on.rc
+SCRDE=	DNP3_off.rc
+TINIC=	 11
+ATIVA=	CAD
+ATVAT=	AUT
+ESSEN=	ESC
+HORAA=	 0
+MONIT=	MON
+NUATV=	 32767
+PERIO=	 0
+TIPPR=	INSP
+WATCHDOG=	 0
+
+;PRO
+;ID=	i101
+;NOME=	Conversor de Protocolo IEC870-101
+;SCRAT=	I101_on.rc
+;SCRDE=	I101_off.rc
+;TINIC=	 12
+;ATIVA=	CAD
+;ATVAT=	MAN
+;ESSEN=	ESC
+;HORAA=	 0
+;MONIT=	MON
+;NUATV=	 32767
+;PERIO=	 0
+;TIPPR=	INSP
+
+PRO
+ID=	i61850
+NOME=	Conversor do Protocolo IEC/61850
+SCRAT=	I61850_on.rc
+SCRDE=	I61850_off.rc
+TINIC=	 13
+ATIVA=	CAD
+ATVAT=	AUT
+ESSEN=	ESC
+HORAA=	 0
+MONIT=	MON
+NUATV=	 32767
+PERIO=	 0
+TIPPR=	INSP
+WATCHDOG=	 0
+
+PRO
+ID=	DumpBd
+NOME=	Dump da Base
+SCRAT=	DumpBd_on.rc
+SCRDE=	DumpBd_off.rc
+TINIC=	 14
+ATIVA=	PRS
+ATVAT=	AUT
+ESSEN=	NES
+HORAA=	 0
+MONIT=	MON
+NUATV=	 32767
+PERIO=	 0
+TIPPR=	INSP
+
+PRO
+ID=	modb
+NOME=	Protocolo MODBUS
+SCRAT=	MODB_on.rc
+SCRDE=	MODB_off.rc
+TINIC=	 15
+ATIVA=	CAD
+ATVAT=	AUT
+ESSEN=	ESC
+HORAA=	 0
+MONIT=	MON
+NUATV=	 32767
+PERIO=	 0
+TIPPR=	INSP
+
+PRO
+ID=	siccp
+NOME=	Conversor de Protocolo SICCP
+SCRAT=	siccp_on.rc
+SCRDE=	siccp_off.rc
+TINIC=	 16
+ATIVA=	CAD
+ATVAT=	AUT
+ESSEN=	ESC
+HORAA=	 0
+MONIT=	MON
+NUATV=	 32767
+PERIO=	 0
+TIPPR=	INSP
+

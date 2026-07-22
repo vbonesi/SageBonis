@@ -1,0 +1,186 @@
+
+TTP
+DESCR=	Ausência de transportador de protocolo
+ID=	NLTP
+NSEQ=	 0
+
+TTP
+DESCR=	Transportador de Multiligações em Protocolo X25/X75
+ID=	MLX25
+NSEQ=	 1
+
+TTP
+DESCR=	Transportador de Multiligações em Protocolo TCP/IP
+ID=	MLTCP
+NSEQ=	 2
+
+TTP
+DESCR=	Transportador em Frames FT3 Modo Balanceado do DNP (IEC/60870-5-2)
+ID=	DNPF3
+NSEQ=	 3
+
+TTP
+DESCR=	Transportador em Frames FT3 do IEC/60870-5
+ID=	IECF3
+NSEQ=	 4
+
+TTP
+DESCR=	Transportador de Conexões Virtuais UTR em TCP/IP
+ID=	CXTCP
+NSEQ=	 5
+
+TTP
+DESCR=	Transportador de Conexões Virtuais UTR em X25
+ID=	CXX25
+NSEQ=	 6
+
+TTP
+DESCR=	Transportador de Conexões Virtuais UTR em Frames Assíncronos 32 Bits
+ID=	CXA32
+NSEQ=	 7
+
+TTP
+DESCR=	Transportador Balanceado/Não Balanceado em Frames FT1.2 do IEC/60870-5
+ID=	IECF1
+NSEQ=	 8
+
+TTP
+DESCR=	Transportador em Frames ANSI X3.28
+ID=	CX328
+NSEQ=	 9
+
+TTP
+DESCR=	Transportador em Frames FT3-DNP do IEC/60870 sobre TCP
+ID=	UDPF3
+NSEQ=	 10
+
+TTP
+DESCR=	Transportador Balanceado em Frames FT1.2 do IEC/60870 sobre TCP
+ID=	TCPF1
+NSEQ=	 11
+
+TTP
+DESCR=	Transportador em Frames FT3 do IEC/60870 sobre TTY
+ID=	CXTT3
+NSEQ=	 12
+
+TTP
+DESCR=	Transportador Não Balanceado em Frames FT1.2 do IEC/60870 sobre TTY
+ID=	CXTT1
+NSEQ=	 13
+
+TTP
+DESCR=	Transportador em Frames FT3-DNP do IEC/60870 sobre TTY
+ID=	CXTTD
+NSEQ=	 14
+
+TTP
+DESCR=	Transporte de Frames MODBUS em enlaces TTY / TCP-IP
+ID=	YMBUS
+NSEQ=	 15
+
+TTP
+DESCR=	Transporte de Frames ALTUS AL-1000 em enlaces TTY / TCP-IP
+ID=	ALTUS
+NSEQ=	 16
+
+TTP
+DESCR=	Transportador Balanceado em Frames FT1.2 do IEC/60870 sobre TTY
+ID=	CXTB1
+NSEQ=	 17
+
+TTP
+DESCR=	Transportador de Multilicações em Linhas Seriais Assíncronas
+ID=	SPTDS
+NSEQ=	 18
+
+TTP
+DESCR=	Transportador de Frames do Protocolo Microlab sobre TTY
+ID=	YMLAB
+NSEQ=	 19
+
+TTP
+DESCR=	Transporte TCP-IP do IEC/60870-5-104
+ID=	CX104
+NSEQ=	 20
+
+TTP
+DESCR=	Transportador de Multilicações em Datagramas UDP
+ID=	PCTR
+NSEQ=	 21
+
+TTP
+DESCR=	Transportador de Multilicações em Conexões MMS / TCP-IP
+ID=	MMST
+NSEQ=	 22
+
+TTP
+DESCR=	Transporte Balanceado Bidirecional Frames FT1.2 do IEC/60870 sobre UDP
+ID=	CXTU1
+NSEQ=	 23
+
+TTP
+DESCR=	Transporte Balanceado Bidirecional Frames FT1.2 do IEC/60870 sobre TTY
+ID=	CXTY1
+NSEQ=	 24
+
+TTP
+DESCR=	Transportador de Conexões UTR em Frames Assíncronos 32 Bits sobre TTY
+ID=	CA32Y
+NSEQ=	 25
+
+TTP
+DESCR=	Transporte de Frames Open-MODBUS TCP/IP
+ID=	TMBUS
+NSEQ=	 26
+
+TTP
+DESCR=	Transporte de Frames Assíncronos HDLC sobre TTY
+ID=	YHDLC
+NSEQ=	 27
+
+TTP
+DESCR=	Transportador Balanceado em Frames FT1.2 do IEC/60870 para terminal server
+ID=	IEC1S
+NSEQ=	 28
+
+TTP
+DESCR=	Transportador Não Balanceado em Frames FT1.2 do IEC/60870 para terminal server
+ID=	IEC2S
+NSEQ=	 29
+
+TTP
+DESCR=	Transportador em Frames FT3-DNP do IEC/60870 para terminal server
+ID=	IEC3S
+NSEQ=	 30
+
+TTP
+DESCR=	Transporte de Frames MODBUS para terminal server
+ID=	SMBUS
+NSEQ=	 31
+
+TTP
+DESCR=	Transportador em Frames Assíncronos 32 Bits para terminal server
+ID=	A32S
+NSEQ=	 32
+
+TTP
+DESCR=	Transportador de Frames do Protocolo Microlab para terminal server
+ID=	SMLAB
+NSEQ=	 33
+
+TTP
+DESCR=	Transporte de Frames Assíncronos HDLC para terminal server
+ID=	SHDLC
+NSEQ=	 34
+
+TTP
+DESCR=	Transporte de SNMP
+ID=	TSNMP
+NSEQ=	 35
+
+TTP
+DESCR=	Transportador Nao Balanceado em Frames FT1.2 do IEC/60870 sobre TCP
+ID=	IEC2T
+NSEQ=	 36
+

@@ -1,0 +1,24 @@
+;************ GE GRID SOLUTIONS ************
+;********** Dados da Entidade PRO **********
+;** Arquivo gerado em 13/05/2026 16:17:31 **
+;** Autor: Nicholas
+;** Empresa: Automa
+;********************************************************
+
+; *** ARQUIVO COM 1 PRO(S)
+
+PRO
+             ID = gsnmp
+           NOME = Conversor de Protocolo SNMP (gerente)
+          SCRAT = gtsnmp_on.rc
+          SCRDE = gtsnmp_off.rc
+          TINIC = 16
+          ATIVA = CAD
+          ATVAT = AUT
+          ESSEN = ESC
+          HORAA = 0
+          MONIT = MON
+          NUATV = 4
+          PERIO = 0
+          TIPPR = INSP
+

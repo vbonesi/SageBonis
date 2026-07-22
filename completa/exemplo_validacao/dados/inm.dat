@@ -1,0 +1,26 @@
+
+INM
+CLASSE=	SSC_ClasAlr
+CTX=	tr
+TIPCO=	NOR
+
+INM
+CLASSE=	SSC_ClasCat
+CTX=	tr
+TIPCO=	NOR
+
+INM
+CLASSE=	SCD_ClasIds
+CTX=	tr
+TIPCO=	NOR
+
+INM
+CLASSE=	SCD_ClasCod
+CTX=	tr
+TIPCO=	NOR
+
+INM
+CLASSE=	SSC_ClasTnd
+CTX=	tr
+TIPCO=	NOR
+

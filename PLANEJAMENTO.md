@@ -111,9 +111,9 @@ MODBUS → 61850 → SNMP → ICCP/SICCP**, com aquisição **e** distribuição
 controle; os demais só aquisição, seguindo o que a própria macro GE de
 referência já limitava). Fora do escopo por ora: **103** (sem nenhuma base real
 no acervo, só documentação de manual — diferente de OPC UA/C37.118, que nem
-documentação tem), **OPC UA**, **C37.118** e, como só se confirmou ao
-investigar (ver abaixo), **ICCP/SICCP** — sem base real disponível pra validar
-nenhum dos quatro; retomar qualquer um se aparecer uma.
+documentação tem) e **OPC UA**/**C37.118** — sem base real nem manual
+suficientemente completo disponível; retomar qualquer um se aparecer uma base
+ou documentação equivalente ao que resolveu o ICCP (ver abaixo).
 
 **Entregue**: **104**, **101**, **DNP3** e **MODBUS**, confirmados contra bases
 reais (`conv_iccp104`/GRD para 104, aquisição e distribuição; base do próprio
@@ -183,36 +183,60 @@ dados) — vale pra qualquer `CABECALHOS_*` que cresça no futuro, não só pro
 SNMP. Reaplicado na planilha real depois do fix (mesmo processo de
 ensaio-antes-de-aplicar do item anterior).
 
-**ICCP/SICCP — investigado, mas fica FORA do escopo por ora** (mesmo motivo de
-103/OPC UA/C37.118: sem base real pra validar). Diferente dos outros 5
-protocolos, aqui a investigação virou uma conclusão negativa clara, não uma
-implementação: 2 pistas seguidas até o fim —
-1. `30_base_mestre/biblioteca/protocolos/iccp/` (uma referência supostamente
-   curada, com pastas `aquisicao/`+`distribuicao/`) — a pasta `distribuicao/`
-   está **vazia**, e a `aquisicao/` na verdade contém dados no **padrão 104**
-   (`LSC.TTP=CX104`, `CNF.CONFIG` com `IGNERS/SINCR/INVAL/PlPr/LiPr/PlRe/LiRe`),
-   não nenhum campo específico de ICCP.
-2. `fin_ems` (única base real do acervo listada como "DNP+ICCP" no inventário)
-   — busca por `TTP`/`TCV` em **todos** os `lsc.dat` (incluindo includes) só
-   encontra `IEC3S`/`UDPF3` (DNP3 aquisição/distribuição) e `NLTP` (enlaces
-   internos de cálculo) — nenhum traço de ICCP em nenhum `.dat`.
+**ICCP investigado no SkillSAGE primeiro — sem base real** (2 pistas seguidas
+até o fim): `30_base_mestre/biblioteca/protocolos/iccp/` (referência
+supostamente curada) tem a pasta `distribuicao/` **vazia**, e a `aquisicao/`
+na verdade contém dados no **padrão 104**, não nenhum campo de ICCP; `fin_ems`
+(única base real do acervo listada "DNP+ICCP") não tem nenhum traço de ICCP em
+nenhum `.dat`. A própria documentação curada do SkillSAGE confirma: *"No
+acervo NÃO há base ICCP. O `conv_iccp104` é uma ferramenta que converte
+ICCP → 104 (...) não ICCP."*
 
-A própria documentação curada do SkillSAGE (`references/protocolos.md`)
-confirma essa conclusão explicitamente: *"No acervo NÃO há base ICCP. O
-`conv_iccp104` é uma ferramenta que converte ICCP → 104 (...) A `CNF.CONFIG`
-placa/linha que aparece ali é 104, não ICCP (...) o `host_mms`/`MUL` do ICCP é
-confirmado só no manual"*. Ou seja: o que existe no acervo inteiro sobre ICCP é
-descrição de manual (Anx15/Anx17), nunca uma base real — e o modelo real seria
-estruturalmente diferente dos 6 já entregues (MMS via `MUL`/`ENM`, não
-`CXU`/`UTR`/`ENU`; configuração por VCC + Acordo Bilateral/DataSets, não
-CNF.CONFIG ponto-a-ponto), então não dava pra generalizar por analogia com
-confiança, como foi feito pros outros.
+**Mas o usuário apontou o manual oficial** (`SAGE_ManCfg_Anx15_ICCP_rev21.pdf`,
+CEPEL, em `Drive/SAGE/Manuais/`) como fonte suficiente — diferente de
+103/OPC UA/C37.118 (que não têm nem base real nem manual completo o bastante),
+o Anx15 é completo e determinístico (é literalmente de onde uma base real
+viria). **Entregue com base nele**: existem **dois mecanismos** de ICCP no
+SAGE, confirmados no manual e cruzados com um achado real (ver abaixo) — o
+**conversor "iccp"** (fino, LSC/CNF/MUL/ENM/NV1/NV2 por centro remoto, é o que
+`gerar_ied` modela) e o **servidor "SICCP"** (genérico, expõe TUDO
+automaticamente via um único arquivo de sistema `siccp.cnf`, **sem nenhuma
+entidade** — por isso nenhuma base real do acervo tinha entidades de ICCP: a
+maioria dos deployments reais usa o SICCP genérico, não o conversor fino).
 
-**Ainda pendente**: nada mais planejado — os 8 protocolos do escopo original
-estão todos ou entregues (104/101/DNP3/MODBUS/61850/SNMP) ou explicitamente
-adiados por falta de base real (103/OPC UA/C37.118/ICCP-SICCP). Retomar
-qualquer um dos adiados se uma base real aparecer no SkillSAGE (ou em outra
-fonte).
+`gerar_ied` para "iccp": igual ao 61850, é bidirecional por natureza
+(`LSC.TIPO="AD"`, `Direcao` não usado, `TN1` fixo `NLN1`), mas **sem**
+`CXU`/`UTR`/`ENU`/`TAC`/`TDD` — usa `MUL` ("Multiligação com Centro de
+Controle Remoto") + `ENM` ("Enlace de multiligação", servidor principal/
+reserva) no lugar. Diferente do 61850, **um único NV1 reúne até 8 tipos de
+NV2** — aquisição (`ADAQ`/`AAAQ`/`ATTA`/`CSIM`) **e** distribuição
+(`DDAQ`/`DAAQ`/`DTTA`/`CDUP`) podem coexistir no mesmo canal MMS bidirecional.
+`CNF.CONFIG` reaproveita `ApTitle`/`AeQ`/`PS`/`SS`/`TS` do 61850 (mesmo
+default), mas troca os campos obrigatórios: `IDIG`/`IANL`/`IDIS`/`TOUT`/
+`MPDU`/`T2V`/`OPMSK`/`BLC3` — `OPMSK` usa default **0** aqui (não 228521 do
+61850, mesma coluna da planilha, resolvido por protocolo dentro da função
+dedicada em vez de `_DEFAULTS_IED`, que é compartilhado por nome de campo).
+
+**Achado real durante o teste UNO**: a planilha real do usuário **já tinha**
+as abas `mul`/`enm` populadas — não de ICCP, mas do **61850** (o `CNF.CONFIG`
+correspondente bate exatamente com o formato ApTitle/.../OPMSK/GOOSE já
+confirmado pro 61850). Isso confirma o schema de `MUL`/`ENM` contra uma base
+real (mesmas colunas ID/CNF/GSD/ORDEM e ID/MUL/ORDEM do manual) — mas também
+revela que **o `_gerar_infra_ied_61850` já entregue NÃO gera `MUL`/`ENM`**,
+uma lacuna real no protocolo já implementado (a base real de referência usada
+pro 61850, `par`/CTEEP, não tinha CXU/UTR/ENU nem eu cheguei a procurar
+MUL/ENM nela na hora). Não corrigido nesta rodada — ficou fora do pedido desta
+vez (só ICCP/DNP3), fica como pendência pra próxima sessão se o usuário quiser.
+
+Validado: smoke test em memória (105 checks, incluindo regressão dos 6
+protocolos anteriores) + teste ponta-a-ponta via UNO real, incluindo a
+integração com `unificar_pontos` e confirmação de que o upsert em `mul`/`enm`
+só ADICIONOU linhas (as ~90/~180 linhas reais de 61850 ficaram intactas).
+
+**Ainda pendente**: OPC UA e C37.118 (sem base real nem manual completo o
+bastante); e, como achado desta investigação, revisitar `_gerar_infra_ied_61850`
+pra também gerar `MUL`/`ENM` (ver acima). Retomar OPC UA/C37.118 se aparecer
+uma base real ou um manual equivalente ao que resolveu o ICCP.
 
 ### Ganhos rápidos (baixo esforço, alto retorno) — ✅ entregues
 - **Troca de ID global** (`trocar_id_global`) — renomeia um ponto e propaga a todas as

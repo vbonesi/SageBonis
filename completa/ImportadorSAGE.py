@@ -2550,6 +2550,7 @@ CABECALHOS_IEDS = [
     "PlPr", "LiPr", "PlRe", "LiRe", "IGNERS", "SINCR", "INVAL", "TZBR", "DnpLvl", "PROTO",
     "ApTitle", "AeQ", "PS", "SS", "TS", "IDAD", "KEEP", "NREP", "TOUT", "MPDU", "OPMSK", "GOOSE",
     "VERSAO", "HOST", "COMMUNITY",
+    "VERBD", "NSERV1", "NSERV2", "IDIG", "IANL", "IDIS", "T2V", "BLC3",
     "AQANL", "AQPOL", "AQTOT", "INTGR", "NFAIL", "SFAIL", "FAILP", "FAILR",
     "NTENT", "RESPT", "TDESC", "TRANS", "VLUTR", "Redundante", "Gera",
 ]
@@ -2673,6 +2674,47 @@ PARAMS_PROTOCOLO = {
         "tn1_fixo": "SNM1",
         "enutr_por_ordem": {"PRI": "1", "REV": "0"},
     },
+    # ICCP confirmado contra o MANUAL OFICIAL SAGE (SAGE_ManCfg_Anx15_ICCP_rev21.pdf,
+    # CEPEL), não contra uma base real -- o SkillSAGE (e a investigação direta em
+    # duas pistas: a "referência" iccp/aquisicao+distribuicao da biblioteca, que na
+    # verdade é dado 104; e fin_ems, a única base do acervo marcada "ICCP", que não
+    # tem nenhum traço de ICCP em nenhum .dat) confirma que não existe base real
+    # disponível. O manual, porém, é completo e determinístico o suficiente pra
+    # implementar com confiança (é a fonte primária de onde uma base real viria).
+    #
+    # Modelo BEM diferente dos demais -- usa "modelo_infra"="iccp", função à parte
+    # (_gerar_infra_ied_iccp): SEM CXU/UTR/ENU/TAC/TDD (o manual nunca menciona
+    # essas entidades pro TASE.2/ICCP-MMS -- usa MUL "Multiligação com Centro de
+    # Controle Remoto" + ENM "Enlace de multiligação" no lugar, pra escolher
+    # servidor principal/reserva do centro remoto). LSC.TIPO sai "AD" (bidirecional,
+    # igual ao 61850 -- "Direcao" não se aplica). TN1 fixo "NLN1" (igual ao 61850).
+    # NV2 é o que muda mais: em vez de "grupos_leitura"/"grupos_comando" (2 NV1
+    # separados), ICCP usa UM SÓ NV1 com até 8 tipos de NV2 coexistindo -- aquisição
+    # (ADAQ/AAAQ/ATTA/CSIM) E distribuição (DDAQ/DAAQ/DTTA/CDUP) no MESMO canal MMS,
+    # porque o mesmo VCC pode aquisitar E distribuir simultaneamente.
+    #
+    # TCV=CNVN (não CNVO do 61850!) e TTP=MMST (mesmo do 61850). CNF.CONFIG usa
+    # ApTitle/AeQ/PS/SS/TS (parte opcional, mesmo formato e default do 61850) +
+    # IDIG/IANL/IDIS/TOUT/MPDU/T2V/OPMSK/BLC3 (parte obrigatória, 8 tokens --
+    # confirmado no manual, incluindo o pseudocódigo com nomes de variável
+    # idênticos: "IDIG= td IANL= ta IDIS= tt TOUT= to MPDU= o1 T2V= o2 OPMSK= o3
+    # BLC3= o4"). Note que OPMSK aqui usa default "0" ("nenhuma opção", recomendado
+    # pelo manual), diferente do default de 61850 (228521) que reaproveita a MESMA
+    # coluna da planilha -- por isso o default de OPMSK é resolvido on-a-fly dentro
+    # de _gerar_infra_ied_iccp, não via _DEFAULTS_IED (que é compartilhado entre
+    # protocolos por nome de campo). IDIG/IANL/IDIS (temporizadores de
+    # integridade/intervalo) não têm default -- o valor recomendado depende de o
+    # VCC remoto suportar o bloco 2 do ICCP (RBE) ou não (1800s vs 2-10s), algo que
+    # só se sabe olhando o Acordo Bilateral real.
+    "ICCP": {
+        "tcv": "CNVN", "ttp": "MMST", "modelo_infra": "iccp",
+        "grupos_todos": [
+            ("ADAQ", "PDF", "Aquisição Digital"), ("AAAQ", "PAF", "Aquisição Analógica"),
+            ("ATTA", "PTF", "Aquisição Discreta/Totalizador"), ("CSIM", "CGF", "Comando Supervisório"),
+            ("DDAQ", "PDF", "Distribuição Digital"), ("DAAQ", "PAF", "Distribuição Analógica"),
+            ("DTTA", "PTF", "Distribuição Discreta/Totalizador"), ("CDUP", "CGF", "Roteamento de Controle"),
+        ],
+    },
 }
 # TAC padrão -- 1 registro só, TPAQS=ASAC, sem sufixo no ID/NOME. Usado por
 # 104/101/DNP3; MODBUS sobrescreve com 2 registros (ver acima).
@@ -2681,10 +2723,16 @@ _TAC_PADRAO = [("", "", "ASAC")]
 _DEFAULTS_IED = {
     "MAP": "GERAL", "NSRV1": "localhost", "NSRV2": "localhost",
     "IGNERS": "0", "SINCR": "0", "INVAL": "103", "TZBR": "0", "DnpLvl": "2", "PROTO": "BIN",
-    # AeQ/PS/SS/TS/IDAD/KEEP/NREP/TOUT/MPDU/GOOSE: constantes em quase todos os
-    # 12 exemplos reais de 61850 (par/CTEEP); OPMSK=228521 é o valor mais comum
-    # do acervo inteiro (11/12 nesta base). "ApTitle" fica de fora -- é
-    # endereçamento MMS específico do site/IED, sem default sensato possível.
+    # ApTitle/AeQ/PS/SS/TS/IDAD/KEEP/NREP/TOUT/MPDU/GOOSE: constantes em quase
+    # todos os 12 exemplos reais de 61850 (par/CTEEP), com ApTitle="1 1 10 /
+    # 1 1 10" confirmado igual também na parte "fixa-opcional" default do
+    # CNF.CONFIG do ICCP (manual Anx15) -- daí virar default compartilhado
+    # entre os dois protocolos que usam essa coluna. OPMSK=228521 é o valor
+    # mais comum do acervo inteiro de 61850 (11/12 nesta base); ICCP usa um
+    # default PRÓPRIO (0, "nenhuma opção") pra essa MESMA coluna, resolvido
+    # dentro de _gerar_infra_ied_iccp em vez de aqui, já que esse dict é
+    # compartilhado por nome de campo entre todos os protocolos.
+    "ApTitle": "1 1 10 / 1 1 10",
     "AeQ": "1", "PS": "1 / 1", "SS": "1", "TS": "1", "IDAD": "600",
     "KEEP": "5", "NREP": "3", "TOUT": "10", "MPDU": "0", "OPMSK": "228521", "GOOSE": "0",
     # VERSAO/COMMUNITY confirmados idênticos em 2 bases reais de SNMP
@@ -2692,6 +2740,12 @@ _DEFAULTS_IED = {
     # protocolo). "HOST" fica de fora -- é o IP do equipamento monitorado,
     # sem default sensato possível.
     "VERSAO": "2c", "COMMUNITY": "public",
+    # T2V/BLC3 do ICCP: "normalmente preenchido com zero" (T2V, deixa o SAGE
+    # negociar a TASE2_Version do remoto) e "zero indica a escolha do default"
+    # (BLC3, perfil de storage type) -- confirmado no manual (Anx15, seção
+    # CNF.CONFIG). IDIG/IANL/IDIS (temporizadores) ficam de fora -- dependem de
+    # o VCC remoto suportar o bloco 2 do ICCP, sem default universal seguro.
+    "T2V": "0", "BLC3": "0",
     "AQANL": "1000", "AQPOL": "1000", "AQTOT": "0",
     "NFAIL": "2", "SFAIL": "200", "FAILP": "0", "FAILR": "0",
     "NTENT": "4", "RESPT": "1500", "TDESC": "15", "TRANS": "12", "VLUTR": "0",
@@ -2760,8 +2814,8 @@ def _gerar_infra_ied_61850(linha, headers, id_ied, params):
     12 do OPMSK ligado, ver referências), que não é automatizado por não caber
     no modelo de 1-linha-por-IED desta aba; monte as 3 linhas manualmente
     (2 físicas + 1 virtual com OPMSK ajustado) se precisar desse padrão."""
-    saida = {"lsc": [], "cnf": [], "cxu": [], "utr": [], "enu": [],
-             "nv1": [], "nv2": [], "tac": [], "tdd": []}
+    saida = {"lsc": [], "cnf": [], "cxu": [], "utr": [], "enu": [], "tac": [], "tdd": [],
+             "mul": [], "enm": [], "nv1": [], "nv2": []}
     nome_ied = _valor(linha, headers, "Nome") or ("Canal 61850 %s" % id_ied)
 
     saida["lsc"].append({
@@ -2791,11 +2845,66 @@ def _gerar_infra_ied_61850(linha, headers, id_ied, params):
     return saida
 
 
+_CAMPOS_CNF_ICCP_OPCIONAL = ("ApTitle", "AeQ", "PS", "SS", "TS")
+_CAMPOS_CNF_ICCP_OBRIGATORIO = ("IDIG", "IANL", "IDIS", "TOUT", "MPDU", "T2V", "BLC3")
+
+
+def _gerar_infra_ied_iccp(linha, headers, id_ied, params):
+    """Lógica PURA da casca ICCP/TASE.2 -- confirmado contra o manual oficial
+    (Anx15 CEPEL), ver comentário em PARAMS_PROTOCOLO["ICCP"]. Sem CXU/UTR/ENU/
+    TAC/TDD -- usa MUL (multiligação, domain name da direção de aquisição) +
+    ENM (enlace, servidor principal/reserva do centro remoto) no lugar. LSC.TIPO
+    sai sempre "AD" (bidirecional, "Direcao" não é usado). TN1 fixo "NLN1". Um
+    único NV1 reúne todos os tipos de NV2 presentes em params["grupos_todos"] --
+    aquisição e distribuição podem coexistir no mesmo canal MMS. "Redundante"
+    controla só se um 2º servidor (NSERV2/ENM) é criado -- o manual não vincula
+    isso a nenhum outro efeito (ao contrário do UTR/ENU dos protocolos
+    "clássicos", que não existem aqui)."""
+    saida = {"lsc": [], "cnf": [], "cxu": [], "utr": [], "enu": [], "tac": [], "tdd": [],
+             "mul": [], "enm": [], "nv1": [], "nv2": []}
+    nome_ied = _valor(linha, headers, "Nome") or ("Canal ICCP %s" % id_ied)
+    gsd = _valor(linha, headers, "GSD")
+
+    redundante = _valor(linha, headers, "Redundante").strip().lower() in _VALORES_ATIVO
+    nserv1 = _campo_ied(linha, headers, "NSERV1") or ("%s_SRV1" % id_ied)
+    nserv2 = (_campo_ied(linha, headers, "NSERV2") or ("%s_SRV2" % id_ied)) if redundante else ""
+
+    saida["lsc"].append({
+        "ID": id_ied, "NOME": nome_ied, "GSD": gsd,
+        "TCV": params["tcv"], "TTP": params["ttp"], "TIPO": "AD",
+        "VERBD": _valor(linha, headers, "VERBD"),
+        "NSERV1": nserv1, "NSERV2": nserv2,
+    })
+
+    # OPMSK tem default próprio do ICCP (0 -- "nenhuma opção", recomendado no
+    # manual), diferente do default de 61850 (228521) que reaproveita a MESMA
+    # coluna da planilha -- por isso resolvido aqui, não via _DEFAULTS_IED.
+    partes_cnf = ["%s= %s" % (c, _campo_ied(linha, headers, c)) for c in _CAMPOS_CNF_ICCP_OPCIONAL]
+    partes_cnf += ["%s= %s" % (c, _campo_ied(linha, headers, c)) for c in _CAMPOS_CNF_ICCP_OBRIGATORIO]
+    partes_cnf.append("OPMSK= %s" % (_valor(linha, headers, "OPMSK") or "0"))
+    saida["cnf"].append({"ID": id_ied, "LSC": id_ied, "CONFIG": " ".join(partes_cnf)})
+
+    mul_id = "%s_AQ" % id_ied
+    saida["mul"].append({"ID": mul_id, "CNF": id_ied, "GSD": gsd, "LSIMP": "0", "ORDEM": "1"})
+    saida["enm"].append({"ID": nserv1, "MUL": mul_id, "ORDEM": "1"})
+    if redundante:
+        saida["enm"].append({"ID": nserv2, "MUL": mul_id, "ORDEM": "2"})
+
+    nv1_id = "%s_NV1" % id_ied
+    saida["nv1"].append({"ID": nv1_id, "CNF": id_ied, "ORDEM": "1", "TN1": "NLN1", "CONFIG": nome_ied})
+    for ordem_nv2, (tn2, tppnt, desc) in enumerate(params["grupos_todos"], start=1):
+        saida["nv2"].append({
+            "ID": "%s_%s" % (nv1_id, tn2), "NV1": nv1_id, "ORDEM": str(ordem_nv2),
+            "TN2": tn2, "TPPNT": tppnt, "CONFIG": "%s %s" % (desc, id_ied),
+        })
+    return saida
+
+
 def _gerar_infra_ied(linha, headers):
     """Lógica PURA: {entidade: [linha_dict, ...]} a upsertar para 1 linha ativa da
     aba IEDs. Testável fora do LibreOffice (mesmo espírito das demais frentes)."""
-    saida = {"lsc": [], "cnf": [], "cxu": [], "utr": [], "enu": [],
-             "nv1": [], "nv2": [], "tac": [], "tdd": []}
+    saida = {"lsc": [], "cnf": [], "cxu": [], "utr": [], "enu": [], "tac": [], "tdd": [],
+             "mul": [], "enm": [], "nv1": [], "nv2": []}
     id_ied = _valor(linha, headers, "ID")
     protocolo = _valor(linha, headers, "Protocolo")
     direcao = _valor(linha, headers, "Direcao")
@@ -2805,6 +2914,8 @@ def _gerar_infra_ied(linha, headers):
 
     if params.get("modelo_infra") == "61850":
         return _gerar_infra_ied_61850(linha, headers, id_ied, params)
+    if params.get("modelo_infra") == "iccp":
+        return _gerar_infra_ied_iccp(linha, headers, id_ied, params)
 
     aquisicao = direcao.strip().lower() == "aquisicao"
 

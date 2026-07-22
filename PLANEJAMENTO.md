@@ -286,18 +286,24 @@ com o `ENU` sempre-em-par dos protocolos clássicos). Validado via
 `MUL`, +3 `ENM` = 1 do ICCP + 2 do 61850) sem alterar nenhuma das linhas reais
 pré-existentes.
 
-**Também pendente — extração reversa de IEDs**: `gerar_ied()` só funciona num
-sentido (config `IEDs` → `LSC`/`CNF`/`NV1`/`NV2`/etc.). Diferente de
-`extrair_pontos()` (que já reconstrói `PontoDigital`/`PontoAnalogico`/
-`ComandoAvulso`/`CanaisDistribuicao` a partir de entidades já importadas), não
-existe hoje uma função simétrica que reconstrua a aba `IEDs` a partir de
-`LSC`/`CNF`/etc. já existentes numa base importada — na planilha real do
-usuário (que já tem 106 `LSC`/`CNF` reais) a aba `IEDs` continua vazia depois
-de `extrair_pontos()`, porque essa função nunca olha pra essas entidades.
-Simétrico à lacuna do 61850 `MUL`/`ENM` fechada acima, mas num escopo maior
-(precisaria inferir `Protocolo` a partir de `LSC.TTP`, `Direcao` a partir de
-`LSC.TIPO`, e desmontar `CNF.CONFIG` de volta em colunas — um "parser reverso"
-por protocolo, o oposto do que `_montar_config_cnf`/`_CAMPOS_CNF_*` fazem hoje).
+**Entregue — extração reversa de IEDs**: `extrair_pontos()` agora também
+reconstrói a aba `IEDs` a partir de `LSC`/`CNF`/`CXU`/`UTR`/`ENU`/`TAC`/`MUL`/
+`ENM` já existentes (`_extrair_ieds`, espelho de `_gerar_infra_ied`/
+`_gerar_infra_ied_61850`/`_gerar_infra_ied_iccp`) — fecha a mesma lacuna que
+`_extrair_ponto_digital`/etc. já fechavam para os pontos, agora para o
+"esqueleto" de canal também. `Protocolo` vem de `(LSC.TCV, LSC.TTP)` (com
+tratamento explícito do `ttp_distribuicao` do DNP3, que já identifica a
+distribuição sem olhar `LSC.TIPO`); `Direcao` vem de `LSC.TIPO`
+(`AA`/`DD`), vazia para 61850/ICCP; `CNF.CONFIG` é desmontado de volta campo a
+campo por um parser genérico (`_parsear_config_cnf`) que sabe a lista exata de
+campos esperados por protocolo/direção e por isso lida corretamente com valor
+multi-token (`ApTitle= 1 1 10 / 1 1 10`); `Redundante` é **inferido** (não
+existe como campo em nenhuma entidade) via contagem de `UTR` (protocolos
+clássicos/SNMP) ou `ENM` (ICCP) — sem efeito para 61850, mesma regra do
+forward. Validado com round-trip forward→reverso em memória para os 7
+protocolos (`smoke_test_ied.py`) e via UNO real contra a planilha de produção
+(`teste_uno_protocolos.py`) — inclusive reconhecendo corretamente os 90 `LSC`
+de 61850 e 16 de SNMP **já reais** da planilha, não só os sintéticos do teste.
 
 **Ainda pendente**: OPC UA e C37.118 — sem base real nem manual completo o
 bastante disponível; retomar se aparecer uma base real ou um manual

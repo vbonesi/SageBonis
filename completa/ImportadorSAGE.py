@@ -2259,11 +2259,14 @@ def _extrair_canais_e_distribuicao(entidades):
 def extrair_pontos(*args):
     """Macro: espelho de unificar_pontos -- reconstrói PontoDigital/PontoAnalogico/
     ComandoAvulso/CanaisDistribuicao/DistribuicaoPontos a partir das entidades já
-    importadas (PDS/PDF/PAS/PAF/CGS/CGF/PDD/PAD). Fecha o ciclo pra bases já
-    existentes; rodar antes de editar/estender uma base real pelo modelo unificado."""
+    importadas (PDS/PDF/PAS/PAF/CGS/CGF/PDD/PAD). Também espelha gerar_ied --
+    reconstrói a aba IEDs a partir de LSC/CNF/CXU/UTR/ENU/TAC/MUL/ENM (ver
+    _extrair_ieds). Fecha o ciclo pra bases já existentes; rodar antes de
+    editar/estender uma base real pelos modelos unificado ou de protocolo/IED."""
     doc = XSCRIPTCONTEXT.getDocument()  # type: ignore
     entidades = {}
-    for nome in ("pds", "pdf", "pas", "paf", "cgs", "cgf", "pdd", "pad"):
+    for nome in ("pds", "pdf", "pas", "paf", "cgs", "cgf", "pdd", "pad",
+                 "lsc", "cnf", "cxu", "utr", "enu", "tac", "mul", "enm"):
         if _aba_existe_ci(doc, nome.upper()):
             entidades[nome] = _ler_entidade(_get_sheet(doc, nome.upper()))
 
@@ -2273,6 +2276,7 @@ def extrair_pontos(*args):
         (NOME_ABA_COMANDO_AVULSO, CABECALHOS_COMANDO_AVULSO),
         (NOME_ABA_CANAIS_DISTRIBUICAO, CABECALHOS_CANAIS_DISTRIBUICAO),
         (NOME_ABA_DISTRIBUICAO_PONTOS, CABECALHOS_DISTRIBUICAO_PONTOS),
+        (NOME_ABA_IEDS, CABECALHOS_IEDS),
     ):
         _garantir_aba_config(doc, nome_aba, cabecalhos)
 
@@ -2281,6 +2285,7 @@ def extrair_pontos(*args):
     ids_com_ponto = {l["ID_Logico"] for l in linhas_pd} | {l["ID_Logico"] for l in linhas_pa}
     linhas_ca = _extrair_comandos_avulsos(entidades, ids_com_ponto)
     linhas_canais, linhas_dist = _extrair_canais_e_distribuicao(entidades)
+    linhas_ieds = _extrair_ieds(entidades)
 
     _upsert_linhas_entidade(doc, NOME_ABA_PONTO_DIGITAL, linhas_pd, colunas_chave=("ID_Fisico",))
     _upsert_linhas_entidade(doc, NOME_ABA_PONTO_ANALOGICO, linhas_pa, colunas_chave=("ID_Fisico",))
@@ -2288,6 +2293,7 @@ def extrair_pontos(*args):
     _upsert_linhas_entidade(doc, NOME_ABA_CANAIS_DISTRIBUICAO, linhas_canais, colunas_chave=("Nome",))
     _upsert_linhas_entidade(doc, NOME_ABA_DISTRIBUICAO_PONTOS, linhas_dist,
                             colunas_chave=("ID_Logico", "Canal"))
+    _upsert_linhas_entidade(doc, NOME_ABA_IEDS, linhas_ieds, colunas_chave=("ID",))
 
 
 # ===============================================================
@@ -3112,6 +3118,178 @@ def gerar_ied(*args):
     saida = _mesclar_saidas(*saidas) if saidas else {}
     for entidade, linhas_saida in saida.items():
         _upsert_linhas_entidade(doc, entidade.upper(), linhas_saida)
+
+
+# ---------------------------------------------------------------
+# ---- Extração reversa de IEDs: LSC/CNF/CXU/UTR/ENU/TAC/MUL/ENM -> IEDs ----
+# ---------------------------------------------------------------
+# Espelho de _gerar_infra_ied/_gerar_infra_ied_61850/_gerar_infra_ied_iccp:
+# reconstrói a aba IEDs a partir da infraestrutura de canal já importada de uma
+# base real. 1 LSC = 1 linha de IEDs (aquisição e distribuição de um protocolo
+# "clássico" são LSC distintos, nunca fundidos numa linha só -- exatamente como
+# a geração forward também trata cada 1 como uma linha independente da aba).
+# Reconstrução de melhor esforço, não um inverso perfeito: LSC cujo TCV/TTP não
+# bate com nenhum protocolo de PARAMS_PROTOCOLO (ainda não modelado, ex.
+# 103/OPC UA/C37.118) é ignorado silenciosamente -- mesmo espírito do Método
+# não reconhecido em _inferir_metodo.
+
+def _protocolo_e_direcao_por_lsc(tcv, ttp, tipo):
+    """(Protocolo, Direcao) a partir de LSC.TCV/TTP/TIPO, ou (None, None) se o
+    par TCV/TTP não bater com nenhum protocolo conhecido. Direcao vem de TIPO
+    (AA=Aquisicao/DD=Distribuicao) pros protocolos "clássicos"; fica '' pra
+    61850/ICCP (bidirecional, TIPO sempre AD, Direcao não se aplica -- mesma
+    regra do forward)."""
+    for protocolo, params in PARAMS_PROTOCOLO.items():
+        if tcv != params["tcv"]:
+            continue
+        if params.get("modelo_infra") in ("61850", "iccp"):
+            if ttp == params["ttp"]:
+                return protocolo, ""
+            continue
+        if ttp == params.get("ttp_distribuicao"):
+            return protocolo, "Distribuicao"
+        if ttp == params["ttp"]:
+            tipo_norm = tipo.strip().upper()
+            direcao = "Aquisicao" if tipo_norm == "AA" else ("Distribuicao" if tipo_norm == "DD" else "")
+            return protocolo, direcao
+    return None, None
+
+
+def _parsear_config_cnf(config, campos_esperados):
+    """Reverso de _montar_config_cnf/_gerar_infra_ied_*: dado o texto de
+    CNF.CONFIG e a lista ORDENADA dos campos que a geração usaria pra esse
+    protocolo/direção (ver _campos_cnf_esperados), devolve {campo: valor}.
+    Sabe lidar com valor multi-token (ex.: ApTitle='1 1 10 / 1 1 10') porque
+    procura o próximo CAMPO ESPERADO, não o próximo espaço em branco -- assim
+    tudo que sobra até lá (barras, espaços internos) vira o valor de um só
+    campo. Um campo esperado ausente no texto (versão antiga, protocolo com
+    menos campos) simplesmente não aparece no resultado."""
+    valores = {}
+    for i, campo in enumerate(campos_esperados):
+        marcador = "%s= " % campo
+        pos = config.find(marcador)
+        if pos < 0:
+            continue
+        inicio = pos + len(marcador)
+        fim = len(config)
+        for prox in campos_esperados[i + 1:]:
+            pos_prox = config.find("%s= " % prox, inicio)
+            if pos_prox >= 0:
+                fim = pos_prox
+                break
+        valores[campo] = config[inicio:fim].strip()
+    return valores
+
+
+def _campos_cnf_esperados(params, aquisicao):
+    """Mesma lista/ordem de campos que _montar_config_cnf usaria pra montar o
+    CNF.CONFIG desse protocolo/direção -- usada só pra saber onde parsear de
+    volta (ver _parsear_config_cnf); não gera nada."""
+    campos_customizados = params.get("cnf_campos")
+    if campos_customizados:
+        return list(campos_customizados)
+    base = ["PlPr", "LiPr", "PlRe", "LiRe"]
+    if not aquisicao and not params.get("cnf_extra_tambem_distribuicao"):
+        return base
+    extras = list(params.get("cnf_extra", ()))
+    return (base + extras) if params.get("cnf_extra_pos") == "depois" else (extras + base)
+
+
+def _extrair_ieds(entidades):
+    """Lógica PURA: linhas de IEDs a partir de LSC/CNF/CXU/UTR/ENU/TAC/MUL/ENM
+    já importados. Ver nota da seção acima."""
+    lsc_dicts = _linhas_ativas_como_dicts(*entidades.get("lsc", (None, None)))
+    if not lsc_dicts:
+        return []
+    cnf_dicts = _linhas_ativas_como_dicts(*entidades.get("cnf", (None, None)))
+    cxu_dicts = _linhas_ativas_como_dicts(*entidades.get("cxu", (None, None)))
+    utr_dicts = _linhas_ativas_como_dicts(*entidades.get("utr", (None, None)))
+    enu_dicts = _linhas_ativas_como_dicts(*entidades.get("enu", (None, None)))
+    tac_dicts = _linhas_ativas_como_dicts(*entidades.get("tac", (None, None)))
+    mul_dicts = _linhas_ativas_como_dicts(*entidades.get("mul", (None, None)))
+    enm_dicts = _linhas_ativas_como_dicts(*entidades.get("enm", (None, None)))
+
+    cnf_por_lsc = {c["LSC"]: c for c in cnf_dicts if c.get("LSC")}
+    cxu_por_id = {c["ID"]: c for c in cxu_dicts if c.get("ID")}
+    utr_por_cxu = {}
+    for u in utr_dicts:
+        utr_por_cxu.setdefault(u.get("CXU", ""), []).append(u)
+    enu_por_cxu = {}
+    for e in enu_dicts:
+        enu_por_cxu.setdefault(e.get("CXU", ""), []).append(e)
+    tac_por_lsc = {}
+    for t in tac_dicts:
+        tac_por_lsc.setdefault(t.get("LSC", ""), []).append(t)
+    mul_por_cnf = {}
+    for m in mul_dicts:
+        mul_por_cnf.setdefault(m.get("CNF", ""), []).append(m)
+    enm_por_mul = {}
+    for e in enm_dicts:
+        enm_por_mul.setdefault(e.get("MUL", ""), []).append(e)
+
+    def _primeiro_pri(linhas):
+        return next((l for l in linhas if l.get("ORDEM") == "PRI"), linhas[0] if linhas else None)
+
+    saida = []
+    for lsc in lsc_dicts:
+        id_ied = lsc.get("ID", "")
+        if not id_ied:
+            continue
+        protocolo, direcao = _protocolo_e_direcao_por_lsc(
+            lsc.get("TCV", ""), lsc.get("TTP", ""), lsc.get("TIPO", ""))
+        if not protocolo:
+            continue  # TCV/TTP não reconhecido -- protocolo ainda não modelado
+        params = PARAMS_PROTOCOLO[protocolo]
+        config = cnf_por_lsc.get(id_ied, {}).get("CONFIG", "")
+        linha = {"ID": id_ied, "Protocolo": protocolo, "Direcao": direcao,
+                 "Nome": lsc.get("NOME", ""), "GSD": lsc.get("GSD", "")}
+
+        modelo = params.get("modelo_infra")
+        if modelo == "61850":
+            linha["MAP"] = lsc.get("MAP", "")
+            linha["NSRV1"] = lsc.get("NSRV1", "")
+            linha["NSRV2"] = lsc.get("NSRV2", "")
+            linha.update(_parsear_config_cnf(config, _CAMPOS_CNF_61850))
+            tacs = tac_por_lsc.get(id_ied, [])
+            if tacs:
+                linha["INS"] = tacs[0].get("INS", "")
+        elif modelo == "iccp":
+            linha["VERBD"] = lsc.get("VERBD", "")
+            linha["NSERV1"] = lsc.get("NSERV1", "")
+            linha["NSERV2"] = lsc.get("NSERV2", "")
+            campos_iccp = list(_CAMPOS_CNF_ICCP_OPCIONAL) + list(_CAMPOS_CNF_ICCP_OBRIGATORIO) + ["OPMSK"]
+            linha.update(_parsear_config_cnf(config, campos_iccp))
+            muls = mul_por_cnf.get(id_ied, [])
+            enms = enm_por_mul.get(muls[0]["ID"], []) if muls else []
+            linha["Redundante"] = "S" if len(enms) > 1 else ""
+        else:
+            linha["MAP"] = lsc.get("MAP", "")
+            linha["NSRV1"] = lsc.get("NSRV1", "")
+            linha["NSRV2"] = lsc.get("NSRV2", "")
+            aquisicao = direcao == "Aquisicao"
+            linha.update(_parsear_config_cnf(config, _campos_cnf_esperados(params, aquisicao)))
+
+            cxu = cxu_por_id.get(id_ied)
+            if cxu:
+                for campo in ("AQANL", "AQPOL", "AQTOT", "INTGR", "NFAIL", "SFAIL", "FAILP", "FAILR"):
+                    linha[campo] = cxu.get(campo, "")
+            utrs = utr_por_cxu.get(id_ied, [])
+            utr_pri = _primeiro_pri(utrs)
+            if utr_pri:
+                linha["NTENT"] = utr_pri.get("NTENT", "")
+                linha["RESPT"] = utr_pri.get("RESPT", "")
+            linha["Redundante"] = "S" if len(utrs) > 1 else ""
+            enu_pri = _primeiro_pri(enu_por_cxu.get(id_ied, []))
+            if enu_pri:
+                linha["TDESC"] = enu_pri.get("TDESC", "")
+                linha["TRANS"] = enu_pri.get("TRANS", "")
+                linha["VLUTR"] = enu_pri.get("VLUTR", "")
+            if aquisicao:
+                tacs = tac_por_lsc.get(id_ied, [])
+                if tacs:
+                    linha["INS"] = tacs[0].get("INS", "")
+        saida.append(linha)
+    return saida
 
 
 # ===============================================================

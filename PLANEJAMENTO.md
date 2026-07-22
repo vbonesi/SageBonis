@@ -111,8 +111,9 @@ MODBUS → 61850 → SNMP → ICCP/SICCP**, com aquisição **e** distribuição
 controle; os demais só aquisição, seguindo o que a própria macro GE de
 referência já limitava). Fora do escopo por ora: **103** (sem nenhuma base real
 no acervo, só documentação de manual — diferente de OPC UA/C37.118, que nem
-documentação tem), **OPC UA** e **C37.118** — sem base real disponível pra
-validar nenhum dos três; retomar se aparecer uma.
+documentação tem), **OPC UA**, **C37.118** e, como só se confirmou ao
+investigar (ver abaixo), **ICCP/SICCP** — sem base real disponível pra validar
+nenhum dos quatro; retomar qualquer um se aparecer uma.
 
 **Entregue**: **104**, **101**, **DNP3** e **MODBUS**, confirmados contra bases
 reais (`conv_iccp104`/GRD para 104, aquisição e distribuição; base do próprio
@@ -178,13 +179,40 @@ de SNMP existir, não ganhava as 3 colunas novas ao rodar `gerar_ied` de novo,
 porque a função simplesmente retornava sem checar se o cabeçalho já existente
 estava desatualizado. Corrigido para comparar o cabeçalho atual com o canônico
 e completar as colunas que faltarem (sem tocar nas já existentes nem nos
-dados) — vale pra qualquer `CABECALHOS_*` que cresça no futuro (ex.: quando
-ICCP/SICCP for implementado), não só pro SNMP. Reaplicado na planilha real
-depois do fix (mesmo processo de ensaio-antes-de-aplicar do item anterior).
+dados) — vale pra qualquer `CABECALHOS_*` que cresça no futuro, não só pro
+SNMP. Reaplicado na planilha real depois do fix (mesmo processo de
+ensaio-antes-de-aplicar do item anterior).
 
-**Ainda pendente**: ICCP/SICCP — precisa de pesquisa própria (endereçamento,
-`CNF.CONFIG`, grupos NV1/NV2 específicos, e como modelar a bidirecionalidade
-entre centros de controle) antes de implementar.
+**ICCP/SICCP — investigado, mas fica FORA do escopo por ora** (mesmo motivo de
+103/OPC UA/C37.118: sem base real pra validar). Diferente dos outros 5
+protocolos, aqui a investigação virou uma conclusão negativa clara, não uma
+implementação: 2 pistas seguidas até o fim —
+1. `30_base_mestre/biblioteca/protocolos/iccp/` (uma referência supostamente
+   curada, com pastas `aquisicao/`+`distribuicao/`) — a pasta `distribuicao/`
+   está **vazia**, e a `aquisicao/` na verdade contém dados no **padrão 104**
+   (`LSC.TTP=CX104`, `CNF.CONFIG` com `IGNERS/SINCR/INVAL/PlPr/LiPr/PlRe/LiRe`),
+   não nenhum campo específico de ICCP.
+2. `fin_ems` (única base real do acervo listada como "DNP+ICCP" no inventário)
+   — busca por `TTP`/`TCV` em **todos** os `lsc.dat` (incluindo includes) só
+   encontra `IEC3S`/`UDPF3` (DNP3 aquisição/distribuição) e `NLTP` (enlaces
+   internos de cálculo) — nenhum traço de ICCP em nenhum `.dat`.
+
+A própria documentação curada do SkillSAGE (`references/protocolos.md`)
+confirma essa conclusão explicitamente: *"No acervo NÃO há base ICCP. O
+`conv_iccp104` é uma ferramenta que converte ICCP → 104 (...) A `CNF.CONFIG`
+placa/linha que aparece ali é 104, não ICCP (...) o `host_mms`/`MUL` do ICCP é
+confirmado só no manual"*. Ou seja: o que existe no acervo inteiro sobre ICCP é
+descrição de manual (Anx15/Anx17), nunca uma base real — e o modelo real seria
+estruturalmente diferente dos 6 já entregues (MMS via `MUL`/`ENM`, não
+`CXU`/`UTR`/`ENU`; configuração por VCC + Acordo Bilateral/DataSets, não
+CNF.CONFIG ponto-a-ponto), então não dava pra generalizar por analogia com
+confiança, como foi feito pros outros.
+
+**Ainda pendente**: nada mais planejado — os 8 protocolos do escopo original
+estão todos ou entregues (104/101/DNP3/MODBUS/61850/SNMP) ou explicitamente
+adiados por falta de base real (103/OPC UA/C37.118/ICCP-SICCP). Retomar
+qualquer um dos adiados se uma base real aparecer no SkillSAGE (ou em outra
+fonte).
 
 ### Ganhos rápidos (baixo esforço, alto retorno) — ✅ entregues
 - **Troca de ID global** (`trocar_id_global`) — renomeia um ponto e propaga a todas as

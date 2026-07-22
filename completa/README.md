@@ -343,6 +343,24 @@ python sync_macro.py inject  --ods completa/SageBonis.ods --py completa/Importad
 python sync_macro.py status  --ods completa/SageBonis.ods --py completa/ImportadorSAGE.py
 ```
 
+## Testes (`completa/tests/`)
+```bash
+python completa/tests/run_all.py            # roda tudo
+python completa/tests/run_all.py --sem-uno   # só os smoke tests (sem soffice)
+```
+- **Smoke tests em memória** (`smoke_test_*.py`) — lógica pura, sem LibreOffice, rodam em
+  segundos: `smoke_test_ied.py` (assistente de protocolo, ~108 checks), `smoke_test_unificacao.py`,
+  `smoke_test_extracao.py`, `smoke_test_ganhos_rapidos.py`. Importam `ImportadorSAGE.py` direto
+  (`importlib`) e chamam as funções `_gerar_*`/`_extrair_*`/etc. isoladas de qualquer UNO.
+- **Teste UNO real** (`teste_uno_protocolos.py`) — sobe um `soffice --headless`, copia o
+  `SageBonis.ods` real pra um arquivo descartável (`/tmp`), injeta a macro atual, roda os 7
+  protocolos via macro de verdade e confirma que o upsert não mexeu nos dados reais
+  pré-existentes (ex.: `mul`/`enm` de 61850). **Nunca escreve no `.ods` rastreado.** Requer
+  `soffice` no `PATH`. O ciclo de vida (subir/derrubar processo, profile, cópia temporária) é
+  todo administrado por `uno_harness.py` (`class TesteUno`, use como *context manager*).
+- Ao adicionar um protocolo/recurso novo, estenda o smoke test correspondente e, se a mudança
+  envolver criação de aba/entidade nova, adicione um caso em `teste_uno_protocolos.py`.
+
 ## Status
 🚧 Em desenvolvimento, mas os 3 itens do roadmap original (verificador, unificação
 de pontos, assistente de protocolo/IED) já foram entregues. Do assistente de

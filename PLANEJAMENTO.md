@@ -111,15 +111,20 @@ MODBUS → 61850 → SNMP → ICCP/SICCP**, com aquisição **e** distribuição
 macro GE de referência já limitava). Fora do escopo por ora: OPC UA e C37.118 —
 sem base real disponível pra validar; retomar se aparecer uma.
 
-**Entregue**: **104** (aquisição e distribuição), confirmado contra base real
-(`conv_iccp104`, GRD — CNF.CONFIG, TCV/TTP, grupos NV1/NV2 por TN1
-A104/C104/D104/O104). `gerar_ied` cria a infraestrutura; validado via UNO real,
-incluindo integração ponta-a-ponta com `unificar_pontos` (NV2 criado aqui →
-consumido por um ponto novo em `PontoDigital`). Detalhes em
+**Entregue**: **104** e **101** (aquisição e distribuição), confirmados contra
+bases reais (`conv_iccp104`/GRD para 104; base do próprio usuário — SE Miracema/
+`neoenergia` — para 101). Mesmo formato de `CNF.CONFIG` nos dois; só troca
+TCV/TTP (104=CNVM/CX104, 101=CNVG/IEC2S) — o código já generalizava sem precisar
+mudar lógica, só adicionar a entrada em `PARAMS_PROTOCOLO`. `gerar_ied` cria a
+infraestrutura; validado via UNO real, incluindo integração ponta-a-ponta com
+`unificar_pontos` (NV2 criado aqui → consumido por um ponto novo em
+`PontoDigital`). 101 tipicamente precisa de uma entrada em `tsr.conf` (serial),
+configurada à parte — fora do modelo desta planilha. Detalhes em
 [completa/README.md](completa/README.md).
 
-**Ainda pendente**: 101, 103, DNP3, MODBUS, 61850, SNMP, ICCP/SICCP — cada um
-precisa de pesquisa própria (endereçamento, `CNF.CONFIG`, grupos NV1/NV2
+**Ainda pendente**: 103, DNP3, MODBUS, 61850, SNMP, ICCP/SICCP (este último com
+aquisição **e** distribuição, não só aquisição) — cada um precisa de pesquisa
+própria (endereçamento, `CNF.CONFIG`, grupos NV1/NV2
 específicos) antes de implementar, seguindo o mesmo padrão do 104.
 
 ### Ganhos rápidos (baixo esforço, alto retorno) — ✅ entregues

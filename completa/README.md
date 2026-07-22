@@ -165,20 +165,32 @@ criados aqui nas abas `PontoDigital`/`PontoAnalogico`/`ComandoAvulso` (Unificaç
 Pontos) para gerar os pontos individuais — esta parte só monta a "casca" onde os
 pontos vão morar, não cria PDF/PDS/PAF/PAS/CGF/CGS.
 
-**Protocolos disponíveis**: **104** e **101**, confirmados contra bases reais
-(aquisição **e** distribuição). Próximos da lista: 103, DNP3, MODBUS, 61850, SNMP,
-ICCP/SICCP (OPC UA e C37.118 ficam de fora por ora, sem base real disponível para
-validar). O 101 tipicamente roda por serial — configure a entrada correspondente em
-`tsr.conf` (`config/<base>/sys/tsr.conf`, transportador `iec1s`/`iec2s`/`iec2t`) à
-parte; é um arquivo de sistema fora do modelo desta planilha, `gerar_ied` não mexe
-nele.
+**Protocolos disponíveis**: **104**, **101** e **DNP3**. 104 e 101 confirmados
+contra bases reais nos dois sentidos (aquisição **e** distribuição); DNP3
+confirmado contra base real só na **aquisição** — a distribuição foi extrapolada
+por consistência (mesmo formato "stripped" do 104/101) e pelo código de
+referência da macro GE, sem uma base real de distribuição DNP3 disponível pra
+validar. **103** ficou de fora por ora — não há nenhuma base real com IEC 103 no
+acervo de referência, só documentação de manual. Próximos da lista: MODBUS,
+61850, SNMP, ICCP/SICCP (este com aquisição **e** distribuição — ICCP funciona
+nos dois sentidos entre centros de controle). OPC UA e C37.118 ficam de fora por
+ora, sem base real disponível para validar.
+
+101 e DNP3 tipicamente rodam por serial — configure a entrada correspondente em
+`tsr.conf` (`config/<base>/sys/tsr.conf`, transportador `iec1s`/`iec2s`/`iec2t`
+para 101, `iec3s` para DNP3 serial) à parte; é um arquivo de sistema fora do
+modelo desta planilha, `gerar_ied` não mexe nele.
 
 Colunas da aba `IEDs`: `ID, Protocolo, Direcao (Aquisicao/Distribuicao), Nome, GSD,
-MAP, NSRV1, NSRV2, PlPr, LiPr, PlRe, LiRe, IGNERS, SINCR, INVAL, AQANL, AQPOL, AQTOT,
-INTGR, NFAIL, SFAIL, FAILP, FAILR, NTENT, RESPT, TDESC, TRANS, VLUTR, Redundante,
-Gera`. A maioria tem um default sensato (ex.: `MAP=GERAL`, `NSRV1/NSRV2=localhost`) —
-só preencha o que quiser mudar; a célula sempre vence o default. `Redundante=S` cria
-`UTR` em par (PRI/REV); `ENU` sempre vem em par (redundância de rede), mesmo com um
+MAP, NSRV1, NSRV2, PlPr, LiPr, PlRe, LiRe, IGNERS, SINCR, INVAL, TZBR, DnpLvl,
+AQANL, AQPOL, AQTOT, INTGR, NFAIL, SFAIL, FAILP, FAILR, NTENT, RESPT, TDESC, TRANS,
+VLUTR, Redundante, Gera`. `IGNERS/SINCR/INVAL` só valem para 104/101;
+`TZBR/DnpLvl` só para DNP3 (cada protocolo usa seu próprio conjunto de campos
+extras no `CONFIG` do CNF — colunas que não se aplicam ao protocolo escolhido
+ficam simplesmente sem uso). A maioria tem um default sensato (ex.: `MAP=GERAL`,
+`NSRV1/NSRV2=localhost`) — só preencha o que quiser mudar; a célula sempre vence
+o default. `Redundante=S` cria `UTR` em par (PRI/REV); `ENU` sempre vem em par
+(redundância de rede), mesmo com um
 `UTR` só, igual ao observado na base real.
 
 > ⚠️ **Simplificação assumida**: a base real de aquisição separa digital e

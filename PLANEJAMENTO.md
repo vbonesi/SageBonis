@@ -107,25 +107,31 @@ depois alimenta a Unificação de Pontos (item 2) via os NV2 criados.
 
 **Escopo final acordado** (ordem de implementação): **104 → 101 → 103 → DNP3 →
 MODBUS → 61850 → SNMP → ICCP/SICCP**, com aquisição **e** distribuição para
-104/101/DNP3 **e ICCP/SICCP** (os demais só aquisição, seguindo o que a própria
-macro GE de referência já limitava). Fora do escopo por ora: OPC UA e C37.118 —
-sem base real disponível pra validar; retomar se aparecer uma.
+104/101/DNP3 **e ICCP/SICCP** (ICCP funciona nos dois sentidos entre centros de
+controle; os demais só aquisição, seguindo o que a própria macro GE de
+referência já limitava). Fora do escopo por ora: **103** (sem nenhuma base real
+no acervo, só documentação de manual — diferente de OPC UA/C37.118, que nem
+documentação tem), **OPC UA** e **C37.118** — sem base real disponível pra
+validar nenhum dos três; retomar se aparecer uma.
 
-**Entregue**: **104** e **101** (aquisição e distribuição), confirmados contra
-bases reais (`conv_iccp104`/GRD para 104; base do próprio usuário — SE Miracema/
-`neoenergia` — para 101). Mesmo formato de `CNF.CONFIG` nos dois; só troca
-TCV/TTP (104=CNVM/CX104, 101=CNVG/IEC2S) — o código já generalizava sem precisar
-mudar lógica, só adicionar a entrada em `PARAMS_PROTOCOLO`. `gerar_ied` cria a
-infraestrutura; validado via UNO real, incluindo integração ponta-a-ponta com
-`unificar_pontos` (NV2 criado aqui → consumido por um ponto novo em
-`PontoDigital`). 101 tipicamente precisa de uma entrada em `tsr.conf` (serial),
-configurada à parte — fora do modelo desta planilha. Detalhes em
+**Entregue**: **104**, **101** e **DNP3**, confirmados contra bases reais
+(`conv_iccp104`/GRD para 104, aquisição e distribuição; base do próprio usuário —
+SE Miracema/`neoenergia` — para 101, aquisição e distribuição; `ctl_dnp_mdb`/
+DJ9E539 para DNP3, só aquisição — distribuição extrapolada por consistência,
+sem base real disponível). `PARAMS_PROTOCOLO` generalizado para cobrir as
+diferenças reais entre protocolos: DNP3 usa sufixo "DNP" no TN1 (não "DNP3"),
+TN2 analógico "AANL" (não "APFL"), e campos `TZBR`/`DnpLvl` no `CNF.CONFIG` em
+vez de `IGNERS`/`SINCR`/`INVAL` (nessa ordem: depois de PlPr/LiPr/PlRe/LiRe, ao
+contrário do 104/101). `gerar_ied` cria a infraestrutura; validado via UNO real
+para os 3 protocolos, incluindo integração ponta-a-ponta com `unificar_pontos`
+(NV2 criado aqui → consumido por um ponto novo em `PontoDigital`). 101 e DNP3
+tipicamente precisam de uma entrada em `tsr.conf` (serial), configurada à parte
+— fora do modelo desta planilha. Detalhes em
 [completa/README.md](completa/README.md).
 
-**Ainda pendente**: 103, DNP3, MODBUS, 61850, SNMP, ICCP/SICCP (este último com
-aquisição **e** distribuição, não só aquisição) — cada um precisa de pesquisa
-própria (endereçamento, `CNF.CONFIG`, grupos NV1/NV2
-específicos) antes de implementar, seguindo o mesmo padrão do 104.
+**Ainda pendente**: MODBUS, 61850, SNMP, ICCP/SICCP — cada um precisa de
+pesquisa própria (endereçamento, `CNF.CONFIG`, grupos NV1/NV2 específicos)
+antes de implementar, seguindo o mesmo padrão.
 
 ### Ganhos rápidos (baixo esforço, alto retorno) — ✅ entregues
 - **Troca de ID global** (`trocar_id_global`) — renomeia um ponto e propaga a todas as

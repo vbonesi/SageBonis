@@ -114,6 +114,46 @@ with TesteUno(porta=2100) as t:
     check("integração: PDF criado a partir do NV2 do 104 (via unificar_pontos)",
           any(l.get("ID") == "TESTE_CONSOL_PT001_FIS" and l.get("NV2") == nv2_asim["ID"] for l in pdf))
 
+    # Extração reversa de IEDs (espelho de gerar_ied, ver _extrair_ieds): roda
+    # extrair_pontos (mesmo entry point que também reconstrói PontoDigital/etc a
+    # partir da base real inteira -- ~2900 PDF pré-existentes) e confirma que as
+    # 8 linhas de IEDs recém-criadas acima são reconstruídas corretamente, entre
+    # elas os 106 LSC/CNF de 61850 já reais da planilha (que não vieram de
+    # gerar_ied nesta rodada) -- prova que o parser de CNF.CONFIG e o
+    # reconhecimento de TCV/TTP aguentam dado de produção de verdade, não só
+    # os casos sintéticos do smoke test em memória.
+    t.chamar_macro("extrair_pontos")
+    ieds_apos = t.ler_aba("IEDs")
+
+    def by_id_ieds(id_ied):
+        return next((l for l in ieds_apos if l.get("ID") == id_ied), None)
+
+    ied_grd = by_id_ieds("GRD104T")
+    check("extração reversa (UNO real): 104 aquis reconstrói Protocolo/Direcao/PlPr..LiRe",
+          ied_grd is not None and ied_grd.get("Protocolo") == "104" and ied_grd.get("Direcao") == "Aquisicao"
+          and ied_grd.get("PlPr") == "7" and ied_grd.get("LiRe") == "8")
+    ied_cogtdnpt = by_id_ieds("COGTDNPT")
+    check("extração reversa (UNO real): DNP3 distribuição reconhecida via TTP=UDPF3 (não TIPO)",
+          ied_cogtdnpt is not None and ied_cogtdnpt.get("Protocolo") == "DNP3"
+          and ied_cogtdnpt.get("Direcao") == "Distribuicao")
+    ied_mdb1t = by_id_ieds("MDB1T")
+    check("extração reversa (UNO real): MODBUS reconstrói PROTO=BIN",
+          ied_mdb1t is not None and ied_mdb1t.get("PROTO") == "BIN")
+    ied_tr3t = by_id_ieds("TR3T")
+    check("extração reversa (UNO real): 61850 reconstrói ApTitle multi-token + GSD/INS",
+          ied_tr3t is not None and ied_tr3t.get("ApTitle") == "1 1 10 / 1 1 10" and ied_tr3t.get("GSD") == "PAR")
+    ied_a2bt = by_id_ieds("A2BT")
+    check("extração reversa (UNO real): ICCP reconstrói VERBD e OPMSK=0 próprio (não 228521 do 61850)",
+          ied_a2bt is not None and ied_a2bt.get("VERBD") == "TESTE_CONSOLIDADO" and ied_a2bt.get("OPMSK") == "0")
+    check("extração reversa (UNO real): upsert casou por ID, não duplicou nenhuma das 8 linhas escritas",
+          sum(1 for l in ieds_apos if l.get("ID") in {c[0] for c in casos}) == len(casos))
+    # Base real tem 106 LSC pré-existentes (90 de 61850 + 16 de SNMP, nenhum
+    # criado por gerar_ied nesta rodada) -- +1 de cada dos casos de teste acima.
+    check("extração reversa (UNO real): também extraiu os 90 LSC de 61850 já reais da planilha (+1 do teste)",
+          sum(1 for l in ieds_apos if l.get("Protocolo") == "61850") == 91)
+    check("extração reversa (UNO real): também extraiu os 16 LSC de SNMP já reais da planilha (+1 do teste)",
+          sum(1 for l in ieds_apos if l.get("Protocolo") == "SNMP") == 17)
+
 print()
 if falhas:
     print(f"{len(falhas)} checagem(ns) FALHOU/FALHARAM: {falhas}")

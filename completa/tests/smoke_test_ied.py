@@ -349,6 +349,174 @@ saida_iccp_red = mod._gerar_infra_ied(linha_iccp_red, headers)
 check("ICCP redundante: 2 ENM (servidor principal + reserva)", len(saida_iccp_red["enm"]) == 2)
 check("ICCP redundante: LSC.NSERV2 preenchido", saida_iccp_red["lsc"][0]["NSERV2"] == "C2D_SRV2")
 
+# ------------------------------------------------------------------
+# 14. Extracao reversa de IEDs (_extrair_ieds) -- unitarios diretos
+# ------------------------------------------------------------------
+check("_protocolo_e_direcao_por_lsc: 104 aquis (TIPO=AA)",
+      mod._protocolo_e_direcao_por_lsc("CNVM", "CX104", "AA") == ("104", "Aquisicao"))
+check("_protocolo_e_direcao_por_lsc: 104 dist (TIPO=DD)",
+      mod._protocolo_e_direcao_por_lsc("CNVM", "CX104", "DD") == ("104", "Distribuicao"))
+check("_protocolo_e_direcao_por_lsc: DNP3 dist via TTP=UDPF3 (nao precisa olhar TIPO)",
+      mod._protocolo_e_direcao_por_lsc("CNVH", "UDPF3", "DD") == ("DNP3", "Distribuicao"))
+check("_protocolo_e_direcao_por_lsc: DNP3 aquis via TTP=IEC3S (TIPO desempata)",
+      mod._protocolo_e_direcao_por_lsc("CNVH", "IEC3S", "AA") == ("DNP3", "Aquisicao"))
+check("_protocolo_e_direcao_por_lsc: 61850 sempre Direcao vazia (bidirecional)",
+      mod._protocolo_e_direcao_por_lsc("CNVO", "MMST", "AD") == ("61850", ""))
+check("_protocolo_e_direcao_por_lsc: ICCP sempre Direcao vazia (bidirecional)",
+      mod._protocolo_e_direcao_por_lsc("CNVN", "MMST", "AD") == ("ICCP", ""))
+check("_protocolo_e_direcao_por_lsc: TCV/TTP desconhecido -> None,None (protocolo nao modelado)",
+      mod._protocolo_e_direcao_por_lsc("CNVX", "XXXX", "AA") == (None, None))
+
+check("_parsear_config_cnf: valor multi-token (ApTitle, achado real 61850/ICCP)",
+      mod._parsear_config_cnf("ApTitle= 1 1 10 / 1 1 10 AeQ= 1", ["ApTitle", "AeQ"])
+      == {"ApTitle": "1 1 10 / 1 1 10", "AeQ": "1"})
+check("_parsear_config_cnf: campo ausente no texto nao aparece no resultado",
+      "SINCR" not in mod._parsear_config_cnf("PlPr= 7 LiPr= 7", ["PlPr", "LiPr", "SINCR"]))
+check("_parsear_config_cnf: campo com valor vazio no meio (caso ICCP sem IDIG/IANL/IDIS)",
+      mod._parsear_config_cnf("IDIG=  IANL=  IDIS=  TOUT= 10", ["IDIG", "IANL", "IDIS", "TOUT"])
+      == {"IDIG": "", "IANL": "", "IDIS": "", "TOUT": "10"})
+
+
+# ------------------------------------------------------------------
+# 15. Extracao reversa de IEDs (_extrair_ieds) -- round-trip forward->reverso
+# em cima de TODAS as saidas de _gerar_infra_ied* ja construidas acima (secoes
+# 2 a 13): gera pra frente, empacota a saida como se fosse entidade ja
+# importada (headers = uniao das chaves + "Gera"=x sempre), roda o reverso e
+# confere que os campos originais da linha de IEDs sao reconstruidos.
+# ------------------------------------------------------------------
+def _dicts_para_entidade(lista_dicts):
+    """[{...}, ...] (saida de _gerar_infra_ied*) -> (headers, linhas) como se
+    fosse uma aba de entidade ja importada -- 'Gera'=x sempre (sem isso,
+    _linhas_ativas_como_dicts descartaria tudo por falta da coluna de controle)."""
+    if not lista_dicts:
+        return (None, None)
+    campos = sorted({chave for d in lista_dicts for chave in d.keys()})
+    colunas = campos + ["Gera"]
+    linhas = [[d.get(c, "") for c in campos] + ["x"] for d in lista_dicts]
+    return (colunas, linhas)
+
+
+def _entidades_de_saida(saida):
+    """Empacota a saida de _gerar_infra_ied(_61850/_iccp) no formato 'entidades'
+    esperado por _extrair_ieds: {nome: (headers, linhas)}."""
+    return {nome: _dicts_para_entidade(linhas) for nome, linhas in saida.items()}
+
+
+# --- 104 ---
+ied_aq = by_id(mod._extrair_ieds(_entidades_de_saida(saida_aq)), "GRD")
+check("round-trip 104 aquis: Protocolo/Direcao", ied_aq["Protocolo"] == "104" and ied_aq["Direcao"] == "Aquisicao")
+check("round-trip 104 aquis: Nome/GSD preservados",
+      ied_aq["Nome"] == "Ligacao 104 GRD" and ied_aq["GSD"] == "GT_SCD_1")
+check("round-trip 104 aquis: PlPr/LiPr/PlRe/LiRe do CNF.CONFIG",
+      (ied_aq["PlPr"], ied_aq["LiPr"], ied_aq["PlRe"], ied_aq["LiRe"]) == ("7", "7", "8", "8"))
+check("round-trip 104 aquis: IGNERS/SINCR/INVAL tambem parseados (extras so na aquisicao)",
+      (ied_aq["IGNERS"], ied_aq["SINCR"], ied_aq["INVAL"]) == ("0", "0", "103"))
+check("round-trip 104 aquis: AQANL/INTGR do CXU", ied_aq["AQANL"] == "1000" and ied_aq["INTGR"] == "180000")
+check("round-trip 104 aquis: NTENT/RESPT do UTR, TDESC/TRANS/VLUTR do ENU",
+      ied_aq["NTENT"] == "4" and ied_aq["RESPT"] == "1500"
+      and ied_aq["TDESC"] == "15" and ied_aq["TRANS"] == "12" and ied_aq["VLUTR"] == "0")
+check("round-trip 104 aquis: nao redundante -> Redundante vazio", ied_aq["Redundante"] == "")
+
+ied_aq_red = by_id(mod._extrair_ieds(_entidades_de_saida(saida_aq_red)), "GRD2")
+check("round-trip 104 aquis redundante: Redundante=S inferido de 2 UTR (PRI+REV)",
+      ied_aq_red["Redundante"] == "S")
+
+ied_dist = by_id(mod._extrair_ieds(_entidades_de_saida(saida_dist)), "COT")
+check("round-trip 104 dist: Direcao=Distribuicao (via TIPO=DD)", ied_dist["Direcao"] == "Distribuicao")
+check("round-trip 104 dist: PlPr/LiPr/PlRe/LiRe do CNF.CONFIG",
+      (ied_dist["PlPr"], ied_dist["LiPr"], ied_dist["PlRe"], ied_dist["LiRe"]) == ("5", "5", "6", "6"))
+check("round-trip 104 dist: SEM IGNERS/SINCR/INVAL (nao existem no CONFIG de distribuicao)",
+      "IGNERS" not in ied_dist and "SINCR" not in ied_dist and "INVAL" not in ied_dist)
+check("round-trip 104 dist: INTGR usa o valor de distribuicao (50)", ied_dist["INTGR"] == "50")
+check("round-trip 104 dist: sem TAC -> INS nao aparece", "INS" not in ied_dist)
+
+# --- 101 ---
+ied_101_aq = by_id(mod._extrair_ieds(_entidades_de_saida(saida_101_aq)), "NEOA")
+check("round-trip 101 aquis: Protocolo/Direcao/PlPr..LiRe",
+      ied_101_aq["Protocolo"] == "101" and ied_101_aq["Direcao"] == "Aquisicao"
+      and (ied_101_aq["PlPr"], ied_101_aq["LiPr"], ied_101_aq["PlRe"], ied_101_aq["LiRe"])
+      == ("2", "1", "2", "3"))
+ied_101_dist = by_id(mod._extrair_ieds(_entidades_de_saida(saida_101_dist)), "NEOD")
+check("round-trip 101 dist: Direcao=Distribuicao, sem IGNERS",
+      ied_101_dist["Direcao"] == "Distribuicao" and "IGNERS" not in ied_101_dist)
+
+# --- DNP3 (o caso mais intrincado: TTP muda por direcao, extras tambem na distribuicao) ---
+ied_dnp_aq = by_id(mod._extrair_ieds(_entidades_de_saida(saida_dnp_aq)), "DJ9E539")
+check("round-trip DNP3 aquis: Protocolo/Direcao (via TTP=IEC3S)",
+      ied_dnp_aq["Protocolo"] == "DNP3" and ied_dnp_aq["Direcao"] == "Aquisicao")
+check("round-trip DNP3 aquis: PlPr/LiPr/PlRe/LiRe + TZBR/DnpLvl",
+      (ied_dnp_aq["PlPr"], ied_dnp_aq["LiPr"], ied_dnp_aq["PlRe"], ied_dnp_aq["LiRe"]) == ("4", "10", "0", "0")
+      and ied_dnp_aq["TZBR"] == "0" and ied_dnp_aq["DnpLvl"] == "2")
+
+ied_dnp_dist = by_id(mod._extrair_ieds(_entidades_de_saida(saida_dnp_dist)), "COGTXA21")
+check("round-trip DNP3 dist: Protocolo/Direcao reconhecidos via TTP=UDPF3 (nao TIPO)",
+      ied_dnp_dist["Protocolo"] == "DNP3" and ied_dnp_dist["Direcao"] == "Distribuicao")
+check("round-trip DNP3 dist: PlPr/LiPr/PlRe/LiRe + TZBR/DnpLvl TAMBEM presentes (achado real)",
+      (ied_dnp_dist["PlPr"], ied_dnp_dist["LiPr"], ied_dnp_dist["PlRe"], ied_dnp_dist["LiRe"])
+      == ("2", "5", "2", "6")
+      and ied_dnp_dist["TZBR"] == "0" and ied_dnp_dist["DnpLvl"] == "2")
+
+# --- MODBUS (INS propagado via TAC dual; sem PROTO na distribuicao) ---
+ied_mdb_aq = by_id(mod._extrair_ieds(_entidades_de_saida(saida_mdb_aq)), "MDB1")
+check("round-trip MODBUS aquis: PROTO do CNF.CONFIG", ied_mdb_aq["PROTO"] == "BIN")
+check("round-trip MODBUS aquis: INS recuperado do TAC (dos 2, mesmo valor)", ied_mdb_aq["INS"] == "ARA2")
+ied_mdb_dist = by_id(mod._extrair_ieds(_entidades_de_saida(saida_mdb_dist)), "DMDB")
+check("round-trip MODBUS dist: sem PROTO (nao existe no CONFIG de distribuicao)", "PROTO" not in ied_mdb_dist)
+
+# --- 61850 (o parser precisa acertar ApTitle/PS multi-token) ---
+ied_61850 = by_id(mod._extrair_ieds(_entidades_de_saida(saida_61850)), "UPCP_TR3")
+check("round-trip 61850: Protocolo/Direcao (bidirecional, Direcao vazia)",
+      ied_61850["Protocolo"] == "61850" and ied_61850["Direcao"] == "")
+check("round-trip 61850: Nome/GSD/INS preservados",
+      ied_61850["Nome"] == "UPCP_TR3 - 138" and ied_61850["GSD"] == "PAR" and ied_61850["INS"] == "PAR")
+check("round-trip 61850: ApTitle multi-token reconstruido inteiro",
+      ied_61850["ApTitle"] == "1 1 10 / 1 1 10")
+check("round-trip 61850: PS multi-token reconstruido inteiro (outro campo c/ '/')",
+      ied_61850["PS"] == "1 / 1")
+check("round-trip 61850: OPMSK/GOOSE (ultimo campo do CONFIG) corretos",
+      ied_61850["OPMSK"] == "228521" and ied_61850["GOOSE"] == "0")
+check("round-trip 61850: Redundante nao se aplica (chave ausente, sem efeito no forward)",
+      "Redundante" not in ied_61850)
+
+ied_61850_virtual = by_id(mod._extrair_ieds(_entidades_de_saida(saida_61850_virtual)), "UCD1_CNF")
+check("round-trip 61850 virtual: override de OPMSK preservado (bit 12)",
+      ied_61850_virtual["OPMSK"] == "8010")
+
+# --- SNMP (cnf_campos totalmente customizado, sem PlPr/LiPr) ---
+ied_snmp = by_id(mod._extrair_ieds(_entidades_de_saida(saida_snmp)), "SWA1")
+check("round-trip SNMP: VERSAO/HOST/COMMUNITY do CNF.CONFIG customizado",
+      ied_snmp["VERSAO"] == "2c" and ied_snmp["HOST"] == "172.30.45.71" and ied_snmp["COMMUNITY"] == "public")
+check("round-trip SNMP: sem PlPr (cnf_campos substitui a base inteira)", "PlPr" not in ied_snmp)
+check("round-trip SNMP: INS do TAC, Direcao=Aquisicao (via TIPO=AA)",
+      ied_snmp["INS"] == "PAR" and ied_snmp["Direcao"] == "Aquisicao")
+check("round-trip SNMP: nao redundante -> Redundante vazio", ied_snmp["Redundante"] == "")
+
+ied_snmp_red = by_id(mod._extrair_ieds(_entidades_de_saida(saida_snmp_red)), "SWB1")
+check("round-trip SNMP redundante: Redundante=S inferido de 2 UTR", ied_snmp_red["Redundante"] == "S")
+
+# --- ICCP (MUL/ENM em vez de UTR pra Redundante; OPMSK default proprio) ---
+ied_iccp = by_id(mod._extrair_ieds(_entidades_de_saida(saida_iccp)), "A2B")
+check("round-trip ICCP: Protocolo/Direcao (bidirecional, Direcao vazia)",
+      ied_iccp["Protocolo"] == "ICCP" and ied_iccp["Direcao"] == "")
+check("round-trip ICCP: VERBD/NSERV1 preservados, NSERV2 vazio (nao redundante)",
+      ied_iccp["VERBD"] == "A2B_2024" and ied_iccp["NSERV1"] == "A2B_SRV1" and ied_iccp["NSERV2"] == "")
+check("round-trip ICCP: ApTitle multi-token (default compartilhado com 61850)",
+      ied_iccp["ApTitle"] == "1 1 10 / 1 1 10")
+check("round-trip ICCP: OPMSK=0 (default proprio do ICCP, NAO 228521 do 61850)", ied_iccp["OPMSK"] == "0")
+check("round-trip ICCP: T2V/BLC3 do CONFIG (defaults do manual)",
+      ied_iccp["T2V"] == "0" and ied_iccp["BLC3"] == "0")
+check("round-trip ICCP: nao redundante -> Redundante vazio (so 1 ENM)", ied_iccp["Redundante"] == "")
+
+ied_iccp_red = by_id(mod._extrair_ieds(_entidades_de_saida(saida_iccp_red)), "C2D")
+check("round-trip ICCP redundante: Redundante=S inferido de 2 ENM", ied_iccp_red["Redundante"] == "S")
+
+# --- protocolo desconhecido: LSC solto (nunca gerado por _gerar_infra_ied, mas
+# pode existir numa base real de protocolo ainda nao modelado) -- ignorado ---
+entidades_desconhecido = _dicts_para_entidade(
+    [{"ID": "X103", "TCV": "CNVZ", "TTP": "ZZZ", "TIPO": "AA", "NOME": "Protocolo nao modelado"}])
+check("round-trip: TCV/TTP nao reconhecido -> nao extrai nenhuma linha",
+      mod._extrair_ieds({"lsc": entidades_desconhecido}) == [])
+
 print()
 if falhas:
     print(f"{len(falhas)} checagem(ns) FALHOU/FALHARAM: {falhas}")

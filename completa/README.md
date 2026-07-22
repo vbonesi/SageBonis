@@ -350,6 +350,42 @@ com confiança. Pontos de atenção:
   da planilha. `IDIG/IANL/IDIS` (temporizadores de integridade) não têm
   default — o valor certo depende de o VCC remoto suportar o bloco 2 do ICCP.
 
+#### Extração reversa de IEDs (bases já existentes) — `extrair_pontos`
+`gerar_ied` sozinho só ajuda com **canais novos**: um IED já importado de uma
+base real (`LSC`/`CNF`/`CXU`/`UTR`/`ENU`/`TAC`/`MUL`/`ENM` vindos de `.dat`) não
+aparece na aba `IEDs` automaticamente. `extrair_pontos` (o mesmo comando que já
+reconstrói `PontoDigital`/`PontoAnalogico`/`ComandoAvulso`, ver seção anterior)
+também reconstrói `IEDs` a partir de cada `LSC` já existente:
+
+- **1 `LSC` = 1 linha de `IEDs`** — aquisição e distribuição de um protocolo
+  "clássico" são `LSC` distintos (nunca fundidos numa linha só), exatamente
+  como a própria geração também trata cada um como independente.
+- **`Protocolo`** vem de `(LSC.TCV, LSC.TTP)` comparado contra cada entrada
+  conhecida (incluindo o `ttp_distribuicao` do DNP3 — um `LSC.TTP=UDPF3` já
+  identifica "DNP3 distribuição" sem precisar olhar mais nada). Um `LSC` cujo
+  `TCV`/`TTP` não bate com nenhum protocolo conhecido (ainda não modelado, ex.
+  103/OPC UA/C37.118) é **ignorado silenciosamente** — mesmo espírito do
+  Método não reconhecido em `CanaisDistribuicao`.
+- **`Direcao`** vem de `LSC.TIPO` (`AA`→Aquisicao/`DD`→Distribuicao) pros
+  protocolos "clássicos"; fica vazia para 61850/ICCP (bidirecional, `Direcao`
+  não se aplica, mesma regra do forward).
+- **`CNF.CONFIG`** é parseado de volta campo a campo, sabendo lidar com valor
+  multi-token (ex. `ApTitle= 1 1 10 / 1 1 10` do 61850/ICCP) porque procura o
+  próximo campo **esperado** pro protocolo/direção em questão, não o próximo
+  espaço em branco.
+- **`INS`** vem do `TAC` ligado ao `LSC` (quando existe — só na aquisição dos
+  protocolos "clássicos", ou sempre em 61850); **`AQANL`/`AQPOL`/`AQTOT`/
+  `INTGR`/`NFAIL`/`SFAIL`/`FAILP`/`FAILR`** vêm do `CXU`; **`NTENT`/`RESPT`**
+  do `UTR` (`PRI`); **`TDESC`/`TRANS`/`VLUTR`** do `ENU` (`PRI`).
+  `Redundante` é **inferido**, nunca lido de um campo próprio (não existe um
+  campo assim em nenhuma entidade): 2 `UTR` (`PRI`+`REV`) para os protocolos
+  "clássicos"/SNMP, 2 `ENM` do mesmo `MUL` para ICCP, e **sem efeito nenhum**
+  para 61850 (mesma regra do forward — fica de fora).
+
+Rode `extrair_pontos` **antes** de estender uma base já existente com um novo
+canal do mesmo protocolo, pelas mesmas razões da extração de pontos: é uma
+reconstrução de melhor esforço, não um inverso perfeito.
+
 ## Instalação e uso
 Igual à Simples: abra `SageBonis.ods` e habilite as macros do documento (a macro vem
 embutida). Atribua as funções `verificar_base`, `unificar_pontos`, `extrair_pontos`,
@@ -370,7 +406,8 @@ python completa/tests/run_all.py            # roda tudo
 python completa/tests/run_all.py --sem-uno   # só os smoke tests (sem soffice)
 ```
 - **Smoke tests em memória** (`smoke_test_*.py`) — lógica pura, sem LibreOffice, rodam em
-  segundos: `smoke_test_ied.py` (assistente de protocolo, ~108 checks), `smoke_test_unificacao.py`,
+  segundos: `smoke_test_ied.py` (assistente de protocolo + extração reversa de IEDs, ~160
+  checks, incluindo round-trip forward→reverso pelos 7 protocolos), `smoke_test_unificacao.py`,
   `smoke_test_extracao.py`, `smoke_test_ganhos_rapidos.py`. Importam `ImportadorSAGE.py` direto
   (`importlib`) e chamam as funções `_gerar_*`/`_extrair_*`/etc. isoladas de qualquer UNO.
 - **Teste UNO real** (`teste_uno_protocolos.py`) — sobe um `soffice --headless`, copia o

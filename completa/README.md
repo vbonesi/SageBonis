@@ -175,10 +175,14 @@ natureza (ver seção própria abaixo) e foi confirmado contra 12 IEDs reais; SN
 é só aquisição por natureza (protocolo de monitoramento, não modela comando —
 ver seção própria) e foi confirmado contra 2 bases reais independentes. **103**
 ficou de fora por ora — não há nenhuma base real com IEC 103 no acervo de
-referência, só documentação de manual. Próximo da lista: ICCP/SICCP (com
-aquisição **e** distribuição — funciona nos dois sentidos entre centros de
-controle). OPC UA e C37.118 ficam de fora por ora, sem base real disponível
-para validar.
+referência, só documentação de manual. **ICCP/SICCP**, **OPC UA** e **C37.118**
+ficam de fora por ora, sem base real disponível para validar nenhum dos três —
+ICCP foi investigado especificamente (2 pistas no SkillSAGE não confirmaram
+nada; a própria documentação curada de lá afirma "no acervo NÃO há base ICCP")
+e o modelo real seria estruturalmente diferente dos 6 já entregues (MMS via
+`MUL`/`ENM`, VCC + Acordo Bilateral em vez de `CNF.CONFIG` ponto-a-ponto), então
+não dava pra generalizar por analogia com confiança. Retomar qualquer um dos
+três se aparecer uma base real.
 
 101 e DNP3 tipicamente rodam por serial — configure a entrada correspondente em
 `tsr.conf` (`config/<base>/sys/tsr.conf`, transportador `iec1s`/`iec2s`/`iec2t`
@@ -287,5 +291,8 @@ python sync_macro.py status  --ods completa/SageBonis.ods --py completa/Importad
 ```
 
 ## Status
-🚧 Em desenvolvimento. Único item do roadmap ainda pendente (ver
-[PLANEJAMENTO.md](../PLANEJAMENTO.md)): assistente de protocolo/IED.
+🚧 Em desenvolvimento, mas os 3 itens do roadmap original (verificador, unificação
+de pontos, assistente de protocolo/IED) já foram entregues. Do assistente de
+protocolo/IED, restam só protocolos sem base real disponível pra validar (103,
+OPC UA, C37.118, ICCP/SICCP — ver [PLANEJAMENTO.md](../PLANEJAMENTO.md)),
+retomados se uma base real aparecer.

@@ -114,24 +114,35 @@ no acervo, só documentação de manual — diferente de OPC UA/C37.118, que nem
 documentação tem), **OPC UA** e **C37.118** — sem base real disponível pra
 validar nenhum dos três; retomar se aparecer uma.
 
-**Entregue**: **104**, **101** e **DNP3**, confirmados contra bases reais
-(`conv_iccp104`/GRD para 104, aquisição e distribuição; base do próprio usuário —
-SE Miracema/`neoenergia` — para 101, aquisição e distribuição; `ctl_dnp_mdb`/
-DJ9E539 para DNP3, só aquisição — distribuição extrapolada por consistência,
-sem base real disponível). `PARAMS_PROTOCOLO` generalizado para cobrir as
-diferenças reais entre protocolos: DNP3 usa sufixo "DNP" no TN1 (não "DNP3"),
-TN2 analógico "AANL" (não "APFL"), e campos `TZBR`/`DnpLvl` no `CNF.CONFIG` em
-vez de `IGNERS`/`SINCR`/`INVAL` (nessa ordem: depois de PlPr/LiPr/PlRe/LiRe, ao
-contrário do 104/101). `gerar_ied` cria a infraestrutura; validado via UNO real
-para os 3 protocolos, incluindo integração ponta-a-ponta com `unificar_pontos`
-(NV2 criado aqui → consumido por um ponto novo em `PontoDigital`). 101 e DNP3
-tipicamente precisam de uma entrada em `tsr.conf` (serial), configurada à parte
-— fora do modelo desta planilha. Detalhes em
-[completa/README.md](completa/README.md).
+**Entregue**: **104**, **101**, **DNP3** e **MODBUS**, confirmados contra bases
+reais (`conv_iccp104`/GRD para 104, aquisição e distribuição; base do próprio
+usuário — SE Miracema/`neoenergia` — para 101, aquisição e distribuição;
+`ctl_dnp_mdb`/DJ9E539 para DNP3 e `mdb_alat_calc`/MDB1 para MODBUS, ambos só
+aquisição — distribuição de ambos extrapolada por consistência, sem base real
+disponível). `PARAMS_PROTOCOLO` generalizado para cobrir as diferenças reais
+entre protocolos: DNP3 usa sufixo "DNP" no TN1 (não "DNP3"), TN2 analógico
+"AANL" (não "APFL"), e campos `TZBR`/`DnpLvl` no `CNF.CONFIG` em vez de
+`IGNERS`/`SINCR`/`INVAL` (nessa ordem: depois de PlPr/LiPr/PlRe/LiRe, ao
+contrário do 104/101). MODBUS foi além disso: seu grupo de leitura inteiro é
+outro (`ALAT`/`AANL`/`ASTP`, sem `ASIM`/`ADUP`) — daí a generalização de
+`tn2_analogico` (1 campo) para `grupos_leitura`/`grupos_comando` (listas
+completas de TN2/TPPNT/descrição); e sua aquisição real gera **2** registros de
+`TAC` (TPAQS `ASAC` + `AFIL`, este para analógicos com conversão float), não 1 —
+generalizado via `params["tacs"]`. Também foi adicionado o campo `INS`
+(instalação/estação do `TAC`, campo `TAC.INS` já existia como FK no verificador
+mas não era gerado) a **todos** os protocolos, não só MODBUS — confirmado
+presente em 3 das 4 bases reais (101/DNP3/MODBUS), fidelidade que faltava desde
+o 104. `gerar_ied` cria a infraestrutura; validado via UNO real para os 4
+protocolos, incluindo integração ponta-a-ponta com `unificar_pontos` (NV2 criado
+aqui → consumido por um ponto novo em `PontoDigital`) e regressão dos 3
+protocolos anteriores após a generalização. 101 e DNP3 tipicamente precisam de
+uma entrada em `tsr.conf` (serial), configurada à parte — fora do modelo desta
+planilha; MODBUS também pode rodar serial ou TCP, mesma ressalva se for serial.
+Detalhes em [completa/README.md](completa/README.md).
 
-**Ainda pendente**: MODBUS, 61850, SNMP, ICCP/SICCP — cada um precisa de
-pesquisa própria (endereçamento, `CNF.CONFIG`, grupos NV1/NV2 específicos)
-antes de implementar, seguindo o mesmo padrão.
+**Ainda pendente**: 61850, SNMP, ICCP/SICCP — cada um precisa de pesquisa
+própria (endereçamento, `CNF.CONFIG`, grupos NV1/NV2 específicos) antes de
+implementar, seguindo o mesmo padrão.
 
 ### Ganhos rápidos (baixo esforço, alto retorno) — ✅ entregues
 - **Troca de ID global** (`trocar_id_global`) — renomeia um ponto e propaga a todas as

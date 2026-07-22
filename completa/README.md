@@ -99,6 +99,12 @@ existentes e povoa (upsert, mesma regra de não duplicar) as 5 abas de config:
 
 - PDS/PAS com origens (PDF/PAF cujo `PNT` aponta pra eles) → linhas em
   `PontoDigital`/`PontoAnalogico` (1 origem = 1 linha; N origens = redundância);
+- PDS/PAS **sem nenhum** PDF/PAF correspondente (tipicamente pontos calculados,
+  RCA/TCL) **não são extraídos** — não têm componente físico, então ficam fora do
+  escopo de `PontoDigital`/`PontoAnalogico` (que descrevem pontos com origem física);
+  o ponto em si continua intocado na aba original. Uma versão anterior tentava
+  preservá-los com um `ID_Fisico` fictício, mas isso gerava um PDF/PAF fantasma toda
+  vez que `unificar_pontos` rodava de novo;
 - CGS com o mesmo ID de um PDS/PAS → marca `Comando=S` na origem correspondente;
 - CGS **sem** PDS/PAS correspondente → vai pra `ComandoAvulso`;
 - PDD/PAD → um canal por `TDD` distinto em `CanaisDistribuicao` (com **Método

@@ -1738,10 +1738,14 @@ def _gerar_fan_out_digital(linhas, headers, canais, distribuicoes):
     já lida em memória. Testável fora do LibreOffice (mesmo espírito do verificador)."""
     saida = {"pdf": [], "pds": [], "pdd": [], "rfc": [], "cgf": [], "cgs": []}
     for id_logico, origens in _agrupar_por_id_logico(linhas, headers).items():
-        redundante = len(origens) > 1
+        # Só linhas com ID_Fisico preenchido viram PDF/RFC -- uma origem sem ID_Fisico
+        # (ex.: ponto calculado extraído sem PDF correspondente) não tem componente
+        # físico nenhum; o PDS ainda é gerado normalmente logo abaixo.
+        origens_com_fisico = [o for o in origens if _valor(o, headers, "ID_Fisico")]
+        redundante = len(origens_com_fisico) > 1
         tpfil = "FIL5" if redundante else "NLFL"
         primeira = origens[0]
-        for ordem, origem in enumerate(origens, start=1):
+        for ordem, origem in enumerate(origens_com_fisico, start=1):
             id_fisico = _valor(origem, headers, "ID_Fisico")
             saida["pdf"].append({
                 "ID": id_fisico, "NV2": _valor(origem, headers, "NV2"),
@@ -1779,10 +1783,12 @@ def _gerar_fan_out_analogico(linhas, headers, canais, distribuicoes):
     """Mesma lógica de _gerar_fan_out_digital, para PAF/PAS/PAD (sem comando)."""
     saida = {"paf": [], "pas": [], "pad": [], "rfc": []}
     for id_logico, origens in _agrupar_por_id_logico(linhas, headers).items():
-        redundante = len(origens) > 1
+        # Ver nota equivalente em _gerar_fan_out_digital sobre origens sem ID_Fisico.
+        origens_com_fisico = [o for o in origens if _valor(o, headers, "ID_Fisico")]
+        redundante = len(origens_com_fisico) > 1
         tpfil = "FIL5" if redundante else "NLFL"
         primeira = origens[0]
-        for ordem, origem in enumerate(origens, start=1):
+        for ordem, origem in enumerate(origens_com_fisico, start=1):
             id_fisico = _valor(origem, headers, "ID_Fisico")
             saida["paf"].append({
                 "ID": id_fisico, "NV2": _valor(origem, headers, "NV2"),
@@ -1948,7 +1954,11 @@ def unificar_pontos(*args):
         _gerar_comandos_avulsos(linhas_cmd or [], headers_cmd or CABECALHOS_COMANDO_AVULSO),
     )
     for entidade, linhas in saida.items():
-        _upsert_linhas_entidade(doc, entidade.upper(), linhas)
+        # RFC não tem coluna "ID" própria (ver dicionário de atributos do SAGE) -- sem
+        # isso, o upsert (chave "ID" por padrão) descartaria toda linha de RFC em
+        # silêncio, porque nenhum dict de RFC tem essa chave.
+        chave = ("PARC", "PNT") if entidade == "rfc" else ("ID",)
+        _upsert_linhas_entidade(doc, entidade.upper(), linhas, colunas_chave=chave)
 
 
 # ---------------------------------------------------------------
@@ -2005,12 +2015,19 @@ def _extrair_ponto_digital(entidades):
         id_logico = pds.get("ID", "")
         if not id_logico:
             continue
-        origens = pdf_por_pnt.get(id_logico) or [{}]
+        origens = pdf_por_pnt.get(id_logico)
+        if not origens:
+            # Sem PDF correspondente -- tipicamente um ponto calculado (RCA/TCL), que
+            # não tem origem física nenhuma. Fora do escopo de PontoDigital (que
+            # descreve pontos COM origem física); o PDS em si continua intocado na
+            # aba "pds". Fabricar aqui um ID_Fisico só geraria um PDF fantasma na
+            # próxima vez que unificar_pontos() rodasse.
+            continue
         cgfs = cgf_por_cgs.get(id_logico, []) if id_logico in cgs_por_id else []
         for i, pdf in enumerate(origens):
             linha = {
                 "ID_Logico": id_logico,
-                "ID_Fisico": pdf.get("ID", "") or id_logico,
+                "ID_Fisico": pdf.get("ID", ""),
                 "NOME": pdf.get("DESC1") or pds.get("NOME", ""),
                 "NV2": pdf.get("NV2", ""),
                 "KCONV": pdf.get("KCONV", ""),
@@ -2046,10 +2063,13 @@ def _extrair_ponto_analogico(entidades):
         id_logico = pas.get("ID", "")
         if not id_logico:
             continue
-        for paf in (paf_por_pnt.get(id_logico) or [{}]):
+        origens = paf_por_pnt.get(id_logico)
+        if not origens:
+            continue  # sem PAF correspondente -- ver nota equivalente em _extrair_ponto_digital
+        for paf in origens:
             saida.append({
                 "ID_Logico": id_logico,
-                "ID_Fisico": paf.get("ID", "") or id_logico,
+                "ID_Fisico": paf.get("ID", ""),
                 "NOME": paf.get("DESC1") or pas.get("NOME", ""),
                 "NV2": paf.get("NV2", ""),
                 "KCONV1": paf.get("KCONV1", ""), "KCONV2": paf.get("KCONV2", ""),

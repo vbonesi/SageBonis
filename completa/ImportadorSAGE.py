@@ -2518,7 +2518,7 @@ def gerir_includes(*args):
 NOME_ABA_IEDS = "IEDs"
 CABECALHOS_IEDS = [
     "ID", "Protocolo", "Direcao", "Nome", "GSD", "MAP", "NSRV1", "NSRV2",
-    "PlPr", "LiPr", "PlRe", "LiRe", "IGNERS", "SINCR", "INVAL",
+    "PlPr", "LiPr", "PlRe", "LiRe", "IGNERS", "SINCR", "INVAL", "TZBR", "DnpLvl",
     "AQANL", "AQPOL", "AQTOT", "INTGR", "NFAIL", "SFAIL", "FAILP", "FAILR",
     "NTENT", "RESPT", "TDESC", "TRANS", "VLUTR", "Redundante", "Gera",
 ]
@@ -2526,19 +2526,42 @@ CABECALHOS_IEDS = [
 # Parâmetros fixos por protocolo (TCV/TTP da LSC, iguais em aquisição e
 # distribuição). Só 104 confirmado contra base real por enquanto -- adicionar
 # 101/103/DNP3/MODBUS/61850/SNMP aqui quando confirmados contra bases reais.
+# Cada entrada define: tcv/ttp (LSC), tn1_sufixo (prefixo TN1 -- geralmente igual
+# ao nome do protocolo, mas DNP3 é uma exceção real: usa "DNP", não "DNP3"),
+# tn2_analogico (TN2 do grupo de leitura analógica -- APFL na família 101/104,
+# AANL no DNP3), cnf_extra (campos extras do CNF.CONFIG que só aparecem na
+# aquisição) e cnf_extra_pos (se esses campos vêm "antes" ou "depois" de
+# PlPr/LiPr/PlRe/LiRe -- SAGE deve ler como pares soltos, então a ordem
+# provavelmente não importa de fato, mas seguimos o observado em cada exemplo real).
 PARAMS_PROTOCOLO = {
-    "104": {"tcv": "CNVM", "ttp": "CX104"},
+    "104": {
+        "tcv": "CNVM", "ttp": "CX104", "tn1_sufixo": "104", "tn2_analogico": "APFL",
+        "cnf_extra": ("IGNERS", "SINCR", "INVAL"), "cnf_extra_pos": "antes",
+    },
     # 101 confirmado contra base real do usuário (SE Miracema/neoenergia): mesmo
     # formato de CNF.CONFIG e prefixos TN1 do 104 -- só troca TCV/TTP. Diferença
     # não modelada aqui: 101 tipicamente roda por serial e precisa de uma entrada
     # em tsr.conf (config/<base>/sys/tsr.conf, transportador iec1s/iec2s/iec2t) --
     # isso é um arquivo de sistema fora do modelo de planilha; configure à parte.
-    "101": {"tcv": "CNVG", "ttp": "IEC2S"},
+    "101": {
+        "tcv": "CNVG", "ttp": "IEC2S", "tn1_sufixo": "101", "tn2_analogico": "APFL",
+        "cnf_extra": ("IGNERS", "SINCR", "INVAL"), "cnf_extra_pos": "antes",
+    },
+    # DNP3 confirmado contra base real (SkillSAGE, ctl_dnp_mdb/DJ9E539) -- só a
+    # aquisição; a distribuição segue o mesmo padrão "stripped" do 104/101
+    # (extrapolado por consistência + pelo código de referência da macro GE, sem
+    # base real de distribuição DNP3 disponível -- diferente do 104/101,
+    # confirmados nos dois sentidos contra base real). Também roda tipicamente
+    # por serial (tsr.conf), mesma ressalva do 101.
+    "DNP3": {
+        "tcv": "CNVH", "ttp": "IEC3S", "tn1_sufixo": "DNP", "tn2_analogico": "AANL",
+        "cnf_extra": ("TZBR", "DnpLvl"), "cnf_extra_pos": "depois",
+    },
 }
 
 _DEFAULTS_IED = {
     "MAP": "GERAL", "NSRV1": "localhost", "NSRV2": "localhost",
-    "IGNERS": "0", "SINCR": "0", "INVAL": "103",
+    "IGNERS": "0", "SINCR": "0", "INVAL": "103", "TZBR": "0", "DnpLvl": "2",
     "AQANL": "1000", "AQPOL": "1000", "AQTOT": "0",
     "NFAIL": "2", "SFAIL": "200", "FAILP": "0", "FAILR": "0",
     "NTENT": "4", "RESPT": "1500", "TDESC": "15", "TRANS": "12", "VLUTR": "0",
@@ -2560,13 +2583,31 @@ def _campo_ied(linha, headers, nome):
     return _DEFAULTS_IED.get(nome, "")
 
 
-def _prefixo_tn1(protocolo, direcao, papel):
+def _prefixo_tn1(tn1_sufixo, direcao, papel):
     """papel: "leitura" ou "comando". Confirmado contra base real: aquisição usa
-    A<proto>/C<proto>; distribuição usa D<proto>/O<proto>."""
+    A<sufixo>/C<sufixo>; distribuição usa D<sufixo>/O<sufixo>. 'tn1_sufixo' vem de
+    PARAMS_PROTOCOLO -- geralmente igual ao nome do protocolo, mas não sempre
+    (DNP3 usa sufixo "DNP", não "DNP3")."""
     aquisicao = direcao.strip().lower() == "aquisicao"
     if papel == "leitura":
-        return ("A" if aquisicao else "D") + protocolo
-    return ("C" if aquisicao else "O") + protocolo
+        return ("A" if aquisicao else "D") + tn1_sufixo
+    return ("C" if aquisicao else "O") + tn1_sufixo
+
+
+def _montar_config_cnf(linha, headers, params, aquisicao):
+    """Monta o CONFIG do CNF: PlPr/LiPr/PlRe/LiRe sempre presentes; os campos
+    extras de params["cnf_extra"] só entram na aquisição, antes ou depois
+    conforme params["cnf_extra_pos"] (achado real: a ordem varia por protocolo --
+    104/101 põem os extras antes, DNP3 depois. SAGE deve ler como pares soltos,
+    então a ordem provavelmente não importa de fato, mas seguimos o observado)."""
+    base = ["PlPr= %s" % _valor(linha, headers, "PlPr"), "LiPr= %s" % _valor(linha, headers, "LiPr"),
+            "PlRe= %s" % _valor(linha, headers, "PlRe"), "LiRe= %s" % _valor(linha, headers, "LiRe")]
+    if not aquisicao:
+        return " ".join(base)
+    extras = ["%s= %s" % (campo, _campo_ied(linha, headers, campo))
+              for campo in params.get("cnf_extra", ())]
+    partes = (base + extras) if params.get("cnf_extra_pos") == "depois" else (extras + base)
+    return " ".join(partes)
 
 
 def _gerar_infra_ied(linha, headers):
@@ -2591,18 +2632,7 @@ def _gerar_infra_ied(linha, headers):
         "TCV": params["tcv"], "TTP": params["ttp"], "TIPO": "AA" if aquisicao else "DD",
     })
 
-    if aquisicao:
-        config_cnf = "IGNERS= %s SINCR= %s INVAL= %s PlPr= %s LiPr= %s PlRe= %s LiRe= %s" % (
-            _campo_ied(linha, headers, "IGNERS"), _campo_ied(linha, headers, "SINCR"),
-            _campo_ied(linha, headers, "INVAL"),
-            _valor(linha, headers, "PlPr"), _valor(linha, headers, "LiPr"),
-            _valor(linha, headers, "PlRe"), _valor(linha, headers, "LiRe"),
-        )
-    else:
-        config_cnf = "PlPr= %s LiPr= %s PlRe= %s LiRe= %s" % (
-            _valor(linha, headers, "PlPr"), _valor(linha, headers, "LiPr"),
-            _valor(linha, headers, "PlRe"), _valor(linha, headers, "LiRe"),
-        )
+    config_cnf = _montar_config_cnf(linha, headers, params, aquisicao)
     saida["cnf"].append({"ID": id_ied, "LSC": id_ied, "CONFIG": config_cnf})
 
     saida["cxu"].append({
@@ -2639,14 +2669,17 @@ def _gerar_infra_ied(linha, headers):
         saida["tdd"].append({"ID": "%s_ANA" % id_ied, "LSC": id_ied,
                               "NOME": "Distribuição Analógica %s" % id_ied})
 
-    # NV1/NV2 "grupo" padrão: 1 de leitura (digital+analógico) + 1 de comando.
+    # NV1/NV2 "grupo" padrão: 1 de leitura (digital+analógico) + 1 de comando. O
+    # TN2 analógico varia por protocolo (params["tn2_analogico"]): APFL na
+    # família 101/104, AANL no DNP3.
+    tn2_analogico = params["tn2_analogico"]
     for papel, ordem_nv1, grupos_tn2 in (
         ("leitura", "1", [("ASIM", "PDF", "Digital Single-Point"),
                           ("ADUP", "PDF", "Digital Double-Point"),
-                          ("APFL", "PAF", "Analógica Point Float")]),
+                          (tn2_analogico, "PAF", "Analógica")]),
         ("comando", "3", [("CDUP", "CGF", "Comando Duplo")]),
     ):
-        tn1 = _prefixo_tn1(protocolo, direcao, papel)
+        tn1 = _prefixo_tn1(params["tn1_sufixo"], direcao, papel)
         nv1_id = "%s_%s_%s" % (id_ied, tn1, ordem_nv1)
         saida["nv1"].append({
             "ID": nv1_id, "CNF": id_ied, "ORDEM": ordem_nv1, "TN1": tn1,

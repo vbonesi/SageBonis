@@ -93,6 +93,19 @@ entregue: `extrair_pontos`, o espelho reverso — reconstrói as 5 abas de confi
 partir de uma base **já importada** (com inferência automática de Método por
 Prefixo/Sufixo), fechando o ciclo pra bases reais existentes, não só pontos novos.
 
+**Correção (achado real, base jdm/CHESF, fora do SkillSAGE)**: a extração reversa
+de comando (`_extrair_ponto_digital`/`_extrair_ponto_analogico`/
+`_extrair_comandos_avulsos`) originalmente casava CGS↔ponto por **igualdade de
+`ID`** (`CGS.ID == PDS.ID`/`PAS.ID`) — convenção que o forward desta planilha
+sempre segue, mas que **não é a regra geral do SAGE**. O FK de verdade, já
+documentado no grafo do verificador (`REGRAS_REFS_PADRAO`: `CGS PAC PDS|PAS`), é
+**`CGS.PAC`**: a base jdm tem um comando com `ID=JDM:REGU:STPC` e
+`PAC=JDM:REGU-STPS` — identidade própria, totalmente independente do ponto que
+comanda. Corrigido pra casar por `PAC` (o `ID` próprio do CGS continua usado só
+pra achar o `CGF` correspondente, via `CGF.CGS`). Sem esse fix, um comando
+assim seria invisível na extração reversa. Coberto por teste tanto pro caso
+digital quanto analógico (réplica literal do exemplo real).
+
 **Ainda pendente** desta frente: endereçamento automático do `ID_Fisico`/`NV2` por
 protocolo (101/104/DNP3/61850) — hoje o usuário informa esses campos prontos; migrar
 para o **Assistente de Protocolo/IED** (item 3), que já nasce dependente disso.
@@ -110,7 +123,11 @@ limites (`tucurui`, provavelmente CAG/despacho de geração; `jdm`
 genérico (mesmas 4 colunas de limite pras duas variantes) — a semântica exata de
 `LMI1C` vs `LMI2C` (normal vs emergência? ou outra coisa?) não foi confirmada a
 fundo antes de implementar; se aparecer um caso real que não encaixe no genérico,
-pode precisar de um passe de revisão.
+pode precisar de um passe de revisão. Dado novo (validação com a base jdm real):
+o CGS de `JDM:REGU-STPS` tem `LMI1C=680`/`LMS1C=715` (faixa de tensão de
+regulação de verdade) e `LMI2C=0`/`LMS2C=0` — consistente com a hipótese de que
+`LMI2C`/`LMS2C` ficam mesmo "sem uso" no caso de setpoint numérico simples (só 1
+faixa), mas ainda não é confirmação suficiente pra fechar a questão.
 
 **Por que importa:** é exatamente o item de roadmap "unificar abas de entidades em
 grupos compactos". A GE é o **blueprint pronto** dele. Esforço médio‑alto.

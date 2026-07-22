@@ -2094,7 +2094,17 @@ def _extrair_ponto_digital(entidades):
     pdf_por_pnt = {}
     for pdf in pdf_dicts:
         pdf_por_pnt.setdefault(pdf.get("PNT", ""), []).append(pdf)
-    cgs_por_id = {cgs["ID"]: cgs for cgs in cgs_dicts if cgs.get("ID")}
+    # CGS.PAC -> PDS|PAS e' o FK REAL que liga um comando ao ponto que ele
+    # confirma (já documentado no grafo de FK do verificador -- REGRAS_REFS_PADRAO
+    # tem "CGS PAC PDS|PAS"). CGS.ID NÃO é confiável pra esse link: achado real
+    # (base jdm/CHESF) tem CGS.ID="JDM:REGU:STPC" com PAC="JDM:REGU-STPS" --
+    # identidade própria do comando, independente do ponto. O forward daqui
+    # sempre usa CGS.ID=id_logico por convenção própria (e TAMBÉM seta PAC
+    # corretamente), então essa travessia funciona igual pros dois casos.
+    cgs_por_pac = {}
+    for cgs in cgs_dicts:
+        if cgs.get("PAC"):
+            cgs_por_pac.setdefault(cgs["PAC"], []).append(cgs)
     cgf_por_cgs = {}
     for cgf in cgf_dicts:
         cgf_por_cgs.setdefault(cgf.get("CGS", ""), []).append(cgf)
@@ -2112,7 +2122,8 @@ def _extrair_ponto_digital(entidades):
             # aba "pds". Fabricar aqui um ID_Fisico só geraria um PDF fantasma na
             # próxima vez que unificar_pontos() rodasse.
             continue
-        cgfs = cgf_por_cgs.get(id_logico, []) if id_logico in cgs_por_id else []
+        cgs = next(iter(cgs_por_pac.get(id_logico, [])), None)
+        cgfs = cgf_por_cgs.get(cgs["ID"], []) if cgs else []
         for i, pdf in enumerate(origens):
             linha = {
                 "ID_Logico": id_logico,
@@ -2122,9 +2133,9 @@ def _extrair_ponto_digital(entidades):
                 "KCONV": pdf.get("KCONV", ""),
                 "TAC": pds.get("TAC", ""),
                 "OCR": pds.get("OCR", ""),
-                "Comando": "S" if id_logico in cgs_por_id else "N",
+                "Comando": "S" if cgs else "N",
             }
-            if id_logico in cgs_por_id:
+            if cgs:
                 # Casa a i-ésima origem com o i-ésimo CGF; sobrando menos CGF que
                 # origens, reaproveita o primeiro (caso comum: 1 canal de comando
                 # para N origens redundantes -- ver nota em completa/README.md).
@@ -2149,7 +2160,12 @@ def _extrair_ponto_analogico(entidades):
     paf_por_pnt = {}
     for paf in paf_dicts:
         paf_por_pnt.setdefault(paf.get("PNT", ""), []).append(paf)
-    cgs_por_id = {cgs["ID"]: cgs for cgs in cgs_dicts if cgs.get("ID")}
+    # Ver nota equivalente em _extrair_ponto_digital: CGS.PAC (não CGS.ID) é o FK
+    # real que liga o comando ao ponto.
+    cgs_por_pac = {}
+    for cgs in cgs_dicts:
+        if cgs.get("PAC"):
+            cgs_por_pac.setdefault(cgs["PAC"], []).append(cgs)
     cgf_por_cgs = {}
     for cgf in cgf_dicts:
         cgf_por_cgs.setdefault(cgf.get("CGS", ""), []).append(cgf)
@@ -2162,8 +2178,8 @@ def _extrair_ponto_analogico(entidades):
         origens = paf_por_pnt.get(id_logico)
         if not origens:
             continue  # sem PAF correspondente -- ver nota equivalente em _extrair_ponto_digital
-        cgs = cgs_por_id.get(id_logico)
-        cgfs = cgf_por_cgs.get(id_logico, []) if cgs else []
+        cgs = next(iter(cgs_por_pac.get(id_logico, [])), None)
+        cgfs = cgf_por_cgs.get(cgs["ID"], []) if cgs else []
         for i, paf in enumerate(origens):
             linha = {
                 "ID_Logico": id_logico,
@@ -2189,7 +2205,11 @@ def _extrair_ponto_analogico(entidades):
 
 
 def _extrair_comandos_avulsos(entidades, ids_logicos_com_ponto):
-    """CGS cujo ID não corresponde a nenhum PDS/PAS (comando "solto", ex.: COM_SAGE)."""
+    """CGS cujo PAC não corresponde a nenhum PDS/PAS já extraído (comando
+    "solto", ex.: COM_SAGE) -- PAC (não ID) é o FK real que liga um CGS ao ponto
+    que ele comanda (ver nota em _extrair_ponto_digital); um CGS avulso
+    tipicamente tem PAC apontando pra um ID "genérico" (ex. COM_SAGE) que não é
+    ID de nenhum PDS/PAS de verdade."""
     cgs_dicts = _linhas_ativas_como_dicts(*entidades.get("cgs", (None, None)))
     if not cgs_dicts:
         return []
@@ -2201,14 +2221,15 @@ def _extrair_comandos_avulsos(entidades, ids_logicos_com_ponto):
     saida = []
     for cgs in cgs_dicts:
         id_cgs = cgs.get("ID", "")
-        if not id_cgs or id_cgs in ids_logicos_com_ponto:
+        pac = cgs.get("PAC", "")
+        if not id_cgs or (pac and pac in ids_logicos_com_ponto):
             continue
         cgf = next(iter(cgf_por_cgs.get(id_cgs, [])), {})
         saida.append({
             "ID": id_cgs, "ID_Fisico": cgf.get("ID", ""),
             "NOME": cgs.get("NOME", ""), "NV2": cgf.get("NV2", ""),
             "KCONV": cgf.get("KCONV", ""), "TAC": cgs.get("TAC", ""),
-            "PAC": cgs.get("PAC", ""), "PINT": cgs.get("PINT", ""),
+            "PAC": pac, "PINT": cgs.get("PINT", ""),
             "TIPOE": cgs.get("TIPOE", ""), "TPCTL": cgs.get("TPCTL", ""),
             "LMI1C": cgs.get("LMI1C", ""), "LMI2C": cgs.get("LMI2C", ""),
             "LMS1C": cgs.get("LMS1C", ""), "LMS2C": cgs.get("LMS2C", ""),

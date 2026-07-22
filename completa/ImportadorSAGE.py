@@ -3211,9 +3211,16 @@ def _extrair_ieds(entidades):
 
     cnf_por_lsc = {c["LSC"]: c for c in cnf_dicts if c.get("LSC")}
     cxu_por_id = {c["ID"]: c for c in cxu_dicts if c.get("ID")}
-    utr_por_cxu = {}
+    # UTR liga ao CNF (nunca direto ao LSC) e carrega o ID do CXU que usa -- em
+    # bases reais, CXU/CNF/LSC têm IDs INDEPENDENTES entre si (achado real, base
+    # jdm/CHESF: LSC.ID="JDM", CNF.ID="L_JDM_CNF", CXU.ID="CA_JDM_CXU", cada um
+    # com seu próprio esquema de nome -- diferente do forward daqui, que sempre
+    # usa o mesmo id_ied nos 3). A travessia correta é sempre LSC -> CNF (por
+    # LSC.ID) -> UTR (por UTR.CNF) -> CXU/ENU (por UTR.CXU) -- nunca id_ied
+    # direto em CXU/UTR/ENU.
+    utr_por_cnf = {}
     for u in utr_dicts:
-        utr_por_cxu.setdefault(u.get("CXU", ""), []).append(u)
+        utr_por_cnf.setdefault(u.get("CNF", ""), []).append(u)
     enu_por_cxu = {}
     for e in enu_dicts:
         enu_por_cxu.setdefault(e.get("CXU", ""), []).append(e)
@@ -3240,7 +3247,8 @@ def _extrair_ieds(entidades):
         if not protocolo:
             continue  # TCV/TTP não reconhecido -- protocolo ainda não modelado
         params = PARAMS_PROTOCOLO[protocolo]
-        config = cnf_por_lsc.get(id_ied, {}).get("CONFIG", "")
+        cnf = cnf_por_lsc.get(id_ied)
+        config = cnf.get("CONFIG", "") if cnf else ""
         linha = {"ID": id_ied, "Protocolo": protocolo, "Direcao": direcao,
                  "Nome": lsc.get("NOME", ""), "GSD": lsc.get("GSD", "")}
 
@@ -3269,17 +3277,18 @@ def _extrair_ieds(entidades):
             aquisicao = direcao == "Aquisicao"
             linha.update(_parsear_config_cnf(config, _campos_cnf_esperados(params, aquisicao)))
 
-            cxu = cxu_por_id.get(id_ied)
+            utrs = utr_por_cnf.get(cnf.get("ID", ""), []) if cnf else []
+            cxu_id = utrs[0].get("CXU", "") if utrs else ""
+            cxu = cxu_por_id.get(cxu_id)
             if cxu:
                 for campo in ("AQANL", "AQPOL", "AQTOT", "INTGR", "NFAIL", "SFAIL", "FAILP", "FAILR"):
                     linha[campo] = cxu.get(campo, "")
-            utrs = utr_por_cxu.get(id_ied, [])
             utr_pri = _primeiro_pri(utrs)
             if utr_pri:
                 linha["NTENT"] = utr_pri.get("NTENT", "")
                 linha["RESPT"] = utr_pri.get("RESPT", "")
             linha["Redundante"] = "S" if len(utrs) > 1 else ""
-            enu_pri = _primeiro_pri(enu_por_cxu.get(id_ied, []))
+            enu_pri = _primeiro_pri(enu_por_cxu.get(cxu_id, []))
             if enu_pri:
                 linha["TDESC"] = enu_pri.get("TDESC", "")
                 linha["TRANS"] = enu_pri.get("TRANS", "")

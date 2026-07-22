@@ -510,6 +510,46 @@ check("round-trip ICCP: nao redundante -> Redundante vazio (so 1 ENM)", ied_iccp
 ied_iccp_red = by_id(mod._extrair_ieds(_entidades_de_saida(saida_iccp_red)), "C2D")
 check("round-trip ICCP redundante: Redundante=S inferido de 2 ENM", ied_iccp_red["Redundante"] == "S")
 
+# --- CXU/CNF/LSC com IDs INDEPENDENTES (achado real, base jdm/CHESF: LSC.ID=
+# "JDM", CNF.ID="L_JDM_CNF", CXU.ID="CA_JDM_CXU" -- nenhum dos 3 igual ao outro,
+# diferente do forward daqui, que sempre usa o mesmo id_ied nos 3). A travessia
+# tem que seguir LSC->CNF (por LSC.ID)->UTR (por UTR.CNF)->CXU/ENU (por
+# UTR.CXU) -- nunca assumir que CXU/UTR/ENU repetem o ID do LSC. ---
+entidades_ids_independentes = {
+    "lsc": _dicts_para_entidade([{"ID": "JDM", "TCV": "CNVH", "TTP": "IEC3S", "TIPO": "AA",
+                                   "NOME": "Ligacao Aquisicao DNP3 SE Jardim", "GSD": "JDM"}]),
+    "cnf": _dicts_para_entidade([{"ID": "L_JDM_CNF", "LSC": "JDM",
+                                   "CONFIG": "PlPr= 1 LiPr= 1 PlRe= 2 LiRe= 1 TZBR= 0 DnpLvl= 1"}]),
+    "cxu": _dicts_para_entidade([{"ID": "CA_JDM_CXU", "GSD": "JDM", "ORDEM": "1",
+                                   "AQANL": "200", "AQPOL": "600", "AQTOT": "60000", "INTGR": "60000",
+                                   "NFAIL": "5", "SFAIL": "200", "FAILP": "0", "FAILR": "0"}]),
+    "utr": _dicts_para_entidade([
+        {"ID": "JDM_UTRP", "CNF": "L_JDM_CNF", "CXU": "CA_JDM_CXU", "ENUTR": "7",
+         "NTENT": "3", "RESPT": "3000", "ORDEM": "PRI"},
+        {"ID": "JDM_UTRR", "CNF": "L_JDM_CNF", "CXU": "CA_JDM_CXU", "ENUTR": "7",
+         "NTENT": "3", "RESPT": "3000", "ORDEM": "REV"},
+    ]),
+    "enu": _dicts_para_entidade([
+        {"ID": "JDM_CXU_ENUP", "CXU": "CA_JDM_CXU", "ORDEM": "PRI", "TDESC": "0", "TRANS": "0", "VLUTR": "1"},
+        {"ID": "JDM_CXU_ENUR", "CXU": "CA_JDM_CXU", "ORDEM": "REV", "TDESC": "0", "TRANS": "0", "VLUTR": "17"},
+    ]),
+    "tac": _dicts_para_entidade([{"ID": "JDM", "NOME": "Terminal Aquisicao/Controle de JDM",
+                                   "INS": "JDM", "TPAQS": "ASAC", "LSC": "JDM"}]),
+}
+ied_ids_indep = by_id(mod._extrair_ieds(entidades_ids_independentes), "JDM")
+check("extracao real (IDs independentes): Protocolo/Direcao reconhecidos mesmo com CXU.ID != LSC.ID",
+      ied_ids_indep is not None and ied_ids_indep["Protocolo"] == "DNP3" and ied_ids_indep["Direcao"] == "Aquisicao")
+check("extracao real (IDs independentes): CNF.CONFIG parseado (PlPr/TZBR/DnpLvl)",
+      ied_ids_indep["PlPr"] == "1" and ied_ids_indep["TZBR"] == "0" and ied_ids_indep["DnpLvl"] == "1")
+check("extracao real (IDs independentes): AQANL/INTGR do CXU encontrados via UTR.CNF->UTR.CXU",
+      ied_ids_indep["AQANL"] == "200" and ied_ids_indep["INTGR"] == "60000")
+check("extracao real (IDs independentes): NTENT/RESPT do UTR, Redundante=S (2 UTR)",
+      ied_ids_indep["NTENT"] == "3" and ied_ids_indep["RESPT"] == "3000" and ied_ids_indep["Redundante"] == "S")
+check("extracao real (IDs independentes): TDESC/TRANS/VLUTR do ENU encontrados via CXU.ID real",
+      ied_ids_indep["TDESC"] == "0" and ied_ids_indep["TRANS"] == "0" and ied_ids_indep["VLUTR"] == "1")
+check("extracao real (IDs independentes): INS do TAC (via TAC.LSC, sempre foi por FK de verdade)",
+      ied_ids_indep["INS"] == "JDM")
+
 # --- protocolo desconhecido: LSC solto (nunca gerado por _gerar_infra_ied, mas
 # pode existir numa base real de protocolo ainda nao modelado) -- ignorado ---
 entidades_desconhecido = _dicts_para_entidade(

@@ -131,11 +131,16 @@ existentes e povoa (upsert, mesma regra de não duplicar) as 5 abas de config:
   o ponto em si continua intocado na aba original. Uma versão anterior tentava
   preservá-los com um `ID_Fisico` fictício, mas isso gerava um PDF/PAF fantasma toda
   vez que `unificar_pontos` rodava de novo;
-- CGS com o mesmo ID de um PDS/PAS → marca `Comando=S` na origem correspondente
-  (em `PontoAnalogico`, também traz `ID_Fisico_Comando`/`KCONV_Comando` do CGF
-  ligado e os 4 limites `LMI1C/LMI2C/LMS1C/LMS2C` direto do CGS);
-- CGS **sem** PDS/PAS correspondente → vai pra `ComandoAvulso` (com os 4 limites
-  também, quando presentes no CGS);
+- CGS cujo **`PAC`** aponta pro `ID` de um PDS/PAS → marca `Comando=S` na origem
+  correspondente (em `PontoAnalogico`, também traz `ID_Fisico_Comando`/
+  `KCONV_Comando` do CGF ligado e os 4 limites `LMI1C/LMI2C/LMS1C/LMS2C` direto
+  do CGS). **`CGS.PAC` é o FK de verdade aqui, não `CGS.ID`** — achado real (base
+  jdm/CHESF) tem um CGS com `ID` totalmente independente do ponto
+  (`ID=JDM:REGU:STPC`, `PAC=JDM:REGU-STPS`) — o forward desta planilha sempre usa
+  o mesmo `ID` nos dois por convenção própria (e também seta `PAC` corretamente),
+  mas bases de terceiros nem sempre seguem essa convenção;
+- CGS cujo `PAC` **não** aponta pra nenhum PDS/PAS extraído → vai pra
+  `ComandoAvulso` (com os 4 limites também, quando presentes no CGS);
 - PDD/PAD → um canal por `TDD` distinto em `CanaisDistribuicao` (com **Método
   inferido automaticamente** quando é Prefixo/Sufixo simples — compara o ID original
   com o transformado; quando não dá pra inferir com confiança, assume `Explicito`

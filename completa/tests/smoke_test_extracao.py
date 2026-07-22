@@ -47,14 +47,33 @@ check("simples: ID_Fisico do PDF", linhas_pd[0]["ID_Fisico"] == "IED1.CTRL-XCBR$
 check("simples: TAC/OCR vieram do PDS", linhas_pd[0]["TAC"] == "TAC1" and linhas_pd[0]["OCR"] == "OCR1")
 
 # ------------------------------------------------------------------
-# 2. Digital com comando associado (CGS.ID == PDS.ID)
+# 2. Digital com comando associado (CGS.PAC == PDS.ID -- o FK real; CGS.ID
+# aqui tambem bate por coincidencia, ver 2b pro caso em que NAO bate)
 # ------------------------------------------------------------------
 entidades2 = dict(entidades)
-entidades2["cgs"] = ent(CGS_H, [["", "x", "", "DEM:230:LIN01:DJ:POS", "Disjuntor Posicao", "TAC1", "", "", "", ""]])
+entidades2["cgs"] = ent(CGS_H, [["", "x", "", "DEM:230:LIN01:DJ:POS", "Disjuntor Posicao", "TAC1",
+                                  "DEM:230:LIN01:DJ:POS", "", "", ""]])
 entidades2["cgf"] = ent(CGF_H, [["", "x", "", "IED1.CTRL-CSWI$CO$Pos", "IED1.CTRL_CSIM",
                                  "DEM:230:LIN01:DJ:POS", "SBOw TERM"]])
 linhas_pd2 = mod._extrair_ponto_digital(entidades2)
 check("comando: Comando=S", linhas_pd2[0]["Comando"] == "S")
+
+# ------------------------------------------------------------------
+# 2b. Digital com comando associado, CGS.ID DIFERENTE do ID do ponto (achado
+# real: base jdm/CHESF tem CGS.ID="JDM:REGU:STPC" com PAC="JDM:REGU-STPS" --
+# a identidade do comando e' independente da do ponto; so' o PAC liga os dois,
+# exatamente como o grafo de FK do verificador ja documentava: CGS.PAC->PDS|PAS)
+# ------------------------------------------------------------------
+entidades2b = dict(entidades)
+entidades2b["cgs"] = ent(CGS_H, [["", "x", "", "CMD:INDEPENDENTE:123", "Comando com ID proprio", "TAC1",
+                                   "DEM:230:LIN01:DJ:POS", "", "", ""]])
+entidades2b["cgf"] = ent(CGF_H, [["", "x", "", "IED1.CTRL-CSWI$CO$Pos", "IED1.CTRL_CSIM",
+                                  "CMD:INDEPENDENTE:123", "SBOw TERM"]])
+linhas_pd2b = mod._extrair_ponto_digital(entidades2b)
+check("comando com ID proprio: Comando=S mesmo com CGS.ID != PDS.ID (via PAC)",
+      linhas_pd2b[0]["Comando"] == "S")
+check("comando com ID proprio: ID_Fisico_Comando ainda resolvido (CGF casado pelo ID real do CGS)",
+      linhas_pd2b[0]["ID_Fisico_Comando"] == "IED1.CTRL-CSWI$CO$Pos")
 check("comando: ID_Fisico_Comando preenchido", linhas_pd2[0]["ID_Fisico_Comando"] == "IED1.CTRL-CSWI$CO$Pos")
 
 # ------------------------------------------------------------------
@@ -99,13 +118,14 @@ check("analogico simples: Comando=N (sem CGS)", linhas_pa4c[0]["Comando"] == "N"
 check("analogico simples: ID_Fisico do PAF", linhas_pa4c[0]["ID_Fisico"] == "IED1.MEAS-MMXU$MX$TotW")
 
 # ------------------------------------------------------------------
-# 4d. Analogico com comando (setpoint, CGS.ID == PAS.ID) -- reverso de
-# _gerar_fan_out_analogico; achado real CGS.TIPO=PAS com limites LMI1C/LMS1C
-# (tucurui/jdm, ver PLANEJAMENTO.md)
+# 4d. Analogico com comando (setpoint, CGS.PAC == PAS.ID -- o FK real) --
+# reverso de _gerar_fan_out_analogico; achado real CGS.TIPO=PAS com limites
+# LMI1C/LMS1C (tucurui/jdm, ver PLANEJAMENTO.md). jdm tambem confirmou que
+# CGS.ID pode ser totalmente independente do ID do ponto (ver 4e).
 # ------------------------------------------------------------------
 entidades4d = dict(entidades4c)
-entidades4d["cgs"] = ent(CGS_H, [["", "x", "", "DEM:UG01:POT_ATIVA", "Potencia Ativa", "TAC1", "", "",
-                                   "", "", "0", "0", "100", "100"]])
+entidades4d["cgs"] = ent(CGS_H, [["", "x", "", "DEM:UG01:POT_ATIVA", "Potencia Ativa", "TAC1",
+                                   "DEM:UG01:POT_ATIVA", "", "", "", "0", "0", "100", "100"]])
 entidades4d["cgf"] = ent(CGF_H, [["", "x", "", "IED1.CTRL-ATCC$CO$SetMag", "IED1.CTRL_CSIM",
                                   "DEM:UG01:POT_ATIVA", "APC"]])
 linhas_pa4d = mod._extrair_ponto_analogico(entidades4d)
@@ -119,25 +139,58 @@ check("analogico com comando: limites LMI2C/LMS2C carregados",
       linhas_pa4d[0]["LMI2C"] == "0" and linhas_pa4d[0]["LMS2C"] == "100")
 
 # ------------------------------------------------------------------
+# 4e. Analogico com comando, CGS.ID DIFERENTE do ID do ponto -- reproduz
+# literalmente o achado real da base jdm/CHESF: CGS.ID="JDM:REGU:STPC",
+# PAC="JDM:REGU-STPS", LMI1C=680/LMS1C=715 (setpoint numerico de tensao via
+# UTR). So' o PAC (nao o ID) liga o comando ao ponto.
+# ------------------------------------------------------------------
+entidades4e = {
+    "pas": ent(PAS_H, [["", "x", "", "JDM:REGU-STPS", "Valor da Tensao de Regulacao via UTR-JDM",
+                        "JDM", ""]]),
+    "paf": ent(PAF_H, [["", "x", "", "JDM_ADNP_1_AANL_103", "JDM_ADNP_1_AANL",
+                        "JDM:REGU-STPS", "PAS", ".045", "0", "BIP", ""]]),
+    "cgs": ent(CGS_H, [["", "x", "", "JDM:REGU:STPC", "Valor da Tensao de Regulacao via UTR-JDM", "JDM",
+                        "JDM:REGU-STPS", "JDM:UTR-069:90:PAUT", "STPT", "CSAC", "680", "0", "715", "0"]]),
+    "cgf": ent(CGF_H, [["", "x", "", "JDM_CDNP_2_CSTP_0", "JDM_CDNP_2_CSTP",
+                        "JDM:REGU:STPC", "ON"]]),
+}
+linhas_pa4e = mod._extrair_ponto_analogico(entidades4e)
+check("achado real jdm: Comando=S mesmo com CGS.ID != PAS.ID (via PAC)", linhas_pa4e[0]["Comando"] == "S")
+check("achado real jdm: limites LMI1C=680/LMS1C=715 carregados (setpoint numerico de tensao)",
+      linhas_pa4e[0]["LMI1C"] == "680" and linhas_pa4e[0]["LMS1C"] == "715")
+check("achado real jdm: ID_Fisico_Comando resolvido (CGF casado pelo ID real do CGS)",
+      linhas_pa4e[0]["ID_Fisico_Comando"] == "JDM_CDNP_2_CSTP_0")
+
+# ------------------------------------------------------------------
 # 5. Comando avulso (CGS sem PDS/PAS correspondente, tipo COM_SAGE)
 # ------------------------------------------------------------------
 entidades5 = {
     "cgs": ent(CGS_H, [
         ["", "x", "", "DEM:SAGE:RESET", "Reset", "TAC_LOCAL", "COM_SAGE", "", "AFIC", "CSAC"],
         ["", "x", "", "DEM:SAGE:RESYNC", "Resync", "TAC_LOCAL", "COM_SAGE", "", "AFIC", "CSAC"],
+        # 3o CGS, PAC != "COM_SAGE" -- so' pra testar a exclusao abaixo (ver 5c).
+        ["", "x", "", "DEM:SAGE:TRIP", "Trip", "TAC_LOCAL", "DEM:REAL:PONTO_JA_EXTRAIDO", "", "AFIC", "CSAC"],
     ]),
     "cgf": ent(CGF_H, [
         ["", "x", "", "TAC1.CTRL-CSWI$CO$Rst", "TAC1.CTRL_CSIM", "DEM:SAGE:RESET", "SBOw"],
         ["", "x", "", "TAC1.CTRL-CSWI$CO$Sync", "TAC1.CTRL_CSIM", "DEM:SAGE:RESYNC", "SBOw"],
+        ["", "x", "", "TAC1.CTRL-CSWI$CO$Trip", "TAC1.CTRL_CSIM", "DEM:SAGE:TRIP", "SBOw"],
     ]),
 }
 linhas_avulsos = mod._extrair_comandos_avulsos(entidades5, ids_logicos_com_ponto=set())
-check("avulso: 2 comandos extraidos", len(linhas_avulsos) == 2)
-check("avulso: mesmo TAC/PAC compartilhado",
-      all(l["TAC"] == "TAC_LOCAL" and l["PAC"] == "COM_SAGE" for l in linhas_avulsos))
-# se o CGS.ID JA aparece como ponto (ids_logicos_com_ponto), nao deve virar avulso
-linhas_avulsos_filtrado = mod._extrair_comandos_avulsos(entidades5, ids_logicos_com_ponto={"DEM:SAGE:RESET"})
-check("avulso: exclui CGS que ja tem ponto proprio", len(linhas_avulsos_filtrado) == 1)
+check("avulso: 3 comandos extraidos (nenhum ponto real extraido ainda)", len(linhas_avulsos) == 3)
+check("avulso: RESET/RESYNC compartilham o mesmo PAC (ponto generico)",
+      all(l["PAC"] == "COM_SAGE" for l in linhas_avulsos if l["ID"] in ("DEM:SAGE:RESET", "DEM:SAGE:RESYNC"))
+      and all(l["TAC"] == "TAC_LOCAL" for l in linhas_avulsos))
+# 5c. PAC (nao ID) e' o que decide exclusao -- se o PAC de um CGS ja aparece
+# como ponto extraido (ids_logicos_com_ponto), esse CGS NAO deve virar avulso
+# (ja foi contabilizado como Comando=S do proprio ponto); os outros 2
+# (PAC="COM_SAGE", nunca bate com um ID de ponto de verdade) continuam avulso.
+linhas_avulsos_filtrado = mod._extrair_comandos_avulsos(
+    entidades5, ids_logicos_com_ponto={"DEM:REAL:PONTO_JA_EXTRAIDO"})
+check("avulso: exclui so' o CGS cujo PAC ja tem ponto proprio (via PAC, nao ID)",
+      len(linhas_avulsos_filtrado) == 2
+      and {l["ID"] for l in linhas_avulsos_filtrado} == {"DEM:SAGE:RESET", "DEM:SAGE:RESYNC"})
 
 # ------------------------------------------------------------------
 # 5b. Comando avulso ANALOGICO (com limites LMI1C/LMS1C, achado real ur_mir/tucurui)

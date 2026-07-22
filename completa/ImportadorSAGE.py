@@ -2528,6 +2528,12 @@ CABECALHOS_IEDS = [
 # 101/103/DNP3/MODBUS/61850/SNMP aqui quando confirmados contra bases reais.
 PARAMS_PROTOCOLO = {
     "104": {"tcv": "CNVM", "ttp": "CX104"},
+    # 101 confirmado contra base real do usuário (SE Miracema/neoenergia): mesmo
+    # formato de CNF.CONFIG e prefixos TN1 do 104 -- só troca TCV/TTP. Diferença
+    # não modelada aqui: 101 tipicamente roda por serial e precisa de uma entrada
+    # em tsr.conf (config/<base>/sys/tsr.conf, transportador iec1s/iec2s/iec2t) --
+    # isso é um arquivo de sistema fora do modelo de planilha; configure à parte.
+    "101": {"tcv": "CNVG", "ttp": "IEC2S"},
 }
 
 _DEFAULTS_IED = {

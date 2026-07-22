@@ -165,10 +165,13 @@ criados aqui nas abas `PontoDigital`/`PontoAnalogico`/`ComandoAvulso` (Unificaç
 Pontos) para gerar os pontos individuais — esta parte só monta a "casca" onde os
 pontos vão morar, não cria PDF/PDS/PAF/PAS/CGF/CGS.
 
-**Protocolos disponíveis**: só **104** por enquanto, confirmado contra uma base real
-(aquisição **e** distribuição). Próximos da lista: 101, 103, DNP3, MODBUS, 61850,
-SNMP, ICCP/SICCP (OPC UA e C37.118 ficam de fora por ora, sem base real disponível
-para validar).
+**Protocolos disponíveis**: **104** e **101**, confirmados contra bases reais
+(aquisição **e** distribuição). Próximos da lista: 103, DNP3, MODBUS, 61850, SNMP,
+ICCP/SICCP (OPC UA e C37.118 ficam de fora por ora, sem base real disponível para
+validar). O 101 tipicamente roda por serial — configure a entrada correspondente em
+`tsr.conf` (`config/<base>/sys/tsr.conf`, transportador `iec1s`/`iec2s`/`iec2t`) à
+parte; é um arquivo de sistema fora do modelo desta planilha, `gerar_ied` não mexe
+nele.
 
 Colunas da aba `IEDs`: `ID, Protocolo, Direcao (Aquisicao/Distribuicao), Nome, GSD,
 MAP, NSRV1, NSRV2, PlPr, LiPr, PlRe, LiRe, IGNERS, SINCR, INVAL, AQANL, AQPOL, AQTOT,

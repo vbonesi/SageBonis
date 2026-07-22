@@ -165,24 +165,23 @@ criados aqui nas abas `PontoDigital`/`PontoAnalogico`/`ComandoAvulso` (Unificaç
 Pontos) para gerar os pontos individuais — esta parte só monta a "casca" onde os
 pontos vão morar, não cria PDF/PDS/PAF/PAS/CGF/CGS.
 
-**Protocolos disponíveis**: **104**, **101**, **DNP3**, **MODBUS**, **61850** e
-**SNMP**. 104 e 101 confirmados contra bases reais nos dois sentidos (aquisição
-**e** distribuição); DNP3 e MODBUS confirmados contra base real só na
-**aquisição** — a distribuição de ambos foi extrapolada por consistência (mesmo
-formato "stripped" do 104/101) e pelo código de referência da macro GE, sem uma
-base real de distribuição disponível pra validar; 61850 é bidirecional por
-natureza (ver seção própria abaixo) e foi confirmado contra 12 IEDs reais; SNMP
-é só aquisição por natureza (protocolo de monitoramento, não modela comando —
-ver seção própria) e foi confirmado contra 2 bases reais independentes. **103**
-ficou de fora por ora — não há nenhuma base real com IEC 103 no acervo de
-referência, só documentação de manual. **ICCP/SICCP**, **OPC UA** e **C37.118**
-ficam de fora por ora, sem base real disponível para validar nenhum dos três —
-ICCP foi investigado especificamente (2 pistas no SkillSAGE não confirmaram
-nada; a própria documentação curada de lá afirma "no acervo NÃO há base ICCP")
-e o modelo real seria estruturalmente diferente dos 6 já entregues (MMS via
-`MUL`/`ENM`, VCC + Acordo Bilateral em vez de `CNF.CONFIG` ponto-a-ponto), então
-não dava pra generalizar por analogia com confiança. Retomar qualquer um dos
-três se aparecer uma base real.
+**Protocolos disponíveis**: **104**, **101**, **DNP3**, **MODBUS**, **61850**,
+**SNMP** e **ICCP**. 104 e 101 confirmados contra bases reais nos dois sentidos
+(aquisição **e** distribuição); DNP3 e MODBUS confirmados contra base real só
+na **aquisição** — a distribuição de ambos foi extrapolada por consistência
+(mesmo formato "stripped" do 104/101) e pelo código de referência da macro GE,
+sem uma base real de distribuição disponível pra validar; 61850 é bidirecional
+por natureza (ver seção própria abaixo) e foi confirmado contra 12 IEDs reais;
+SNMP é só aquisição por natureza (protocolo de monitoramento, não modela
+comando — ver seção própria) e foi confirmado contra 2 bases reais
+independentes; ICCP é bidirecional por natureza igual ao 61850 (ver seção
+própria) e foi confirmado contra o **manual oficial** do protocolo (não contra
+uma base real — o acervo de referência não tem nenhuma, ver nota na seção do
+ICCP). **103** ficou de fora por ora — não há nenhuma base real com IEC 103 no
+acervo de referência, só documentação de manual. **OPC UA** e **C37.118**
+ficam de fora por ora, sem base real nem documentação suficiente disponível
+para validar. Retomar qualquer um dos dois se aparecer uma base real ou um
+manual equivalente ao que resolveu o ICCP.
 
 101 e DNP3 tipicamente rodam por serial — configure a entrada correspondente em
 `tsr.conf` (`config/<base>/sys/tsr.conf`, transportador `iec1s`/`iec2s`/`iec2t`
@@ -193,21 +192,25 @@ serial (RTU) ou TCP — mesma ressalva, ajuste `tsr.conf` à parte se for serial
 Colunas da aba `IEDs`: `ID, Protocolo, Direcao (Aquisicao/Distribuicao), Nome, GSD,
 INS, MAP, NSRV1, NSRV2, PlPr, LiPr, PlRe, LiRe, IGNERS, SINCR, INVAL, TZBR, DnpLvl,
 PROTO, ApTitle, AeQ, PS, SS, TS, IDAD, KEEP, NREP, TOUT, MPDU, OPMSK, GOOSE, VERSAO,
-HOST, COMMUNITY, AQANL, AQPOL, AQTOT, INTGR, NFAIL, SFAIL, FAILP, FAILR, NTENT,
-RESPT, TDESC, TRANS, VLUTR, Redundante, Gera`. `IGNERS/SINCR/INVAL` só valem para
-104/101; `TZBR/DnpLvl` só para DNP3; `PROTO` só para MODBUS; `ApTitle` até `GOOSE`
-só para 61850; `VERSAO/HOST/COMMUNITY` só para SNMP (cada protocolo usa seu
-próprio conjunto de campos extras no `CONFIG` do CNF — colunas que não se
-aplicam ao protocolo escolhido ficam simplesmente sem uso; 61850 também não usa
-`AQANL` até `VLUTR`, ver seção própria). `INS` (a instalação/estação a que o
-`TAC` pertence — entidade própria, referenciada por `TAC.INS`) e `HOST` (o IP
-do equipamento monitorado via SNMP) não têm default: são específicos do site.
-A maioria dos outros campos tem um default sensato (ex.: `MAP=GERAL`,
-`NSRV1/NSRV2=localhost`, `PROTO=BIN`, `VERSAO=2c`, `COMMUNITY=public`) — só
-preencha o que quiser mudar; a célula sempre vence o default. `Redundante=S`
-cria `UTR` em par (PRI/REV); `ENU` sempre vem em par (redundância de rede),
-mesmo com um `UTR` só, igual ao observado na base real (não vale para 61850,
-que não usa `UTR`/`ENU`).
+HOST, COMMUNITY, VERBD, NSERV1, NSERV2, IDIG, IANL, IDIS, T2V, BLC3, AQANL, AQPOL,
+AQTOT, INTGR, NFAIL, SFAIL, FAILP, FAILR, NTENT, RESPT, TDESC, TRANS, VLUTR,
+Redundante, Gera`. `IGNERS/SINCR/INVAL` só valem para 104/101; `TZBR/DnpLvl` só
+para DNP3; `PROTO` só para MODBUS; `ApTitle` até `GOOSE` só para 61850 (e
+parcialmente reaproveitado por ICCP, ver abaixo); `VERSAO/HOST/COMMUNITY` só
+para SNMP; `VERBD` até `BLC3` só para ICCP (cada protocolo usa seu próprio
+conjunto de campos extras no `CONFIG` do CNF — colunas que não se aplicam ao
+protocolo escolhido ficam simplesmente sem uso; 61850 e ICCP também não usam
+`AQANL` até `VLUTR`, ver seções próprias). `INS` (a instalação/estação a que o
+`TAC` pertence), `HOST` (o IP do equipamento monitorado via SNMP) e `VERBD` (o
+identificador do Acordo Bilateral vigente do ICCP) não têm default: são
+específicos do site. A maioria dos outros campos tem um default sensato (ex.:
+`MAP=GERAL`, `NSRV1/NSRV2=localhost`, `PROTO=BIN`, `VERSAO=2c`,
+`COMMUNITY=public`, `ApTitle=1 1 10 / 1 1 10`) — só preencha o que quiser
+mudar; a célula sempre vence o default. `Redundante=S` cria `UTR` em par
+(PRI/REV); `ENU` sempre vem em par (redundância de rede), mesmo com um `UTR`
+só, igual ao observado na base real (não vale para 61850/ICCP, que não usam
+`UTR`/`ENU`; para ICCP, `Redundante=S` cria um 2º servidor `ENM`/`NSERV2` no
+lugar).
 
 > ℹ️ Se você já rodou `gerar_ied` (ou qualquer outra função que crie uma aba de
 > config) antes de atualizar o SageBonis para uma versão com colunas novas, não
@@ -276,6 +279,41 @@ bases reais independentes (100% consistentes entre si):
 SNMP é só aquisição por escopo — os 2 exemplos reais confirmam isso (só
 `TIPO=AA`); é um protocolo de monitoramento, não modela distribuição/comando.
 
+**ICCP/TASE.2 é o único protocolo confirmado só contra o manual oficial**
+(`SAGE_ManCfg_Anx15_ICCP_rev21.pdf`, CEPEL), não contra uma base real — o
+acervo de referência (SkillSAGE) não tem nenhuma disponível: a "referência"
+que existia lá (biblioteca de protocolos) na verdade contém dados no padrão
+104, e a única base real marcada como "ICCP" no inventário não tem nenhum
+traço do protocolo em nenhuma entidade. O manual, porém, é completo e
+determinístico o suficiente (é a fonte primária CEPEL/SAGE) pra implementar
+com confiança. Pontos de atenção:
+- Existem **dois mecanismos** de ICCP no SAGE, bem diferentes: o **conversor
+  "iccp"** (fino, escolhe exatamente quais pontos vão pra qual centro remoto —
+  é o que `gerar_ied` modela) e o **servidor "SICCP"** (genérico, expõe
+  automaticamente TODOS os pontos PDS/PAS/PTS/CGS pra qualquer VCC autorizado,
+  **sem nenhuma configuração de entidades** — é só um arquivo de sistema,
+  `siccp.cnf`, mesma categoria do `tsr.conf`, fora do modelo desta planilha).
+  Use SICCP quando não precisar escolher pontos por centro remoto (a maioria
+  dos casos reais, a julgar pela ausência de bases com o conversor fino no
+  acervo); use "iccp" (via `gerar_ied`) quando precisar dessa granularidade.
+- Como o 61850, é bidirecional por natureza (`LSC.TIPO="AD"` sempre,
+  `Direcao` não é usado) e usa `TN1` fixo `NLN1`.
+- **Sem `CXU`/`UTR`/`ENU`/`TAC`/`TDD`** — usa duas entidades novas: `MUL`
+  ("Multiligação com Centro de Controle Remoto", domain name da direção de
+  aquisição) e `ENM` ("Enlace de multiligação", servidor principal/reserva do
+  centro remoto — `Redundante=S` cria o 2º).
+- **Um único NV1 reúne até 8 tipos de NV2** simultaneamente — aquisição
+  (`ADAQ`/`AAAQ`/`ATTA`/`CSIM`) **e** distribuição (`DDAQ`/`DAAQ`/`DTTA`/`CDUP`)
+  podem coexistir no mesmo canal MMS, já que o mesmo VCC pode aquisitar e
+  distribuir ao mesmo tempo — diferente de todos os outros protocolos, que
+  fazem só um dos dois por linha da aba `IEDs`.
+- `CNF.CONFIG` reaproveita `ApTitle/AeQ/PS/SS/TS` do 61850 (mesmo formato e
+  default), mas troca os campos obrigatórios: `IDIG/IANL/IDIS/TOUT/MPDU/T2V/
+  OPMSK/BLC3` (confirmado no manual, incluindo os nomes das 8 variáveis).
+  `OPMSK` usa default **0** aqui — diferente do 228521 do 61850, mesma coluna
+  da planilha. `IDIG/IANL/IDIS` (temporizadores de integridade) não têm
+  default — o valor certo depende de o VCC remoto suportar o bloco 2 do ICCP.
+
 ## Instalação e uso
 Igual à Simples: abra `SageBonis.ods` e habilite as macros do documento (a macro vem
 embutida). Atribua as funções `verificar_base`, `unificar_pontos`, `extrair_pontos`,
@@ -293,6 +331,7 @@ python sync_macro.py status  --ods completa/SageBonis.ods --py completa/Importad
 ## Status
 🚧 Em desenvolvimento, mas os 3 itens do roadmap original (verificador, unificação
 de pontos, assistente de protocolo/IED) já foram entregues. Do assistente de
-protocolo/IED, restam só protocolos sem base real disponível pra validar (103,
-OPC UA, C37.118, ICCP/SICCP — ver [PLANEJAMENTO.md](../PLANEJAMENTO.md)),
-retomados se uma base real aparecer.
+protocolo/IED, restam só protocolos sem base real (nem manual completo, no
+caso de OPC UA/C37.118) disponível pra validar (103, OPC UA, C37.118 — ver
+[PLANEJAMENTO.md](../PLANEJAMENTO.md)), retomados se aparecer uma base ou
+documentação equivalente ao que resolveu o ICCP.

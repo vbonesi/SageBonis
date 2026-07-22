@@ -314,9 +314,18 @@ Completa cumprir, no mínimo:
 - [x] Cobertura de teste mínima das funções puras (parser, geradores, verificador) —
       movida do scratchpad temporário pro repo em `completa/tests/` (antes só existia
       em `/tmp`, perdida entre sessões): 4 smoke tests em memória (~200+ checks) +
-      1 teste UNO real consolidado (harness reutilizável em `uno_harness.py`), todos
+      2 testes UNO reais (harness reutilizável em `uno_harness.py`), todos
       rodáveis via `python completa/tests/run_all.py`;
-- [ ] Paridade de import/export com a Trilha Simples (mesmo resultado de `.dat`).
+- [x] Paridade de import/export com a Trilha Simples (mesmo resultado de `.dat`) —
+      verificado de 2 formas: (1) diff de código confirma que o núcleo compartilhado
+      (`importar_dats`/`exportar_dats`/parser, ~1000 linhas) é **byte-a-byte idêntico**
+      entre `ImportadorSAGE.py` da raiz e da Completa, só divergindo depois do ponto
+      onde a Completa anexa seus recursos próprios; (2) `teste_paridade_import_export.py`
+      confirma empiricamente: importa uma base `.dat` sintética nas duas trilhas,
+      exporta de volta, e os `.dat` resultantes são idênticos byte-a-byte (incluindo um
+      caractere acentuado, pra testar o round-trip Latin-1). Esse teste funciona como
+      guarda-corpo pra manter esse critério cumprido no futuro (se alguém editar um
+      arquivo sem sincronizar o outro, o teste denuncia).
 
 ## Referências
 Macros VBA de origem (fora deste repo), analisadas para extrair as ideias:

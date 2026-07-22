@@ -9,6 +9,16 @@ avançados. A estratégia das duas trilhas está em [PLANEJAMENTO.md](../PLANEJA
 
 ## Recursos além da Simples
 
+Todas as funções abaixo estão no menu **SageBonis** e na toolbar do documento (junto
+com as da Simples, separadas por um divisor). As abas novas seguem a mesma paleta
+quente já usada na planilha (entidades de dado em vermelhos saturados; cada aba de
+config/meta com seu próprio tom pastel, como `Geral`/`Cores`/`MaisUsadas`/
+`EntidadeAtributoValor` já faziam): **salmão pastel** = config (você preenche),
+**terroso** = relatório (a ferramenta escreve). A aba `Análise` foge disso de
+propósito — usa vermelho/verde dinâmico (erro/limpo), informação mais útil que uma
+cor fixa. (Só vale para abas criadas daqui
+pra frente; `VerificacaoRefs`, criada antes dessa convenção existir, fica sem cor.)
+
 ### Verificador de base (linter) — `verificar_base`
 Roda checagens de integridade na base e escreve um relatório na aba **`Análise`**
 (criada automaticamente), com colunas `Severidade | Entidade | Linha | Atributo |

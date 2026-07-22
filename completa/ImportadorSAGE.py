@@ -80,6 +80,19 @@ CABEÇALHO_COLUNA_DADOS = "Comentario/Include"
 COR_LINHA_PAR = 16777215   # Branco (0xFFFFFF)
 COR_LINHA_IMPAR = 15790320  # Cinza muito claro (0xF0F0F0)
 
+# --- Cores de aba da Trilha Completa (coesão com o tema quente já existente) ---
+# A planilha já segue uma paleta em tons de vermelho/laranja: entidades de dado usam
+# vermelhos saturados (PDS/PDF=0xFF0000, infra=0x8D281E...), e cada aba de config/meta
+# já tem seu próprio tom pastel dentro da mesma família (Geral=pêssego 0xFAB387,
+# Cores=malva 0xCBA6F7, MaisUsadas=rosa 0xF5C2E7, EntidadeAtributoValor=amarelo
+# 0xF9E2AF). As cores abaixo seguem essa mesma lógica -- pastel, dentro da família
+# quente, mas tons ainda não usados por nenhuma aba existente. Config = você
+# preenche; Relatório = a ferramenta escreve (saída). A aba "Análise" foge dessa
+# regra de propósito: usa vermelho/verde dinâmico (erro/limpo), informação mais útil
+# que uma cor fixa de categoria.
+COR_ABA_CONFIG = 0xF2CDCD      # pastel salmão (mesma família do Rosewater/Pink já usados)
+COR_ABA_RELATORIO = 0xEBA0AC   # terroso suave (mais escuro que o Config, ainda quente)
+
 # --- Constantes Técnicas ---
 FLAGS_LIMPAR_TUDO = 1048575
 LIMITE_CARACTERES_VALIDACAO = 250 # Manteremos para a próxima etapa
@@ -1402,6 +1415,7 @@ def _criar_aba_refs_exemplo(doc):
     for ent_o, attr_o, ent_d, attr_d in REGRAS_REFS_PADRAO:
         matriz.append([ent_o, attr_o, ent_d, attr_d, "N"])  # N = inativa
     _escrever_matriz(sheet, matriz, negrito_cabecalho=True)
+    sheet.TabColor = COR_ABA_CONFIG
 
 
 def _buscar_entidade(entidades, nome):
@@ -1648,6 +1662,7 @@ def _garantir_aba_config(doc, nome_aba, cabecalhos):
     doc.getSheets().insertByName(nome_aba, new_sheet)
     sheet = _get_sheet(doc, nome_aba)
     _escrever_matriz(sheet, [cabecalhos], negrito_cabecalho=True)
+    sheet.TabColor = COR_ABA_CONFIG
 
 
 def _agrupar_por_id_logico(linhas, headers):
@@ -2296,6 +2311,7 @@ def _escrever_relatorio_simples(doc, nome_aba, cabecalho, linhas_texto):
         sheet = _get_sheet(doc, nome_aba)
     matriz = [cabecalho] + [[linha] for linha in (linhas_texto or ["Nenhuma alteração ativa a processar."])]
     _escrever_matriz(sheet, matriz, negrito_cabecalho=True)
+    sheet.TabColor = COR_ABA_RELATORIO
 
 
 def trocar_id_global(*args):
@@ -2336,7 +2352,7 @@ def trocar_id_global(*args):
 
 # --- Estatística -----------------------------------------------------------
 
-NOME_ABA_ESTATISTICA = "Estatistica"
+NOME_ABA_ESTATISTICA = "Estatística"
 
 
 def _calcular_estatisticas(entidades):
@@ -2370,6 +2386,7 @@ def estatistica_base(*args):
         matriz.append([nome.upper(), str(total), str(ativas)])
     matriz.append(["TOTAL", str(sum(t[1] for t in stats)), str(sum(t[2] for t in stats))])
     _escrever_matriz(sheet, matriz, negrito_cabecalho=True)
+    sheet.TabColor = COR_ABA_RELATORIO
 
 
 # --- Gestão de includes -----------------------------------------------------

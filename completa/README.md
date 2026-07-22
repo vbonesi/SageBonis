@@ -96,10 +96,15 @@ Abas de config (criadas automaticamente, vazias, na 1ª execução):
   próprio `ID` de CGS/CGF; várias linhas podem repetir o mesmo `TAC`/`PAC` (o ponto
   genérico) — é justamente o caso de vários comandos ligados ao mesmo ponto.
 - **`CanaisDistribuicao`** — um canal de saída por linha (`Nome, TDD, Metodo
-  [Prefixo/Sufixo/Substituir], Valor1, Valor2, Ativo`). Substitui os "4 slots fixos"
-  que macros de referência (GE) hard-codificam por quantos canais fizerem sentido.
+  [Prefixo/Sufixo/Substituir/Explicito], Valor1, Valor2, Ativo`). Substitui os "4
+  slots fixos" que macros de referência (GE) hard-codificam por quantos canais
+  fizerem sentido. **`Explicito`**: achado real (algumas bases distribuem com um ID
+  totalmente independente do `ID_Logico`, sem prefixo/sufixo nenhum) — nesse caso o
+  ID final vem de `IDExplicito` em `DistribuicaoPontos`, não de uma transformação.
 - **`DistribuicaoPontos`** — liga um `ID_Logico` a 1+ canais (`ID_Logico, Canal,
-  Ativo`). Um ponto sem nenhuma linha aqui simplesmente não gera distribuição.
+  IDExplicito, Ativo`). `IDExplicito` só é lido quando o canal usa
+  `Metodo=Explicito` (fica vazio/ignorado nos demais casos). Um ponto sem nenhuma
+  linha aqui simplesmente não gera distribuição.
 
 #### Extração reversa (bases já existentes) — `extrair_pontos`
 `unificar_pontos` sozinho só ajuda com **pontos novos**: uma base real já importada
@@ -119,8 +124,10 @@ existentes e povoa (upsert, mesma regra de não duplicar) as 5 abas de config:
 - CGS **sem** PDS/PAS correspondente → vai pra `ComandoAvulso`;
 - PDD/PAD → um canal por `TDD` distinto em `CanaisDistribuicao` (com **Método
   inferido automaticamente** quando é Prefixo/Sufixo simples — compara o ID original
-  com o transformado; quando não dá pra inferir com confiança, fica `Substituir` sem
-  `Valor1`/`Valor2`, pra você conferir) + a ligação em `DistribuicaoPontos`.
+  com o transformado; quando não dá pra inferir com confiança, assume `Explicito`
+  e preenche `IDExplicito` com o ID observado, em vez de arriscar uma
+  transformação que pode não valer pros outros pontos do mesmo canal) + a ligação
+  em `DistribuicaoPontos`.
 
 Rode `extrair_pontos` **antes** de estender uma base já existente pelo modelo
 unificado (ex.: adicionar uma 2ª origem redundante a um ponto que já existe). É uma
@@ -140,7 +147,7 @@ não altera nada e fica registrado como tal. Relatório em `RelatorioTrocaId`.
 
 **Estatística — `estatistica_base`**
 Conta linhas totais e ativas (`Gera = x`) por entidade, com uma linha `TOTAL` no
-fim. Relatório em `Estatistica`.
+fim. Relatório em `Estatística`.
 
 **Gestão de includes — `gerir_includes`**
 Aba `SubstituirIncludes` (`Buscar | Substituir | Ativa`, criada vazia na 1ª execução):
@@ -150,11 +157,37 @@ Sempre escreve o estado atual de todos os includes (já com as trocas aplicadas)
 `RelatorioIncludes`, então também serve só pra listar (deixe `SubstituirIncludes`
 vazia/inativa).
 
+### Assistente de protocolo/IED — `gerar_ied`
+Cria a infraestrutura de canal de um IED (LSC/CNF/CXU/UTR/ENU + `TAC` na aquisição
+ou `TDD` na distribuição, mais os NV1/NV2 "grupo" padrão do protocolo) a partir da
+aba `IEDs` (criada vazia na 1ª execução). Depois de rodar, você referencia os NV2
+criados aqui nas abas `PontoDigital`/`PontoAnalogico`/`ComandoAvulso` (Unificação de
+Pontos) para gerar os pontos individuais — esta parte só monta a "casca" onde os
+pontos vão morar, não cria PDF/PDS/PAF/PAS/CGF/CGS.
+
+**Protocolos disponíveis**: só **104** por enquanto, confirmado contra uma base real
+(aquisição **e** distribuição). Próximos da lista: 101, 103, DNP3, MODBUS, 61850,
+SNMP, ICCP/SICCP (OPC UA e C37.118 ficam de fora por ora, sem base real disponível
+para validar).
+
+Colunas da aba `IEDs`: `ID, Protocolo, Direcao (Aquisicao/Distribuicao), Nome, GSD,
+MAP, NSRV1, NSRV2, PlPr, LiPr, PlRe, LiRe, IGNERS, SINCR, INVAL, AQANL, AQPOL, AQTOT,
+INTGR, NFAIL, SFAIL, FAILP, FAILR, NTENT, RESPT, TDESC, TRANS, VLUTR, Redundante,
+Gera`. A maioria tem um default sensato (ex.: `MAP=GERAL`, `NSRV1/NSRV2=localhost`) —
+só preencha o que quiser mudar; a célula sempre vence o default. `Redundante=S` cria
+`UTR` em par (PRI/REV); `ENU` sempre vem em par (redundância de rede), mesmo com um
+`UTR` só, igual ao observado na base real.
+
+> ⚠️ **Simplificação assumida**: a base real de aquisição separa digital e
+> analógico em NV1 distintos; aqui juntamos tudo num único NV1 de leitura (mais um
+> de comando) para manter a aba simples. Reorganize manualmente se precisar
+> replicar exatamente um padrão com mais grupos.
+
 ## Instalação e uso
 Igual à Simples: abra `SageBonis.ods` e habilite as macros do documento (a macro vem
 embutida). Atribua as funções `verificar_base`, `unificar_pontos`, `extrair_pontos`,
-`trocar_id_global`, `estatistica_base` e `gerir_includes` a botões ou atalhos, como
-as demais.
+`trocar_id_global`, `estatistica_base`, `gerir_includes` e `gerar_ied` a botões ou
+atalhos, como as demais.
 
 ## Sincronizar a macro com o .ods
 A partir da raiz do repositório:

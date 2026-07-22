@@ -259,7 +259,14 @@ a associação MMS é **bidirecional por natureza**, então:
   mesmo `ID` do `LSC`.
 - **Sem `CXU`/`UTR`/`ENU`** — a base real não usa essa camada para 61850 (a
   própria associação MMS já é a "conexão"; não há remota serial pra modelar).
-  `Redundante` não tem efeito aqui.
+  `Redundante` não tem efeito aqui. Usa **`MUL`+`ENM`** no lugar (achado real —
+  a planilha do usuário já tinha 90 `MUL`/180 `ENM` de 61850 pré-existentes ao
+  implementar o ICCP, confirmando que 61850 também usa essa camada): 1 `MUL`
+  por canal, com `ID` igual ao `CNF` (diferente do ICCP, que usa um sufixo
+  `_AQ` — 61850 não tem a noção de "domain name" separado por direção), e
+  **sempre 2 `ENM`** (confirmado 90/90 na base real — não é condicional a
+  `Redundante`, mais parecido com o `ENU` sempre-em-par dos protocolos
+  clássicos).
 - `TN1` sai fixo `NLN1` (não varia por papel, ao contrário dos outros
   protocolos); os grupos de leitura/comando usam `ADAQ` (digital), `AAAQ`
   (analógico) e `CSIM` — **comando simples**, não `CDUP` (comando duplo) como

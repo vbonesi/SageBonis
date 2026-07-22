@@ -260,10 +260,20 @@ dos outros protocolos) — só o DNP3 os usa por ora. Validado: smoke test
 atualizado (108 checks) + teste ponta-a-ponta via UNO real específico pra essa
 correção.
 
-**Ainda pendente**: OPC UA e C37.118 (sem base real nem manual completo o
-bastante); e, como achado desta investigação, revisitar `_gerar_infra_ied_61850`
-pra também gerar `MUL`/`ENM` (ver acima). Retomar OPC UA/C37.118 se aparecer
-uma base real ou um manual equivalente ao que resolveu o ICCP.
+**61850 corrigido para também gerar `MUL`/`ENM`** (fechando a lacuna encontrada
+na entrega do ICCP). Confirmado contra os mesmos 90 `MUL`/180 `ENM` reais de
+61850 já presentes na planilha do usuário: 1 `MUL` por canal com
+`ID`=`CNF`=`ID` do canal (diferente do ICCP, que usa sufixo `_AQ` — 61850 não
+tem "domain name" separado por direção), e **sempre 2 `ENM`** (confirmado
+90/90, não condicional a `Redundante`, ao contrário do ICCP — mais parecido
+com o `ENU` sempre-em-par dos protocolos clássicos). Validado via
+`teste_uno_protocolos.py`, incluindo confirmação de que o upsert só somou (+2
+`MUL`, +3 `ENM` = 1 do ICCP + 2 do 61850) sem alterar nenhuma das linhas reais
+pré-existentes.
+
+**Ainda pendente**: OPC UA e C37.118 — sem base real nem manual completo o
+bastante disponível; retomar se aparecer uma base real ou um manual
+equivalente ao que resolveu o ICCP.
 
 ### Ganhos rápidos (baixo esforço, alto retorno) — ✅ entregues
 - **Troca de ID global** (`trocar_id_global`) — renomeia um ponto e propaga a todas as

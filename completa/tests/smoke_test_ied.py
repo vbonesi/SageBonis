@@ -246,6 +246,13 @@ check("61850: 1 TAC e 1 TDD (sempre os dois, mesmo ID do LSC)",
 check("61850: TAC.INS propagado", saida_61850["tac"][0]["INS"] == "PAR")
 check("61850: SEM CXU/UTR/ENU (nao usa essa camada)",
       len(saida_61850["cxu"]) == 0 and len(saida_61850["utr"]) == 0 and len(saida_61850["enu"]) == 0)
+check("61850: 1 MUL, ID=CNF=ID_IED (achado real, diferente do sufixo _AQ do ICCP)",
+      len(saida_61850["mul"]) == 1 and saida_61850["mul"][0]["ID"] == "UPCP_TR3"
+      and saida_61850["mul"][0]["CNF"] == "UPCP_TR3" and saida_61850["mul"][0]["GSD"] == "PAR")
+check("61850: SEMPRE 2 ENM (nao condicional a Redundante, confirmado 90/90 na base real)",
+      len(saida_61850["enm"]) == 2
+      and {e["ID"] for e in saida_61850["enm"]} == {"UPCP_TR31", "UPCP_TR32"}
+      and all(e["MUL"] == "UPCP_TR3" for e in saida_61850["enm"]))
 check("61850: 1 NV1 so, TN1=NLN1 fixo", len(saida_61850["nv1"]) == 1
       and saida_61850["nv1"][0]["TN1"] == "NLN1")
 tns2_61850 = {n["TN2"] for n in saida_61850["nv2"]}

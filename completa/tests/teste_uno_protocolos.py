@@ -90,8 +90,12 @@ with TesteUno(porta=2100) as t:
           not any(x.get("ID") == "A2BT" for x in tac) and not any(x.get("ID") == "A2BT" for x in tdd))
     check("UNO real: ICCP criou MUL (A2BT_AQ) e ENM", any(m.get("ID") == "A2BT_AQ" for m in mul)
           and any(e.get("MUL") == "A2BT_AQ" for e in enm))
-    check("UNO real: upsert em MUL/ENM só ADICIONOU (dados reais de 61850 pré-existentes intactos)",
-          t.contar_linhas("MUL") == mul_antes + 1 and t.contar_linhas("ENM") == enm_antes + 1)
+    check("UNO real: 61850 TAMBÉM cria MUL/ENM (achado real, ID=CNF, sempre 2 ENM)",
+          any(m.get("ID") == "TR3T" and m.get("CNF") == "TR3T" for m in mul)
+          and {e.get("ID") for e in enm if e.get("MUL") == "TR3T"} == {"TR3T1", "TR3T2"})
+    check("UNO real: upsert em MUL/ENM só ADICIONOU (dados reais pré-existentes intactos) "
+          "-- +2 MUL (ICCP + 61850) e +3 ENM (1 do ICCP + 2 do 61850)",
+          t.contar_linhas("MUL") == mul_antes + 2 and t.contar_linhas("ENM") == enm_antes + 3)
 
     # Integração ponta-a-ponta: NV2 do 104 (ASIM) -> ponto novo em PontoDigital -> PDF
     nv1 = t.ler_aba("NV1")

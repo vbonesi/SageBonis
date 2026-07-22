@@ -2517,25 +2517,35 @@ def gerir_includes(*args):
 
 NOME_ABA_IEDS = "IEDs"
 CABECALHOS_IEDS = [
-    "ID", "Protocolo", "Direcao", "Nome", "GSD", "MAP", "NSRV1", "NSRV2",
+    "ID", "Protocolo", "Direcao", "Nome", "GSD", "INS", "MAP", "NSRV1", "NSRV2",
     "PlPr", "LiPr", "PlRe", "LiRe", "IGNERS", "SINCR", "INVAL", "TZBR", "DnpLvl",
-    "AQANL", "AQPOL", "AQTOT", "INTGR", "NFAIL", "SFAIL", "FAILP", "FAILR",
+    "PROTO", "AQANL", "AQPOL", "AQTOT", "INTGR", "NFAIL", "SFAIL", "FAILP", "FAILR",
     "NTENT", "RESPT", "TDESC", "TRANS", "VLUTR", "Redundante", "Gera",
 ]
 
-# Parâmetros fixos por protocolo (TCV/TTP da LSC, iguais em aquisição e
-# distribuição). Só 104 confirmado contra base real por enquanto -- adicionar
-# 101/103/DNP3/MODBUS/61850/SNMP aqui quando confirmados contra bases reais.
-# Cada entrada define: tcv/ttp (LSC), tn1_sufixo (prefixo TN1 -- geralmente igual
-# ao nome do protocolo, mas DNP3 é uma exceção real: usa "DNP", não "DNP3"),
-# tn2_analogico (TN2 do grupo de leitura analógica -- APFL na família 101/104,
-# AANL no DNP3), cnf_extra (campos extras do CNF.CONFIG que só aparecem na
-# aquisição) e cnf_extra_pos (se esses campos vêm "antes" ou "depois" de
-# PlPr/LiPr/PlRe/LiRe -- SAGE deve ler como pares soltos, então a ordem
-# provavelmente não importa de fato, mas seguimos o observado em cada exemplo real).
+# Grupo de leitura padrão (digital single/double-point + analógico) da família
+# IEC 60870-5 (101/104) e DNP3 -- só o TN2 analógico muda entre elas (ver uso
+# abaixo). MODBUS tem um grupo de leitura totalmente diferente (ver PARAMS_PROTOCOLO).
+_GRUPO_LEITURA_60870 = [("ASIM", "PDF", "Digital Single-Point"),
+                        ("ADUP", "PDF", "Digital Double-Point")]
+# Grupo de comando padrão -- confirmado pra 104/101/DNP3; ainda não confirmado
+# pra MODBUS (a base real disponível não tinha comando), mantido como melhor
+# suposição por consistência.
+_GRUPO_COMANDO_PADRAO = [("CDUP", "CGF", "Comando Duplo")]
+
+# Parâmetros por protocolo (TCV/TTP da LSC, iguais em aquisição e distribuição;
+# tn1_sufixo -- prefixo do TN1, geralmente igual ao nome do protocolo, mas DNP3 e
+# MODBUS são exceções reais: "DNP"/"MDB", não "DNP3"/"MODBUS"; grupos_leitura/
+# grupos_comando -- lista de (TN2, TPPNT, descrição) do NV1 de leitura/comando;
+# cnf_extra -- campos extras do CNF.CONFIG que só aparecem na aquisição;
+# cnf_extra_pos -- se esses campos vêm "antes" ou "depois" de PlPr/LiPr/PlRe/LiRe,
+# conforme observado em cada exemplo real (SAGE deve ler como pares soltos, a
+# ordem provavelmente não importa de fato, mas seguimos o observado).
 PARAMS_PROTOCOLO = {
     "104": {
-        "tcv": "CNVM", "ttp": "CX104", "tn1_sufixo": "104", "tn2_analogico": "APFL",
+        "tcv": "CNVM", "ttp": "CX104", "tn1_sufixo": "104",
+        "grupos_leitura": _GRUPO_LEITURA_60870 + [("APFL", "PAF", "Analógica Point Float")],
+        "grupos_comando": _GRUPO_COMANDO_PADRAO,
         "cnf_extra": ("IGNERS", "SINCR", "INVAL"), "cnf_extra_pos": "antes",
     },
     # 101 confirmado contra base real do usuário (SE Miracema/neoenergia): mesmo
@@ -2544,7 +2554,9 @@ PARAMS_PROTOCOLO = {
     # em tsr.conf (config/<base>/sys/tsr.conf, transportador iec1s/iec2s/iec2t) --
     # isso é um arquivo de sistema fora do modelo de planilha; configure à parte.
     "101": {
-        "tcv": "CNVG", "ttp": "IEC2S", "tn1_sufixo": "101", "tn2_analogico": "APFL",
+        "tcv": "CNVG", "ttp": "IEC2S", "tn1_sufixo": "101",
+        "grupos_leitura": _GRUPO_LEITURA_60870 + [("APFL", "PAF", "Analógica Point Float")],
+        "grupos_comando": _GRUPO_COMANDO_PADRAO,
         "cnf_extra": ("IGNERS", "SINCR", "INVAL"), "cnf_extra_pos": "antes",
     },
     # DNP3 confirmado contra base real (SkillSAGE, ctl_dnp_mdb/DJ9E539) -- só a
@@ -2554,14 +2566,40 @@ PARAMS_PROTOCOLO = {
     # confirmados nos dois sentidos contra base real). Também roda tipicamente
     # por serial (tsr.conf), mesma ressalva do 101.
     "DNP3": {
-        "tcv": "CNVH", "ttp": "IEC3S", "tn1_sufixo": "DNP", "tn2_analogico": "AANL",
+        "tcv": "CNVH", "ttp": "IEC3S", "tn1_sufixo": "DNP",
+        "grupos_leitura": _GRUPO_LEITURA_60870 + [("AANL", "PAF", "Analógica")],
+        "grupos_comando": _GRUPO_COMANDO_PADRAO,
         "cnf_extra": ("TZBR", "DnpLvl"), "cnf_extra_pos": "depois",
     },
+    # MODBUS confirmado contra base real (SkillSAGE, mdb_alat_calc/MDB1) -- só a
+    # aquisição, sem comando (a base disponível era só de medição/cálculo,
+    # grupos_comando aqui é suposição por consistência, não confirmado). Grupo de
+    # leitura BEM diferente da família 60870/DNP3: ALAT (digital via registrador
+    # latch, não ASIM/ADUP) + AANL (holding register) + ASTP (input register,
+    # FC4 -- também analógico, mas endereçado separado do holding register).
+    # MODBUS tem mais variantes reais de registrador (0x/1x/2x/3x/4x -- ver
+    # references/tsr_serial.md do SkillSAGE) que não tentamos cobrir todas aqui;
+    # o usuário pode ajustar manualmente se seu MDB usar outro range. TAC também
+    # é diferente: a base real tinha 2 registros -- um TPAQS=ASAC normal e um
+    # TPAQS=AFIL à parte para analógicos com conversão float (2 registradores
+    # 16-bit compondo 1 IEEE-754) -- daí o "tacs" com 2 entradas abaixo.
+    "MODBUS": {
+        "tcv": "CNVJ", "ttp": "TMBUS", "tn1_sufixo": "MDB",
+        "grupos_leitura": [("ALAT", "PDF", "Digital (registrador latch)"),
+                           ("AANL", "PAF", "Analógica (holding register)"),
+                           ("ASTP", "PAF", "Analógica (input register)")],
+        "grupos_comando": _GRUPO_COMANDO_PADRAO,
+        "cnf_extra": ("PROTO",), "cnf_extra_pos": "depois",
+        "tacs": [("", "", "ASAC"), ("_FIL", " analógicos float", "AFIL")],
+    },
 }
+# TAC padrão -- 1 registro só, TPAQS=ASAC, sem sufixo no ID/NOME. Usado por
+# 104/101/DNP3; MODBUS sobrescreve com 2 registros (ver acima).
+_TAC_PADRAO = [("", "", "ASAC")]
 
 _DEFAULTS_IED = {
     "MAP": "GERAL", "NSRV1": "localhost", "NSRV2": "localhost",
-    "IGNERS": "0", "SINCR": "0", "INVAL": "103", "TZBR": "0", "DnpLvl": "2",
+    "IGNERS": "0", "SINCR": "0", "INVAL": "103", "TZBR": "0", "DnpLvl": "2", "PROTO": "BIN",
     "AQANL": "1000", "AQPOL": "1000", "AQTOT": "0",
     "NFAIL": "2", "SFAIL": "200", "FAILP": "0", "FAILR": "0",
     "NTENT": "4", "RESPT": "1500", "TDESC": "15", "TRANS": "12", "VLUTR": "0",
@@ -2661,23 +2699,27 @@ def _gerar_infra_ied(linha, headers):
         })
 
     if aquisicao:
-        saida["tac"].append({"ID": id_ied, "NOME": _valor(linha, headers, "Nome"),
-                              "LSC": id_ied, "TPAQS": "ASAC"})
+        ins = _valor(linha, headers, "INS")
+        nome_ied = _valor(linha, headers, "Nome")
+        for sufixo_id, sufixo_nome, tpaqs in params.get("tacs", _TAC_PADRAO):
+            saida["tac"].append({
+                "ID": "%s%s" % (id_ied, sufixo_id), "NOME": "%s%s" % (nome_ied, sufixo_nome),
+                "INS": ins, "LSC": id_ied, "TPAQS": tpaqs,
+            })
     else:
         saida["tdd"].append({"ID": "%s_DIG" % id_ied, "LSC": id_ied,
                               "NOME": "Distribuição Digital %s" % id_ied})
         saida["tdd"].append({"ID": "%s_ANA" % id_ied, "LSC": id_ied,
                               "NOME": "Distribuição Analógica %s" % id_ied})
 
-    # NV1/NV2 "grupo" padrão: 1 de leitura (digital+analógico) + 1 de comando. O
-    # TN2 analógico varia por protocolo (params["tn2_analogico"]): APFL na
-    # família 101/104, AANL no DNP3.
-    tn2_analogico = params["tn2_analogico"]
+    # NV1/NV2 "grupo" padrão: 1 de leitura + 1 de comando, cada um com sua lista
+    # de (TN2, TPPNT, descrição) -- vem de params["grupos_leitura"]/["grupos_comando"],
+    # que variam por protocolo (família 101/104 usa ASIM/ADUP/APFL; DNP3 troca o
+    # analógico por AANL; MODBUS usa um conjunto totalmente diferente, sem
+    # ASIM/ADUP -- ver PARAMS_PROTOCOLO).
     for papel, ordem_nv1, grupos_tn2 in (
-        ("leitura", "1", [("ASIM", "PDF", "Digital Single-Point"),
-                          ("ADUP", "PDF", "Digital Double-Point"),
-                          (tn2_analogico, "PAF", "Analógica")]),
-        ("comando", "3", [("CDUP", "CGF", "Comando Duplo")]),
+        ("leitura", "1", params["grupos_leitura"]),
+        ("comando", "3", params.get("grupos_comando", _GRUPO_COMANDO_PADRAO)),
     ):
         tn1 = _prefixo_tn1(params["tn1_sufixo"], direcao, papel)
         nv1_id = "%s_%s_%s" % (id_ied, tn1, ordem_nv1)

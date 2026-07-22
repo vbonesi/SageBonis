@@ -159,9 +159,32 @@ modelo de 1-linha-por-IED desta aba; documentado como criação manual das 3
 linhas. Validado via UNO real, incluindo a mesma integração ponta-a-ponta com
 `unificar_pontos`.
 
-**Ainda pendente**: SNMP, ICCP/SICCP — cada um precisa de pesquisa própria
-(endereçamento, `CNF.CONFIG`, grupos NV1/NV2 específicos) antes de implementar,
-seguindo o mesmo padrão.
+Também entregue: **SNMP**, confirmado contra **2 bases reais independentes**
+(100% consistentes entre si). Ao contrário do 61850, coube no caminho padrão de
+`_gerar_infra_ied` (tem `CXU`/`UTR`/`ENU`, `LSC.TIPO` segue `Direcao`) — só
+precisou de 3 pontos de extensão novos em vez de uma função à parte:
+`cnf_campos` (substitui PlPr/LiPr/PlRe/LiRe inteiramente por `VERSAO`/`HOST`/
+`COMMUNITY` — SNMP não é um protocolo de enlace mestre/escravo), `tn1_fixo`
+(TN1 sempre `SNM1`, sem prefixo A/C/D/O) e `enutr_por_ordem` (`UTR.ENUTR` sai
+`1`/`0` no PRI/REV, não o `9` fixo dos outros 4). SNMP também não tem grupo de
+comando (`grupos_comando=()` — confirmado 0/13 exemplos reais; é protocolo só
+de monitoramento) — o laço de geração de NV1/NV2 foi ajustado pra pular grupos
+vazios inteiramente, em vez de criar um NV1 sem NV2 dentro.
+
+**Bug real encontrado e corrigido durante o teste UNO** (não pelos testes de
+lógica pura): `_garantir_aba_config` só criava uma aba de config se ela **não
+existisse ainda** — mas a aba `IEDs`, já criada (vazia) na planilha real antes
+de SNMP existir, não ganhava as 3 colunas novas ao rodar `gerar_ied` de novo,
+porque a função simplesmente retornava sem checar se o cabeçalho já existente
+estava desatualizado. Corrigido para comparar o cabeçalho atual com o canônico
+e completar as colunas que faltarem (sem tocar nas já existentes nem nos
+dados) — vale pra qualquer `CABECALHOS_*` que cresça no futuro (ex.: quando
+ICCP/SICCP for implementado), não só pro SNMP. Reaplicado na planilha real
+depois do fix (mesmo processo de ensaio-antes-de-aplicar do item anterior).
+
+**Ainda pendente**: ICCP/SICCP — precisa de pesquisa própria (endereçamento,
+`CNF.CONFIG`, grupos NV1/NV2 específicos, e como modelar a bidirecionalidade
+entre centros de controle) antes de implementar.
 
 ### Ganhos rápidos (baixo esforço, alto retorno) — ✅ entregues
 - **Troca de ID global** (`trocar_id_global`) — renomeia um ponto e propaga a todas as

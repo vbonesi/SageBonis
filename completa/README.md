@@ -165,16 +165,18 @@ criados aqui nas abas `PontoDigital`/`PontoAnalogico`/`ComandoAvulso` (Unificaç
 Pontos) para gerar os pontos individuais — esta parte só monta a "casca" onde os
 pontos vão morar, não cria PDF/PDS/PAF/PAS/CGF/CGS.
 
-**Protocolos disponíveis**: **104**, **101**, **DNP3**, **MODBUS** e **61850**.
-104 e 101 confirmados contra bases reais nos dois sentidos (aquisição **e**
-distribuição); DNP3 e MODBUS confirmados contra base real só na **aquisição** —
-a distribuição de ambos foi extrapolada por consistência (mesmo formato
-"stripped" do 104/101) e pelo código de referência da macro GE, sem uma base
-real de distribuição disponível pra validar; 61850 é bidirecional por natureza
-(ver seção própria abaixo) e foi confirmado contra 12 IEDs reais. **103** ficou
-de fora por ora — não há nenhuma base real com IEC 103 no acervo de referência,
-só documentação de manual. Próximos da lista: SNMP, ICCP/SICCP (este com
-aquisição **e** distribuição — ICCP funciona nos dois sentidos entre centros de
+**Protocolos disponíveis**: **104**, **101**, **DNP3**, **MODBUS**, **61850** e
+**SNMP**. 104 e 101 confirmados contra bases reais nos dois sentidos (aquisição
+**e** distribuição); DNP3 e MODBUS confirmados contra base real só na
+**aquisição** — a distribuição de ambos foi extrapolada por consistência (mesmo
+formato "stripped" do 104/101) e pelo código de referência da macro GE, sem uma
+base real de distribuição disponível pra validar; 61850 é bidirecional por
+natureza (ver seção própria abaixo) e foi confirmado contra 12 IEDs reais; SNMP
+é só aquisição por natureza (protocolo de monitoramento, não modela comando —
+ver seção própria) e foi confirmado contra 2 bases reais independentes. **103**
+ficou de fora por ora — não há nenhuma base real com IEC 103 no acervo de
+referência, só documentação de manual. Próximo da lista: ICCP/SICCP (com
+aquisição **e** distribuição — funciona nos dois sentidos entre centros de
 controle). OPC UA e C37.118 ficam de fora por ora, sem base real disponível
 para validar.
 
@@ -186,20 +188,27 @@ serial (RTU) ou TCP — mesma ressalva, ajuste `tsr.conf` à parte se for serial
 
 Colunas da aba `IEDs`: `ID, Protocolo, Direcao (Aquisicao/Distribuicao), Nome, GSD,
 INS, MAP, NSRV1, NSRV2, PlPr, LiPr, PlRe, LiRe, IGNERS, SINCR, INVAL, TZBR, DnpLvl,
-PROTO, ApTitle, AeQ, PS, SS, TS, IDAD, KEEP, NREP, TOUT, MPDU, OPMSK, GOOSE, AQANL,
-AQPOL, AQTOT, INTGR, NFAIL, SFAIL, FAILP, FAILR, NTENT, RESPT, TDESC, TRANS, VLUTR,
-Redundante, Gera`. `IGNERS/SINCR/INVAL` só valem para 104/101; `TZBR/DnpLvl` só
-para DNP3; `PROTO` só para MODBUS; `ApTitle` até `GOOSE` só para 61850 (cada
-protocolo usa seu próprio conjunto de campos extras no `CONFIG` do CNF —
-colunas que não se aplicam ao protocolo escolhido ficam simplesmente sem uso;
-61850 também não usa `AQANL` até `VLUTR`, ver seção própria). `INS` (a
-instalação/estação a que o `TAC` pertence — entidade própria, referenciada por
-`TAC.INS`) não tem default: é específico do site, preencha o código já usado no
-restante da sua base. A maioria dos outros campos tem um default sensato (ex.:
-`MAP=GERAL`, `NSRV1/NSRV2=localhost`, `PROTO=BIN`) — só preencha o que quiser
-mudar; a célula sempre vence o default. `Redundante=S` cria `UTR` em par
-(PRI/REV); `ENU` sempre vem em par (redundância de rede), mesmo com um `UTR` só,
-igual ao observado na base real (não vale para 61850, que não usa `UTR`/`ENU`).
+PROTO, ApTitle, AeQ, PS, SS, TS, IDAD, KEEP, NREP, TOUT, MPDU, OPMSK, GOOSE, VERSAO,
+HOST, COMMUNITY, AQANL, AQPOL, AQTOT, INTGR, NFAIL, SFAIL, FAILP, FAILR, NTENT,
+RESPT, TDESC, TRANS, VLUTR, Redundante, Gera`. `IGNERS/SINCR/INVAL` só valem para
+104/101; `TZBR/DnpLvl` só para DNP3; `PROTO` só para MODBUS; `ApTitle` até `GOOSE`
+só para 61850; `VERSAO/HOST/COMMUNITY` só para SNMP (cada protocolo usa seu
+próprio conjunto de campos extras no `CONFIG` do CNF — colunas que não se
+aplicam ao protocolo escolhido ficam simplesmente sem uso; 61850 também não usa
+`AQANL` até `VLUTR`, ver seção própria). `INS` (a instalação/estação a que o
+`TAC` pertence — entidade própria, referenciada por `TAC.INS`) e `HOST` (o IP
+do equipamento monitorado via SNMP) não têm default: são específicos do site.
+A maioria dos outros campos tem um default sensato (ex.: `MAP=GERAL`,
+`NSRV1/NSRV2=localhost`, `PROTO=BIN`, `VERSAO=2c`, `COMMUNITY=public`) — só
+preencha o que quiser mudar; a célula sempre vence o default. `Redundante=S`
+cria `UTR` em par (PRI/REV); `ENU` sempre vem em par (redundância de rede),
+mesmo com um `UTR` só, igual ao observado na base real (não vale para 61850,
+que não usa `UTR`/`ENU`).
+
+> ℹ️ Se você já rodou `gerar_ied` (ou qualquer outra função que crie uma aba de
+> config) antes de atualizar o SageBonis para uma versão com colunas novas, não
+> precisa recriar a aba: rodar a macro de novo adiciona ao final só as colunas
+> que estiverem faltando, sem tocar no que já existe.
 
 > ⚠️ **Simplificação assumida**: a base real de aquisição separa digital e
 > analógico em NV1 distintos; aqui juntamos tudo num único NV1 de leitura (mais um
@@ -243,6 +252,25 @@ a associação MMS é **bidirecional por natureza**, então:
   de 1-linha-por-IED desta aba. Se precisar desse padrão, crie as 3 linhas
   manualmente (2 físicas, sem bit 12; 1 virtual, com `OPMSK` ajustado para
   incluir o bit 12 — ex. `OPMSK=8010`) e ajuste os `NV1`/`NV2` gerados à mão.
+
+**SNMP volta a caber no caminho padrão** (ao contrário do 61850) — tem
+`CXU`/`UTR`/`ENU` normalmente e `LSC.TIPO` segue `Direcao` como nos 4
+protocolos "clássicos" — mas com 3 diferenças pontuais, confirmadas contra 2
+bases reais independentes (100% consistentes entre si):
+- `CNF.CONFIG` não tem `PlPr/LiPr/PlRe/LiRe` — usa `VERSAO` (SNMP versão 2c),
+  `HOST` (IP do equipamento monitorado, sem default) e `COMMUNITY` (default
+  `public`, o community string padrão do próprio SNMP).
+- `TN1` sai fixo `SNM1` (sem prefixo `A`/`C`/`D`/`O`), e **não existe grupo de
+  comando** — SNMP é só monitoramento (0/13 exemplos reais com algum ponto de
+  comando); só o grupo de leitura é criado, com 1 único tipo confirmado (`ASIM`
+  digital — status ligado/desligado de equipamento de rede/TI). Se precisar de
+  um valor analógico via SNMP (ex.: um MIB do tipo `Gauge32`), adicione esse
+  grupo manualmente — não confirmado contra base real.
+- `UTR.ENUTR` sai `1` no `PRI` / `0` no `REV`, diferente do `9` fixo usado
+  pelos outros 4 protocolos (também confirmado nas 2 bases).
+
+SNMP é só aquisição por escopo — os 2 exemplos reais confirmam isso (só
+`TIPO=AA`); é um protocolo de monitoramento, não modela distribuição/comando.
 
 ## Instalação e uso
 Igual à Simples: abra `SageBonis.ods` e habilite as macros do documento (a macro vem

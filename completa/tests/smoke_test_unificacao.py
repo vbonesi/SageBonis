@@ -119,33 +119,83 @@ check("distribuicao: canal inativo/inexistente e ignorado",
       len(mod._gerar_fan_out_digital(linhas, headers, {}, distribuicoes)["pdd"]) == 0)
 
 # ------------------------------------------------------------------
-# 5. Analogico simples + redundante (2a fonte de medicao)
+# 5. Analogico simples + redundante (2a fonte de medicao) + comando (setpoint)
 # ------------------------------------------------------------------
 headers_ana = mod.CABECALHOS_PONTO_ANALOGICO
+
+
+def linha_ana(**kw):
+    d = {h: "" for h in headers_ana}
+    d.update(kw)
+    return [d[h] for h in headers_ana]
+
+
 linhas_ana = [
-    ["DEM:230:LIN01:MED:IA", "IED1.MEAS-MMXU$MX$A", "Corrente Fase A", "IED1.MEAS_AAAQ",
-     "1", "0", "MV0", "TAC1", "OCR2", "x"],
-    ["DEM:230:LIN01:MED:IA", "IEDX.MEAS-MMXU$MX$A", "Corrente Fase A (2a fonte)", "IEDX.MEAS_AAAQ",
-     "1", "0", "MV0", "TAC1", "OCR2", "x"],
+    linha_ana(ID_Logico="DEM:230:LIN01:MED:IA", ID_Fisico="IED1.MEAS-MMXU$MX$A",
+              NOME="Corrente Fase A", NV2="IED1.MEAS_AAAQ", KCONV1="1", KCONV2="0",
+              KCONV3="MV0", TAC="TAC1", OCR="OCR2", Gera="x"),
+    linha_ana(ID_Logico="DEM:230:LIN01:MED:IA", ID_Fisico="IEDX.MEAS-MMXU$MX$A",
+              NOME="Corrente Fase A (2a fonte)", NV2="IEDX.MEAS_AAAQ", KCONV1="1", KCONV2="0",
+              KCONV3="MV0", TAC="TAC1", OCR="OCR2", Gera="x"),
 ]
 saida5 = mod._gerar_fan_out_analogico(linhas_ana, headers_ana, {}, {})
 check("analogico redundante: 2 PAF", len(saida5["paf"]) == 2)
 check("analogico redundante: 1 PAS com TPFIL=FIL5", len(saida5["pas"]) == 1 and saida5["pas"][0]["TPFIL"] == "FIL5")
 check("analogico redundante: RFC.TIPOP=VAC", all(r["TIPOP"] == "VAC" for r in saida5["rfc"]))
+check("analogico sem Comando=S: nenhum CGS/CGF gerado",
+      len(saida5["cgs"]) == 0 and len(saida5["cgf"]) == 0)
+
+# comando analogico (setpoint) -- achado real: CGS.TIPO=PAS em 6 bases
+# independentes (ver PLANEJAMENTO.md); LMI1C/LMI2C/LMS1C/LMS2C = limites
+linhas_ana_cmd = [
+    linha_ana(ID_Logico="DEM:UG01:SETPOINT", ID_Fisico="IED1.REGU-STPS$MX$Val",
+              NOME="Setpoint Geracao UG01", NV2="IED1.REGU_AAAQ", TAC="TAC1",
+              Comando="S", ID_Fisico_Comando="IED1.REGU-STPS$CO$Val",
+              KCONV_Comando="MV0", LMI1C="-999999", LMI2C="0", LMS1C="999999", LMS2C="100", Gera="x"),
+]
+saida5b = mod._gerar_fan_out_analogico(linhas_ana_cmd, headers_ana, {}, {})
+check("analogico com comando: 1 CGS, 1 CGF", len(saida5b["cgs"]) == 1 and len(saida5b["cgf"]) == 1)
+check("analogico com comando: CGS.PAC == self", saida5b["cgs"][0]["PAC"] == saida5b["cgs"][0]["ID"])
+check("analogico com comando: CGS tem os 4 limites",
+      saida5b["cgs"][0]["LMI1C"] == "-999999" and saida5b["cgs"][0]["LMI2C"] == "0"
+      and saida5b["cgs"][0]["LMS1C"] == "999999" and saida5b["cgs"][0]["LMS2C"] == "100")
+check("analogico com comando: CGF.ID == ID_Fisico_Comando",
+      saida5b["cgf"][0]["ID"] == "IED1.REGU-STPS$CO$Val")
 
 # ------------------------------------------------------------------
-# 6. Comando avulso (COM_SAGE generico, varios comandos no mesmo TAC/PAC)
+# 6. Comando avulso (COM_SAGE generico, varios comandos no mesmo TAC/PAC) --
+# digital e analogico (achado real: PAC=MC_DUMMY_SAGE_ANA em ur_mir)
 # ------------------------------------------------------------------
 headers_cmd = mod.CABECALHOS_COMANDO_AVULSO
+
+
+def linha_cmd(**kw):
+    d = {h: "" for h in headers_cmd}
+    d.update(kw)
+    return [d[h] for h in headers_cmd]
+
+
 linhas_avulsos = [
-    ["DEM:SAGE:RESET", "TAC1.CTRL-CSWI$CO$Rst", "Reset alarmes SAGE", "TAC1.CTRL_CSIM",
-     "SBOw", "TAC_LOCAL", "COM_SAGE", "", "AFIC", "CSAC", "x"],
-    ["DEM:SAGE:RESYNC", "TAC1.CTRL-CSWI$CO$Sync", "Resync SAGE", "TAC1.CTRL_CSIM",
-     "SBOw", "TAC_LOCAL", "COM_SAGE", "", "AFIC", "CSAC", "x"],
+    linha_cmd(ID="DEM:SAGE:RESET", ID_Fisico="TAC1.CTRL-CSWI$CO$Rst", NOME="Reset alarmes SAGE",
+              NV2="TAC1.CTRL_CSIM", KCONV="SBOw", TAC="TAC_LOCAL", PAC="COM_SAGE",
+              TIPOE="AFIC", TPCTL="CSAC", Gera="x"),
+    linha_cmd(ID="DEM:SAGE:RESYNC", ID_Fisico="TAC1.CTRL-CSWI$CO$Sync", NOME="Resync SAGE",
+              NV2="TAC1.CTRL_CSIM", KCONV="SBOw", TAC="TAC_LOCAL", PAC="COM_SAGE",
+              TIPOE="AFIC", TPCTL="CSAC", Gera="x"),
 ]
 saida6 = mod._gerar_comandos_avulsos(linhas_avulsos, headers_cmd)
 check("avulso: 2 CGS distintos", len({c["ID"] for c in saida6["cgs"]}) == 2)
 check("avulso: 2 CGF distintos", len({c["ID"] for c in saida6["cgf"]}) == 2)
+
+linhas_avulsos_ana = [
+    linha_cmd(ID="DEM:SAGE:SETPOINT_DUMMY", ID_Fisico="TAC1.CTRL-STPS$CO$Val",
+              NOME="Setpoint dummy p/ ancorar transportador", NV2="TAC1.CTRL_CSIM",
+              KCONV="MV0", TAC="TAC_LOCAL", PAC="COM_SAGE_ANA",
+              LMI1C="0", LMI2C="0", LMS1C="100", LMS2C="100", Gera="x"),
+]
+saida6b = mod._gerar_comandos_avulsos(linhas_avulsos_ana, headers_cmd)
+check("avulso analogico: CGS carrega os limites", saida6b["cgs"][0]["LMI1C"] == "0"
+      and saida6b["cgs"][0]["LMS1C"] == "100")
 check("avulso: mesmo TAC/PAC compartilhado (ponto generico)",
       all(c["TAC"] == "TAC_LOCAL" and c["PAC"] == "COM_SAGE" for c in saida6["cgs"]))
 

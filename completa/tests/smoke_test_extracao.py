@@ -25,7 +25,8 @@ def ent(headers, linhas):
 
 PDS_H = ["Origem", "Gera", "Comentario/Include", "ID", "NOME", "TAC", "OCR"]
 PDF_H = ["Origem", "Gera", "Comentario/Include", "ID", "NV2", "PNT", "TPPNT", "KCONV", "DESC1"]
-CGS_H = ["Origem", "Gera", "Comentario/Include", "ID", "NOME", "TAC", "PAC", "PINT", "TIPOE", "TPCTL"]
+CGS_H = ["Origem", "Gera", "Comentario/Include", "ID", "NOME", "TAC", "PAC", "PINT", "TIPOE", "TPCTL",
+         "LMI1C", "LMI2C", "LMS1C", "LMS2C"]
 CGF_H = ["Origem", "Gera", "Comentario/Include", "ID", "NV2", "CGS", "KCONV"]
 PAS_H = ["Origem", "Gera", "Comentario/Include", "ID", "NOME", "TAC", "OCR"]
 PAF_H = ["Origem", "Gera", "Comentario/Include", "ID", "NV2", "PNT", "TPPNT", "KCONV1", "KCONV2", "KCONV3", "DESC1"]
@@ -85,6 +86,39 @@ linhas_pa4b = mod._extrair_ponto_analogico(entidades4b)
 check("orfao analogico (sem PAF): nao extrai nenhuma linha", len(linhas_pa4b) == 0)
 
 # ------------------------------------------------------------------
+# 4c. Analogico simples (1 PAS + 1 PAF, sem comando)
+# ------------------------------------------------------------------
+entidades4c = {
+    "pas": ent(PAS_H, [["", "x", "", "DEM:UG01:POT_ATIVA", "Potencia Ativa", "TAC1", "OCR1"]]),
+    "paf": ent(PAF_H, [["", "x", "", "IED1.MEAS-MMXU$MX$TotW", "IED1.MEAS_ADAQ",
+                        "DEM:UG01:POT_ATIVA", "MV", "1", "0", "0", "Potencia Ativa"]]),
+}
+linhas_pa4c = mod._extrair_ponto_analogico(entidades4c)
+check("analogico simples: 1 linha extraida", len(linhas_pa4c) == 1)
+check("analogico simples: Comando=N (sem CGS)", linhas_pa4c[0]["Comando"] == "N")
+check("analogico simples: ID_Fisico do PAF", linhas_pa4c[0]["ID_Fisico"] == "IED1.MEAS-MMXU$MX$TotW")
+
+# ------------------------------------------------------------------
+# 4d. Analogico com comando (setpoint, CGS.ID == PAS.ID) -- reverso de
+# _gerar_fan_out_analogico; achado real CGS.TIPO=PAS com limites LMI1C/LMS1C
+# (tucurui/jdm, ver PLANEJAMENTO.md)
+# ------------------------------------------------------------------
+entidades4d = dict(entidades4c)
+entidades4d["cgs"] = ent(CGS_H, [["", "x", "", "DEM:UG01:POT_ATIVA", "Potencia Ativa", "TAC1", "", "",
+                                   "", "", "0", "0", "100", "100"]])
+entidades4d["cgf"] = ent(CGF_H, [["", "x", "", "IED1.CTRL-ATCC$CO$SetMag", "IED1.CTRL_CSIM",
+                                  "DEM:UG01:POT_ATIVA", "APC"]])
+linhas_pa4d = mod._extrair_ponto_analogico(entidades4d)
+check("analogico com comando: Comando=S", linhas_pa4d[0]["Comando"] == "S")
+check("analogico com comando: ID_Fisico_Comando preenchido",
+      linhas_pa4d[0]["ID_Fisico_Comando"] == "IED1.CTRL-ATCC$CO$SetMag")
+check("analogico com comando: KCONV_Comando preenchido", linhas_pa4d[0]["KCONV_Comando"] == "APC")
+check("analogico com comando: limites LMI1C/LMS1C carregados",
+      linhas_pa4d[0]["LMI1C"] == "0" and linhas_pa4d[0]["LMS1C"] == "100")
+check("analogico com comando: limites LMI2C/LMS2C carregados",
+      linhas_pa4d[0]["LMI2C"] == "0" and linhas_pa4d[0]["LMS2C"] == "100")
+
+# ------------------------------------------------------------------
 # 5. Comando avulso (CGS sem PDS/PAS correspondente, tipo COM_SAGE)
 # ------------------------------------------------------------------
 entidades5 = {
@@ -104,6 +138,23 @@ check("avulso: mesmo TAC/PAC compartilhado",
 # se o CGS.ID JA aparece como ponto (ids_logicos_com_ponto), nao deve virar avulso
 linhas_avulsos_filtrado = mod._extrair_comandos_avulsos(entidades5, ids_logicos_com_ponto={"DEM:SAGE:RESET"})
 check("avulso: exclui CGS que ja tem ponto proprio", len(linhas_avulsos_filtrado) == 1)
+
+# ------------------------------------------------------------------
+# 5b. Comando avulso ANALOGICO (com limites LMI1C/LMS1C, achado real ur_mir/tucurui)
+# ------------------------------------------------------------------
+entidades5b = {
+    "cgs": ent(CGS_H, [
+        ["", "x", "", "DEM:SAGE:SETPOINT_DUMMY", "Setpoint Dummy", "TAC_LOCAL", "COM_SAGE_ANA",
+         "", "", "", "0", "0", "100", "100"],
+    ]),
+    "cgf": ent(CGF_H, [
+        ["", "x", "", "TAC1.CTRL-ATCC$CO$SetMag", "TAC1.CTRL_CSIM", "DEM:SAGE:SETPOINT_DUMMY", "APC"],
+    ]),
+}
+linhas_avulsos_ana = mod._extrair_comandos_avulsos(entidades5b, ids_logicos_com_ponto=set())
+check("avulso analogico: 1 comando extraido", len(linhas_avulsos_ana) == 1)
+check("avulso analogico: limites LMI1C/LMS1C carregados",
+      linhas_avulsos_ana[0]["LMI1C"] == "0" and linhas_avulsos_ana[0]["LMS1C"] == "100")
 
 # ------------------------------------------------------------------
 # 6. Canais/distribuicao: inferencia de Metodo (sufixo/prefixo)

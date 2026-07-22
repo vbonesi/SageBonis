@@ -140,9 +140,28 @@ uma entrada em `tsr.conf` (serial), configurada à parte — fora do modelo dest
 planilha; MODBUS também pode rodar serial ou TCP, mesma ressalva se for serial.
 Detalhes em [completa/README.md](completa/README.md).
 
-**Ainda pendente**: 61850, SNMP, ICCP/SICCP — cada um precisa de pesquisa
-própria (endereçamento, `CNF.CONFIG`, grupos NV1/NV2 específicos) antes de
-implementar, seguindo o mesmo padrão.
+Também entregue: **61850**, confirmado contra 12 IEDs reais de uma base
+didática de referência (100% consistentes). É o mais diferente de todos —
+diferente o bastante que ganhou um caminho próprio (`_gerar_infra_ied_61850`),
+não o genérico dos outros 4: a associação MMS é bidirecional por natureza, então
+1 linha na aba `IEDs` já é o IED completo (`Direcao` não é usado), `LSC.TIPO`
+sai sempre `AD` (nunca `AA`/`DD`), e `TAC`+`TDD` saem sempre os dois juntos, com
+o mesmo `ID`. Não usa `CXU`/`UTR`/`ENU` (a base real não usa essa camada — a
+própria associação MMS já é a "conexão"), então `Redundante` não tem efeito.
+`TN1` sai fixo `NLN1` (não varia por papel); os grupos usam `ADAQ`/`AAAQ`/`CSIM`
+— **comando simples**, não `CDUP` (comando duplo) como os outros 4. `CNF.CONFIG`
+usa campos de associação MMS totalmente diferentes (`ApTitle/AeQ/PS/SS/TS/IDAD/
+KEEP/NREP/TOUT/MPDU/OPMSK/GOOSE`, nada de `PlPr/LiPr/PlRe/LiRe`), com defaults
+confirmados contra a base real (`OPMSK=228521`, o mais comum do acervo;
+`GOOSE=0`). A redundância real de 61850 (**IED virtual**: 2 físicos + 1 virtual
+que assume controle via bit 12 do `OPMSK`) não foi automatizada — não cabe no
+modelo de 1-linha-por-IED desta aba; documentado como criação manual das 3
+linhas. Validado via UNO real, incluindo a mesma integração ponta-a-ponta com
+`unificar_pontos`.
+
+**Ainda pendente**: SNMP, ICCP/SICCP — cada um precisa de pesquisa própria
+(endereçamento, `CNF.CONFIG`, grupos NV1/NV2 específicos) antes de implementar,
+seguindo o mesmo padrão.
 
 ### Ganhos rápidos (baixo esforço, alto retorno) — ✅ entregues
 - **Troca de ID global** (`trocar_id_global`) — renomeia um ponto e propaga a todas as

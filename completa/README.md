@@ -165,16 +165,18 @@ criados aqui nas abas `PontoDigital`/`PontoAnalogico`/`ComandoAvulso` (Unificaç
 Pontos) para gerar os pontos individuais — esta parte só monta a "casca" onde os
 pontos vão morar, não cria PDF/PDS/PAF/PAS/CGF/CGS.
 
-**Protocolos disponíveis**: **104**, **101**, **DNP3** e **MODBUS**. 104 e 101
-confirmados contra bases reais nos dois sentidos (aquisição **e** distribuição);
-DNP3 e MODBUS confirmados contra base real só na **aquisição** — a distribuição
-de ambos foi extrapolada por consistência (mesmo formato "stripped" do 104/101) e
-pelo código de referência da macro GE, sem uma base real de distribuição
-disponível pra validar. **103** ficou de fora por ora — não há nenhuma base real
-com IEC 103 no acervo de referência, só documentação de manual. Próximos da
-lista: 61850, SNMP, ICCP/SICCP (este com aquisição **e** distribuição — ICCP
-funciona nos dois sentidos entre centros de controle). OPC UA e C37.118 ficam de
-fora por ora, sem base real disponível para validar.
+**Protocolos disponíveis**: **104**, **101**, **DNP3**, **MODBUS** e **61850**.
+104 e 101 confirmados contra bases reais nos dois sentidos (aquisição **e**
+distribuição); DNP3 e MODBUS confirmados contra base real só na **aquisição** —
+a distribuição de ambos foi extrapolada por consistência (mesmo formato
+"stripped" do 104/101) e pelo código de referência da macro GE, sem uma base
+real de distribuição disponível pra validar; 61850 é bidirecional por natureza
+(ver seção própria abaixo) e foi confirmado contra 12 IEDs reais. **103** ficou
+de fora por ora — não há nenhuma base real com IEC 103 no acervo de referência,
+só documentação de manual. Próximos da lista: SNMP, ICCP/SICCP (este com
+aquisição **e** distribuição — ICCP funciona nos dois sentidos entre centros de
+controle). OPC UA e C37.118 ficam de fora por ora, sem base real disponível
+para validar.
 
 101 e DNP3 tipicamente rodam por serial — configure a entrada correspondente em
 `tsr.conf` (`config/<base>/sys/tsr.conf`, transportador `iec1s`/`iec2s`/`iec2t`
@@ -184,35 +186,63 @@ serial (RTU) ou TCP — mesma ressalva, ajuste `tsr.conf` à parte se for serial
 
 Colunas da aba `IEDs`: `ID, Protocolo, Direcao (Aquisicao/Distribuicao), Nome, GSD,
 INS, MAP, NSRV1, NSRV2, PlPr, LiPr, PlRe, LiRe, IGNERS, SINCR, INVAL, TZBR, DnpLvl,
-PROTO, AQANL, AQPOL, AQTOT, INTGR, NFAIL, SFAIL, FAILP, FAILR, NTENT, RESPT, TDESC,
-TRANS, VLUTR, Redundante, Gera`. `IGNERS/SINCR/INVAL` só valem para 104/101;
-`TZBR/DnpLvl` só para DNP3; `PROTO` só para MODBUS (cada protocolo usa seu
-próprio conjunto de campos extras no `CONFIG` do CNF — colunas que não se
-aplicam ao protocolo escolhido ficam simplesmente sem uso). `INS` (a instalação/
-estação a que o `TAC` pertence — entidade própria, referenciada por `TAC.INS`)
-não tem default: é específico do site, preencha o código já usado no restante da
-sua base. A maioria dos outros campos tem um default sensato (ex.: `MAP=GERAL`,
-`NSRV1/NSRV2=localhost`, `PROTO=BIN`) — só preencha o que quiser mudar; a célula
-sempre vence o default. `Redundante=S` cria `UTR` em par (PRI/REV); `ENU` sempre
-vem em par (redundância de rede), mesmo com um `UTR` só, igual ao observado na
-base real.
+PROTO, ApTitle, AeQ, PS, SS, TS, IDAD, KEEP, NREP, TOUT, MPDU, OPMSK, GOOSE, AQANL,
+AQPOL, AQTOT, INTGR, NFAIL, SFAIL, FAILP, FAILR, NTENT, RESPT, TDESC, TRANS, VLUTR,
+Redundante, Gera`. `IGNERS/SINCR/INVAL` só valem para 104/101; `TZBR/DnpLvl` só
+para DNP3; `PROTO` só para MODBUS; `ApTitle` até `GOOSE` só para 61850 (cada
+protocolo usa seu próprio conjunto de campos extras no `CONFIG` do CNF —
+colunas que não se aplicam ao protocolo escolhido ficam simplesmente sem uso;
+61850 também não usa `AQANL` até `VLUTR`, ver seção própria). `INS` (a
+instalação/estação a que o `TAC` pertence — entidade própria, referenciada por
+`TAC.INS`) não tem default: é específico do site, preencha o código já usado no
+restante da sua base. A maioria dos outros campos tem um default sensato (ex.:
+`MAP=GERAL`, `NSRV1/NSRV2=localhost`, `PROTO=BIN`) — só preencha o que quiser
+mudar; a célula sempre vence o default. `Redundante=S` cria `UTR` em par
+(PRI/REV); `ENU` sempre vem em par (redundância de rede), mesmo com um `UTR` só,
+igual ao observado na base real (não vale para 61850, que não usa `UTR`/`ENU`).
 
 > ⚠️ **Simplificação assumida**: a base real de aquisição separa digital e
 > analógico em NV1 distintos; aqui juntamos tudo num único NV1 de leitura (mais um
 > de comando) para manter a aba simples. Reorganize manualmente se precisar
 > replicar exatamente um padrão com mais grupos.
 
-**MODBUS é o mais diferente dos quatro**: seu grupo de leitura não usa
-ASIM/ADUP/APFL como a família 60870/DNP3 — usa `ALAT` (digital via registrador
-latch), `AANL` (analógico via holding register) e `ASTP` (analógico via input
-register, FC4). A aquisição real também gera **2 registros de `TAC`** (não 1):
-um `TPAQS=ASAC` normal e um `TPAQS=AFIL` à parte, específico para analógicos com
-conversão float (2 registradores 16-bit compondo 1 IEEE-754) — `gerar_ied` já
-cria os dois automaticamente. MODBUS tem mais variantes reais de registrador
-(faixas 0x/1x/2x/3x/4x) que não tentamos cobrir todas; ajuste manualmente se seu
-MDB usar um range diferente. `grupos_comando` (CDUP) é mantido por consistência
-com os outros protocolos, mas **não foi confirmado** contra base real — a base
-disponível era só de medição/cálculo, sem comando.
+**MODBUS é o mais diferente dos quatro protocolos "clássicos"**: seu grupo de
+leitura não usa ASIM/ADUP/APFL como a família 60870/DNP3 — usa `ALAT` (digital
+via registrador latch), `AANL` (analógico via holding register) e `ASTP`
+(analógico via input register, FC4). A aquisição real também gera **2 registros
+de `TAC`** (não 1): um `TPAQS=ASAC` normal e um `TPAQS=AFIL` à parte, específico
+para analógicos com conversão float (2 registradores 16-bit compondo 1
+IEEE-754) — `gerar_ied` já cria os dois automaticamente. MODBUS tem mais
+variantes reais de registrador (faixas 0x/1x/2x/3x/4x) que não tentamos cobrir
+todas; ajuste manualmente se seu MDB usar um range diferente. `grupos_comando`
+(CDUP) é mantido por consistência com os outros protocolos, mas **não foi
+confirmado** contra base real — a base disponível era só de medição/cálculo,
+sem comando.
+
+**61850 tem uma casca inteiramente diferente dos outros quatro** (confirmado
+contra 12 IEDs reais de uma base didática de referência, 100% consistentes) —
+a associação MMS é **bidirecional por natureza**, então:
+- **1 linha na aba `IEDs` já é o IED completo** — `Direcao` não é usado (a
+  mesma conexão faz aquisição e distribuição juntas). `LSC.TIPO` sai sempre
+  `AD` (nunca `AA`/`DD`), e `TAC` **e** `TDD` são sempre criados os dois, com o
+  mesmo `ID` do `LSC`.
+- **Sem `CXU`/`UTR`/`ENU`** — a base real não usa essa camada para 61850 (a
+  própria associação MMS já é a "conexão"; não há remota serial pra modelar).
+  `Redundante` não tem efeito aqui.
+- `TN1` sai fixo `NLN1` (não varia por papel, ao contrário dos outros
+  protocolos); os grupos de leitura/comando usam `ADAQ` (digital), `AAAQ`
+  (analógico) e `CSIM` — **comando simples**, não `CDUP` (comando duplo) como
+  os outros 4 protocolos.
+- `CNF.CONFIG` usa campos de associação MMS totalmente diferentes — nada de
+  `PlPr/LiPr/PlRe/LiRe`: `ApTitle, AeQ, PS, SS, TS, IDAD, KEEP, NREP, TOUT,
+  MPDU, OPMSK, GOOSE`. A maioria tem default sensato confirmado contra a base
+  real (`OPMSK=228521`, o valor mais comum do acervo; `GOOSE=0`); `ApTitle`
+  (endereçamento MMS do IED) não tem default — é específico do site.
+- **Redundância "IED virtual"** (2 IEDs físicos + 1 virtual que assume o
+  controle via bit 12 do `OPMSK`) **não é automatizada** — não cabe no modelo
+  de 1-linha-por-IED desta aba. Se precisar desse padrão, crie as 3 linhas
+  manualmente (2 físicas, sem bit 12; 1 virtual, com `OPMSK` ajustado para
+  incluir o bit 12 — ex. `OPMSK=8010`) e ajuste os `NV1`/`NV2` gerados à mão.
 
 ## Instalação e uso
 Igual à Simples: abra `SageBonis.ods` e habilite as macros do documento (a macro vem

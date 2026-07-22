@@ -2518,8 +2518,9 @@ def gerir_includes(*args):
 NOME_ABA_IEDS = "IEDs"
 CABECALHOS_IEDS = [
     "ID", "Protocolo", "Direcao", "Nome", "GSD", "INS", "MAP", "NSRV1", "NSRV2",
-    "PlPr", "LiPr", "PlRe", "LiRe", "IGNERS", "SINCR", "INVAL", "TZBR", "DnpLvl",
-    "PROTO", "AQANL", "AQPOL", "AQTOT", "INTGR", "NFAIL", "SFAIL", "FAILP", "FAILR",
+    "PlPr", "LiPr", "PlRe", "LiRe", "IGNERS", "SINCR", "INVAL", "TZBR", "DnpLvl", "PROTO",
+    "ApTitle", "AeQ", "PS", "SS", "TS", "IDAD", "KEEP", "NREP", "TOUT", "MPDU", "OPMSK", "GOOSE",
+    "AQANL", "AQPOL", "AQTOT", "INTGR", "NFAIL", "SFAIL", "FAILP", "FAILR",
     "NTENT", "RESPT", "TDESC", "TRANS", "VLUTR", "Redundante", "Gera",
 ]
 
@@ -2592,6 +2593,25 @@ PARAMS_PROTOCOLO = {
         "cnf_extra": ("PROTO",), "cnf_extra_pos": "depois",
         "tacs": [("", "", "ASAC"), ("_FIL", " analógicos float", "AFIL")],
     },
+    # 61850 confirmado contra base real (SkillSAGE, par/CTEEP -- 12 IEDs 61850
+    # reais na base, 100% consistentes) -- e é o mais diferente de todos: usa
+    # "modelo_infra"="61850", tratado por uma função à parte
+    # (_gerar_infra_ied_61850), não pelo caminho padrão de _gerar_infra_ied.
+    # Motivo: a MMS (61850) é bidirecional por natureza -- o mesmo LSC/CNF faz
+    # aquisição E distribuição ao mesmo tempo (LSC.TIPO="AD" sempre, nos 12/12
+    # exemplos reais, nunca "AA"/"DD"), então "Direcao" não se aplica aqui: 1
+    # linha na aba IEDs já é o IED completo. TAC e TDD saem sempre os dois
+    # (12/12 confirmado, sempre em par). Sem CXU/UTR/ENU -- a base real não usa
+    # essa camada pra 61850 (a associação MMS já É a "conexão"; não há remota
+    # serial pra modelar) -- "Redundante" não tem efeito aqui. TN1 fixo "NLN1"
+    # em 100% dos casos (não varia por papel, ao contrário dos outros
+    # protocolos). CNF.CONFIG usa campos de associação MMS -- nada de
+    # PlPr/LiPr/PlRe/LiRe -- ver _gerar_infra_ied_61850.
+    "61850": {
+        "tcv": "CNVO", "ttp": "MMST", "modelo_infra": "61850",
+        "grupos_leitura": [("ADAQ", "PDF", "Digital"), ("AAAQ", "PAF", "Analógica")],
+        "grupos_comando": [("CSIM", "CGF", "Comando Simples")],
+    },
 }
 # TAC padrão -- 1 registro só, TPAQS=ASAC, sem sufixo no ID/NOME. Usado por
 # 104/101/DNP3; MODBUS sobrescreve com 2 registros (ver acima).
@@ -2600,6 +2620,12 @@ _TAC_PADRAO = [("", "", "ASAC")]
 _DEFAULTS_IED = {
     "MAP": "GERAL", "NSRV1": "localhost", "NSRV2": "localhost",
     "IGNERS": "0", "SINCR": "0", "INVAL": "103", "TZBR": "0", "DnpLvl": "2", "PROTO": "BIN",
+    # AeQ/PS/SS/TS/IDAD/KEEP/NREP/TOUT/MPDU/GOOSE: constantes em quase todos os
+    # 12 exemplos reais de 61850 (par/CTEEP); OPMSK=228521 é o valor mais comum
+    # do acervo inteiro (11/12 nesta base). "ApTitle" fica de fora -- é
+    # endereçamento MMS específico do site/IED, sem default sensato possível.
+    "AeQ": "1", "PS": "1 / 1", "SS": "1", "TS": "1", "IDAD": "600",
+    "KEEP": "5", "NREP": "3", "TOUT": "10", "MPDU": "0", "OPMSK": "228521", "GOOSE": "0",
     "AQANL": "1000", "AQPOL": "1000", "AQTOT": "0",
     "NFAIL": "2", "SFAIL": "200", "FAILP": "0", "FAILR": "0",
     "NTENT": "4", "RESPT": "1500", "TDESC": "15", "TRANS": "12", "VLUTR": "0",
@@ -2648,6 +2674,50 @@ def _montar_config_cnf(linha, headers, params, aquisicao):
     return " ".join(partes)
 
 
+_CAMPOS_CNF_61850 = ("ApTitle", "AeQ", "PS", "SS", "TS", "IDAD", "KEEP", "NREP", "TOUT", "MPDU", "OPMSK", "GOOSE")
+
+
+def _gerar_infra_ied_61850(linha, headers, id_ied, params):
+    """Lógica PURA da casca 61850 -- BEM diferente do caminho padrão dos demais
+    protocolos (ver comentário em PARAMS_PROTOCOLO["61850"]): 1 único LSC faz
+    aquisição+distribuição ao mesmo tempo (TIPO="AD" sempre), TAC e TDD saem
+    sempre os dois, sem CXU/UTR/ENU (a associação MMS já é a "conexão"), TN1
+    fixo "NLN1". "Direcao" e "Redundante" não são usados aqui -- a redundância
+    real de 61850 é o padrão "IED virtual" (2 CNFs físicos + 1 virtual com bit
+    12 do OPMSK ligado, ver referências), que não é automatizado por não caber
+    no modelo de 1-linha-por-IED desta aba; monte as 3 linhas manualmente
+    (2 físicas + 1 virtual com OPMSK ajustado) se precisar desse padrão."""
+    saida = {"lsc": [], "cnf": [], "cxu": [], "utr": [], "enu": [],
+             "nv1": [], "nv2": [], "tac": [], "tdd": []}
+    nome_ied = _valor(linha, headers, "Nome") or ("Canal 61850 %s" % id_ied)
+
+    saida["lsc"].append({
+        "ID": id_ied, "NOME": nome_ied,
+        "GSD": _valor(linha, headers, "GSD"), "MAP": _campo_ied(linha, headers, "MAP"),
+        "NSRV1": _campo_ied(linha, headers, "NSRV1"), "NSRV2": _campo_ied(linha, headers, "NSRV2"),
+        "TCV": params["tcv"], "TTP": params["ttp"], "TIPO": "AD", "VERBD": "SCL_AUTO",
+    })
+
+    config_cnf = " ".join("%s= %s" % (c, _campo_ied(linha, headers, c)) for c in _CAMPOS_CNF_61850)
+    saida["cnf"].append({"ID": id_ied, "LSC": id_ied, "CONFIG": config_cnf})
+
+    saida["tac"].append({"ID": id_ied, "NOME": "Aquisição em IEC61850/MMS - %s" % id_ied,
+                          "INS": _valor(linha, headers, "INS"), "LSC": id_ied, "TPAQS": "ASAC"})
+    saida["tdd"].append({"ID": id_ied, "LSC": id_ied, "NOME": "Distribuição %s" % id_ied})
+
+    nv1_id = "%s_1" % id_ied
+    saida["nv1"].append({
+        "ID": nv1_id, "CNF": id_ied, "ORDEM": "1", "TN1": "NLN1",
+        "CONFIG": "Nível 1 bidirecional NLN1 %s" % id_ied,
+    })
+    for ordem_nv2, (tn2, tppnt, desc) in enumerate(params["grupos_leitura"] + params["grupos_comando"], start=1):
+        saida["nv2"].append({
+            "ID": "%s_%s" % (nv1_id, tn2), "NV1": nv1_id, "ORDEM": str(ordem_nv2),
+            "TN2": tn2, "TPPNT": tppnt, "CONFIG": "%s %s" % (desc, id_ied),
+        })
+    return saida
+
+
 def _gerar_infra_ied(linha, headers):
     """Lógica PURA: {entidade: [linha_dict, ...]} a upsertar para 1 linha ativa da
     aba IEDs. Testável fora do LibreOffice (mesmo espírito das demais frentes)."""
@@ -2659,6 +2729,9 @@ def _gerar_infra_ied(linha, headers):
     params = PARAMS_PROTOCOLO.get(protocolo)
     if not id_ied or params is None:
         return saida  # protocolo desconhecido (ainda) ou linha incompleta
+
+    if params.get("modelo_infra") == "61850":
+        return _gerar_infra_ied_61850(linha, headers, id_ied, params)
 
     aquisicao = direcao.strip().lower() == "aquisicao"
 

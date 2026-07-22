@@ -97,6 +97,31 @@ Prefixo/Sufixo), fechando o ciclo pra bases reais existentes, não só pontos no
 protocolo (101/104/DNP3/61850) — hoje o usuário informa esses campos prontos; migrar
 para o **Assistente de Protocolo/IED** (item 3), que já nasce dependente disso.
 
+**Também pendente — comando para pontos analógicos (setpoints)**: `PontoAnalogico`
+hoje não tem nenhuma coluna de comando (diferente do `PontoDigital`, que já tem
+`Comando`/`ID_Fisico_Comando`/`KCONV_Comando`) — a docstring da função de fan-out
+até admite "mesma lógica do digital, sem comando". Achado real ao investigar
+(`CGS.TIPO=PAS`, comando ligado a um status analógico), em **6 bases reais
+independentes** do acervo: dois padrões distintos —
+1. **Comando de TAP** (subir/descer tape de transformador) — `conv_iccp104/GRD`,
+   `padrao_copel` (`NOME=COMANDAR TAP`), `siemens_ds_din`, `jdm` — parece 2 estados
+   (tipo `AUMD`=Aumentar/Diminuir do `TCTL`), não um setpoint numérico de verdade.
+2. **Setpoint numérico com limites** — `tucurui` (usina hidrelétrica, 1 pasta por
+   unidade geradora) tem `CGS.LMI1C/LMI2C/LMS1C/LMS2C` (limites inferior/superior do
+   comando), provavelmente ligado a CAG/despacho de geração; `jdm` tem
+   `PAC=JDM:REGU-STPS` ("regulador-setpoints").
+
+Também existe o caso **avulso** (comando analógico sem status próprio, mesmo espírito
+do `COM_SAGE` digital) — achado real: `PAC=MC_DUMMY_SAGE_ANA` em `ur_mir`.
+`ComandoAvulso` (`CGS`/`CGF`) hoje também não tem os campos de limite
+(`LMI1C`/`LMI2C`/`LMS1C`/`LMS2C`), então não cobre esse caso de graça.
+
+**Antes de implementar**: pesquisar mais a fundo (`tucurui`/`jdm` têm os exemplos mais
+ricos) pra confirmar a semântica exata de `LMI1C` vs `LMI2C` (normal vs emergência? ou
+outra coisa?) e se o padrão de TAP (2 estados) e o de setpoint numérico devem ser
+modelados como a mesma coisa ou features distintas — sem isso, corre o risco de
+generalizar errado (como quase aconteceu com o DNP3-distribuição).
+
 **Por que importa:** é exatamente o item de roadmap "unificar abas de entidades em
 grupos compactos". A GE é o **blueprint pronto** dele. Esforço médio‑alto.
 
@@ -270,6 +295,19 @@ com o `ENU` sempre-em-par dos protocolos clássicos). Validado via
 `teste_uno_protocolos.py`, incluindo confirmação de que o upsert só somou (+2
 `MUL`, +3 `ENM` = 1 do ICCP + 2 do 61850) sem alterar nenhuma das linhas reais
 pré-existentes.
+
+**Também pendente — extração reversa de IEDs**: `gerar_ied()` só funciona num
+sentido (config `IEDs` → `LSC`/`CNF`/`NV1`/`NV2`/etc.). Diferente de
+`extrair_pontos()` (que já reconstrói `PontoDigital`/`PontoAnalogico`/
+`ComandoAvulso`/`CanaisDistribuicao` a partir de entidades já importadas), não
+existe hoje uma função simétrica que reconstrua a aba `IEDs` a partir de
+`LSC`/`CNF`/etc. já existentes numa base importada — na planilha real do
+usuário (que já tem 106 `LSC`/`CNF` reais) a aba `IEDs` continua vazia depois
+de `extrair_pontos()`, porque essa função nunca olha pra essas entidades.
+Simétrico à lacuna do 61850 `MUL`/`ENM` fechada acima, mas num escopo maior
+(precisaria inferir `Protocolo` a partir de `LSC.TTP`, `Direcao` a partir de
+`LSC.TIPO`, e desmontar `CNF.CONFIG` de volta em colunas — um "parser reverso"
+por protocolo, o oposto do que `_montar_config_cnf`/`_CAMPOS_CNF_*` fazem hoje).
 
 **Ainda pendente**: OPC UA e C37.118 — sem base real nem manual completo o
 bastante disponível; retomar se aparecer uma base real ou um manual

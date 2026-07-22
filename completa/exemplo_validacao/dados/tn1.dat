@@ -1,0 +1,291 @@
+
+TN1
+DESCR=	Ausência de entidade no nível 1
+ID=	NLN1
+NSEQ=	 0
+
+TN1
+DESCR=	Grupo de aquisição de utr em protocolo Conitel C32
+ID=	AQ32
+NSEQ=	 1
+
+TN1
+DESCR=	Grupo de seqüência de eventos em protocolo Conitel C32
+ID=	SQ32
+NSEQ=	 2
+
+TN1
+DESCR=	Grupo de controle de trip-close em protocolo Conitel C32
+ID=	CD32
+NSEQ=	 3
+
+TN1
+DESCR=	Grupo de controle de set-point em protocolo Conitel C32
+ID=	CS32
+NSEQ=	 4
+
+TN1
+DESCR=	Grupo de controle de pulsos raise-lower em protocolo C32
+ID=	CP32
+NSEQ=	 5
+
+TN1
+DESCR=	Grupo de distribuição para COS em protocolo Conitel C32
+ID=	DC32
+NSEQ=	 12
+
+TN1
+DESCR=	Grupo de distribuição para COS de seqüência de eventos em protocolo Conitel C32
+ID=	SC32
+NSEQ=	 13
+
+TN1
+DESCR=	Grupo de distr. controle COS de trip-close em protocolo Conitel C32
+ID=	OD32
+NSEQ=	 14
+
+TN1
+DESCR=	Grupo de distr. controle  COS de set-point em protocolo Conitel C32
+ID=	OS32
+NSEQ=	 15
+
+TN1
+DESCR=	Grupo de distr. controle COS de pulsos raise-lower em protocolo C32
+ID=	OP32
+NSEQ=	 16
+
+TN1
+DESCR=	Grupo de aquisição de utr em protocolo LN57
+ID=	AQ57
+NSEQ=	 17
+
+TN1
+DESCR=	Grupo de controle de trip-close em protocolo LN57
+ID=	CD57
+NSEQ=	 18
+
+TN1
+DESCR=	Grupo de controle de set-point em protocolo LN57
+ID=	CS57
+NSEQ=	 19
+
+TN1
+DESCR=	Grupo de controle de pulsos raise-lower em protocolo LN57
+ID=	CP57
+NSEQ=	 20
+
+TN1
+DESCR=	Grupo de distribuição para COS em protocolo LN57
+ID=	DC57
+NSEQ=	 21
+
+TN1
+DESCR=	Grupo de controle COS de trip-close em protocolo LN57
+ID=	OD57
+NSEQ=	 22
+
+TN1
+DESCR=	Grupo de controle  COS de set-point em protocolo LN57
+ID=	OS57
+NSEQ=	 23
+
+TN1
+DESCR=	Grupo de controle COS de pulsos raise-lower em protocolo LN57
+ID=	OP57
+NSEQ=	 24
+
+TN1
+DESCR=	Grupo de aquisição de utr em protocolo REDAC-70
+ID=	AQ70
+NSEQ=	 25
+
+TN1
+DESCR=	Grupo de controle de trip-close em protocolo REDAC-70
+ID=	CD70
+NSEQ=	 26
+
+TN1
+DESCR=	Grupo de distribuição para COS em protocolo REDAC-70
+ID=	DC70
+NSEQ=	 27
+
+TN1
+DESCR=	Grupo de controle COS de trip-close em protocolo REDAC-70
+ID=	OD70
+NSEQ=	 28
+
+TN1
+DESCR=	Gestão de Comunicação de Dados em Protocolo REDAC-70
+ID=	GC70
+NSEQ=	 29
+
+TN1
+DESCR=	Grupo de aquisição UTR em protocolo IEC/60870-5-101
+ID=	A101
+NSEQ=	 30
+
+TN1
+DESCR=	Grupo de controle supervisório UTR em protocolo IEC/60870-5-101
+ID=	C101
+NSEQ=	 31
+
+TN1
+DESCR=	Grupo de controle de gestão de comunicação em protocolo IEC/60870-5-101
+ID=	G101
+NSEQ=	 32
+
+TN1
+DESCR=	Grupo de distribuição COS em protocolo IEC/60870-5-101
+ID=	D101
+NSEQ=	 33
+
+TN1
+DESCR=	Grupo de controle supervisório COS em protocolo IEC/60870-5-101
+ID=	O101
+NSEQ=	 34
+
+TN1
+DESCR=	Grupo de aquisição UTR em protocolo DNP V3.00
+ID=	ADNP
+NSEQ=	 35
+
+TN1
+DESCR=	Grupo de controle supervisório UTR em protocolo DNP V3.00
+ID=	CDNP
+NSEQ=	 36
+
+TN1
+DESCR=	Grupo de controle de gestão de comunicação em protocolo DNP V3.00
+ID=	GDNP
+NSEQ=	 37
+
+TN1
+DESCR=	Grupo de distribuição COS em protocolo DNP V3.00
+ID=	DDNP
+NSEQ=	 38
+
+TN1
+DESCR=	Grupo de controle supervisório COS em protocolo DNP V3.00
+ID=	ODNP
+NSEQ=	 39
+
+TN1
+DESCR=	Grupo de aquisição digital do protocolo ABB/X328
+ID=	DI
+NSEQ=	 41
+
+TN1
+DESCR=	Grupo de controle digital do protocolo ABB/X328
+ID=	DO
+NSEQ=	 42
+
+TN1
+DESCR=	Grupo de aquisição analógica do protocolo ABB/X328
+ID=	AI
+NSEQ=	 43
+
+TN1
+DESCR=	Grupo de controle analógico do protocolo ABB/X328
+ID=	AO
+NSEQ=	 44
+
+TN1
+DESCR=	Grupo de eventos digitais modificado do protocolo ABB/X328*
+ID=	EDM
+NSEQ=	 45
+
+TN1
+DESCR=	Grupo de eventos digitais do protocolo ABB/X328
+ID=	ED
+NSEQ=	 46
+
+TN1
+DESCR=	Grupo de aquisição padrão em protocolo Modbus
+ID=	AMDB
+NSEQ=	 47
+
+TN1
+DESCR=	Grupo de controle supervisório em protocolo Modbus
+ID=	CMDB
+NSEQ=	 48
+
+TN1
+DESCR=	Grupo de controle de gestão de comunicação em protocolo Modbus
+ID=	GMDB
+NSEQ=	 49
+
+TN1
+DESCR=	Grupo de aquisição padrão em protocolo ALTUS AL-1000
+ID=	AALT
+NSEQ=	 50
+
+TN1
+DESCR=	Grupo de controle supervisório em protocolo ALTUS AL-1000
+ID=	CALT
+NSEQ=	 51
+
+TN1
+DESCR=	Grupo de controle de gestão de comunicação em ALTUS AL-1000
+ID=	GALT
+NSEQ=	 52
+
+TN1
+DESCR=	Grupo de aquisição UTR em protocolo IEC/60870-5-104
+ID=	A104
+NSEQ=	 53
+
+TN1
+DESCR=	Grupo de controle supervisório UTR em protocolo IEC/60870-5-104
+ID=	C104
+NSEQ=	 54
+
+TN1
+DESCR=	Grupo de distribuição COS em protocolo IEC/60870-5-104
+ID=	D104
+NSEQ=	 55
+
+TN1
+DESCR=	Grupo de controle de gestão de comunicação em IEC/60870-5-104
+ID=	G104
+NSEQ=	 56
+
+TN1
+DESCR=	Grupo de controle supervisório COS em protocolo IEC/60870-5-104
+ID=	O104
+NSEQ=	 57
+
+TN1
+DESCR=	Grupo de aquisição padrão em protocolo MicroLab
+ID=	AMLB
+NSEQ=	 58
+
+TN1
+DESCR=	Grupo de controle supervisório em protocolo MicroLab
+ID=	CMLB
+NSEQ=	 59
+
+TN1
+DESCR=	Grupo de controle de gestão de comunicação em protocolo MicroLab
+ID=	GMLB
+NSEQ=	 60
+
+TN1
+DESCR=	Grupo de aquisicao padrao em protocolo MicroLab HDLC-AM
+ID=	AMLH
+NSEQ=	 61
+
+TN1
+DESCR=	Grupo de controle supervisorio em protocolo MicroLab HDLC-AM
+ID=	CMLH
+NSEQ=	 62
+
+TN1
+DESCR=	Grupo de controle de gestao de comunicacao em protocolo MicroLab HDLC-AM
+ID=	GMLH
+NSEQ=	 63
+
+TN1
+DESCR=	Grupo de aquisicao de SNMP
+ID=	SNM1
+NSEQ=	 64
+

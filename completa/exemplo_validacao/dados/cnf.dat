@@ -1,0 +1,89 @@
+#include coringa4S8/cnf.dat
+#include SNMP/cnf.dat
+
+CNF
+CONFIG=	PlPr= 1 LiPr= 1 PlRe= 2 LiRe= 1 TZBR= 0 DnpLvl= 1 SINCR= 12
+ID=	L_JDM_CNF
+LSC=	JDM
+
+CNF
+; *************************************************************
+; ** RINUS - Solucoes em Automacao
+; ** Eduardo Fracassi
+; ** 2009 31-jul
+; *************************************************************
+; *** Arquivo com 7 CNF(s)
+;
+;Migracao Sistema GE
+;
+;   ******************************************
+;   ***   Aquisicao I101 de Jardins        ***
+;   ******************************************
+CONFIG=	PlPr= 3 LiPr= 1 PlRe= 4 LiRe= 1 TZBR= 0 DnpLvl= 3 SINCR= 11
+ID=	COR_CNF
+LSC=	COR_LSC
+
+;CNF
+; ESC - Engenharia de Sistemas de Controle Ltda
+; Projeto: SE  JARDIM  -  500kV
+; Arquivo com dados da entidade cnf
+; Data: 07/11/2012
+; ================================================
+;
+;
+;CONFIG=	IGNERS= 0 SINCR= 0 INVAL= 10 PlPr= 1 LiPr= 1 PlRe= 2 LiRe= 1
+;ID=	JDM_CNF
+;LSC=	JDM_LSC
+
+CNF
+CONFIG=	ApTitle= 1 1 10 / 1 1 10 AeQ= 1 PS= 1 / 1 SS= 1 TS= 1 IDAD= 600 KEEP= 5 NREP= 3 TOUT= 10 MPDU= 210 OPMSK= 28020 GOOSE= 0
+ID=	n1
+LSC=	F1_V7
+
+CNF
+; ================================================
+; Interest Engenharia
+; Projeto: SE  JARDIM - 05V5 - 500kV
+; Arquivo com dados da entidade cnf
+; Data: 28/11/2013
+; ================================================
+;
+CONFIG=	ApTitle= 1 1 10 / 1 1 10 AeQ= 1 PS= 1 / 1 SS= 1 TS= 1 IDAD= 600 KEEP= 5 NREP= 3 TOUT= 10 MPDU= 210 OPMSK= 28020 GOOSE= 0
+ID=	o1
+LSC=	F2_V7
+
+CNF
+CONFIG=	ApTitle= 1 1 10 / 1 1 10 AeQ= 1 PS= 1 / 1 SS= 1 TS= 1 IDAD= 600 KEEP= 5 NREP= 3 TOUT= 10 MPDU= 210 OPMSK= 8131 GOOSE= 0
+ID=	p1
+LSC=	F1_V5
+
+CNF
+CONFIG=	ApTitle= 1 1 10 / 1 1 10 AeQ= 1 PS= 1 / 1 SS= 1 TS= 1 IDAD= 600 KEEP= 5 NREP= 3 TOUT= 10 MPDU= 210 OPMSK= 8131 GOOSE= 0
+ID=	q2
+LSC=	F2_V5
+
+
+CNF
+; Aquisição  DNP3 do N1.75
+;CONFIG= IGNERS= 0 SINCR= 0 INVAL= 10 PlPr= 1 LiPr= 1 PlRe= 2 LiRe= 1
+CONFIG=	PlPr= 2 LiPr= 5 PlRe= 2 LiRe= 6 TZBR= 0 DnpLvl= 3 SINCR= 12
+ID=	JDM_CNF
+LSC=	JDM_LSC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include RDP/cnf.dat
+

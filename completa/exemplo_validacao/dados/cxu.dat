@@ -1,0 +1,53 @@
+#include coringa4S8/cxu.dat
+#include SNMP/cxu.dat
+
+CXU
+;AQPOL=	 300
+;FAILP=	 360000
+;FAILR=	 18000
+;INTGR=	 180000
+AQANL=	 200
+AQPOL=	 600
+AQTOT=	 60000
+FAILP=	 0
+FAILR=	 0
+GSD=	JDM
+ID=	CA_JDM_CXU
+INTGR=	 60000
+NFAIL=	 5
+ORDEM=	 1
+SFAIL=	 200
+
+CXU
+;   **************************************************
+;   ***   Conexao de Aquisicao I101 Jardins        ***
+;   **************************************************
+AQANL=	 4000
+AQPOL=	 500
+AQTOT=	 60000
+FAILP=	 0
+FAILR=	 0
+GSD=	JDM
+ID=	COR_CXU
+INTGR=	 50
+NFAIL=	 5
+ORDEM=	 2
+SFAIL=	 200
+
+CXU
+;AQANL=	 0
+;AQPOL=	 200
+;AQTOT=	 0
+;INTGR=	 60000
+AQANL=	 2000
+AQPOL=	 300
+AQTOT=	 60000
+FAILP=	 0
+FAILR=	 0
+GSD=	JDM
+ID=	JDM_CXU
+INTGR=	 18000
+NFAIL=	 5
+ORDEM=	 3
+SFAIL=	 200
+

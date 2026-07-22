@@ -1,0 +1,1843 @@
+#include coringa4S8/pas.dat
+
+
+PAS
+            ID= JDM:COM_SAGE
+          NOME= Referencia controle CAG
+           TAC= CALC_TAC
+           LIA= -99970
+           LIE= -99990
+           LIU= -99980
+           LSA= 99970
+           LSE= 99990
+           LSU= 99980
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= OUTROS
+         TPFIL= NLFL
+        VLINIC= 0
+        IDICCP= JDM_COM_SAGE_PAS
+           CMT= EXCLUI_NHS
+
+PAS
+            ID= JDM:04B1:KVB
+          NOME= KV Fase B do 04B1-JDM
+           TAC= JDM
+           LIA= 218
+           LIE= -1
+           LIU= 190
+           LSA= 242
+           LSE= 280
+           LSU= 253
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= OCR_PAS01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= KV_BN
+         TPFIL= NLFL
+        VLINIC= 236.3
+         SELSD= SIM
+    ;[NHS] OCR= OCR_PAS01
+
+PAS
+            ID= JDM:04B2:KVB
+          NOME= KV Fase B do 04B2-JDM
+           TAC= JDM
+           LIA= 218
+           LIE= -1
+           LIU= 190
+           LSA= 242
+           LSE= 280
+           LSU= 253
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= OCR_PAS01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= KV_BN
+         TPFIL= NLFL
+        VLINIC= 236.3
+         SELSD= SIM
+    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04B1:HZ
+;          NOME= Frequência em Hz na 04B1-JDM
+;           TAC= JDM
+;           LIA= 59.75
+;           LIE= 59
+;           LIU= 59.5
+;           LSA= 60.25
+;           LSE= 61
+;           LSU= 60.5
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= FREQ
+;         TPFIL= NLFL
+;        VLINIC= 0
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04B1:KVAB
+;          NOME= KV Fase AB do 04B1-JDM
+;           TAC= JDM
+;           LIA= 218
+;           LIE= -1
+;           LIU= 190
+;           LSA= 242
+;           LSE= 280
+;           LSU= 253
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= KV_AB
+;         TPFIL= NLFL
+;        VLINIC= 236.3
+;         SELSD= SIM
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04B1:KVBC
+;          NOME= KV Fase BC do 04B1-JDM
+;           TAC= JDM
+;           LIA= 218
+;           LIE= -1
+;           LIU= 190
+;           LSA= 242
+;           LSE= 280
+;           LSU= 253
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= KV_BC
+;         TPFIL= NLFL
+;        VLINIC= 236.3
+;         SELSD= SIM
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04B1:KVCA
+;          NOME= KV Fase CA do 04B1-JDM
+;           TAC= JDM
+;           LIA= 218
+;           LIE= -1
+;           LIU= 190
+;           LSA= 242
+;           LSE= 280
+;           LSU= 253
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= KV_CA
+;         TPFIL= NLFL
+;        VLINIC= 236.3
+;         SELSD= SIM
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04B2:HZ
+;          NOME= Frequência em Hz na 04B2-JDM
+;           TAC= JDM
+;           LIA= 59.75
+;           LIE= 59
+;           LIU= 59.5
+;           LSA= 60.25
+;           LSE= 61
+;           LSU= 60.5
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= FREQ
+;         TPFIL= NLFL
+;        VLINIC= 0
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04B2:KVAB
+;          NOME= KV Fase AB do 04B2-JDM
+;           TAC= JDM
+;           LIA= 218
+;           LIE= -1
+;           LIU= 190
+;           LSA= 242
+;           LSE= 280
+;           LSU= 253
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= KV_AB
+;         TPFIL= NLFL
+;        VLINIC= 236.3
+;         SELSD= SIM
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04B2:KVBC
+;          NOME= KV Fase BC do 04B2-JDM
+;           TAC= JDM
+;           LIA= 218
+;           LIE= -1
+;           LIU= 190
+;           LSA= 242
+;           LSE= 280
+;           LSU= 253
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= KV_BC
+;         TPFIL= NLFL
+;        VLINIC= 236.3
+;         SELSD= SIM
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04B2:KVCA
+;          NOME= KV Fase CA do 04B2-JDM
+;           TAC= JDM
+;           LIA= 218
+;           LIE= -1
+;           LIU= 190
+;           LSA= 242
+;           LSE= 280
+;           LSU= 253
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= KV_CA
+;         TPFIL= NLFL
+;        VLINIC= 236.3
+;         SELSD= SIM
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04C1:MW
+;          NOME= MW da LT 04C1-JDM/ITB
+;           TAC= JDM
+;           LIA= -780
+;           LIE= -800
+;           LIU= -790
+;           LSA= 780
+;           LSE= 800
+;           LSU= 790
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= MW
+;         TPFIL= NLFL
+;        VLINIC= 6.6
+;         SELSD= SIM
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04C1:MVAR
+;          NOME= MVAR da LT 04C1-JDM/ITB
+;           TAC= JDM
+;           LIA= -480
+;           LIE= -500
+;           LIU= -490
+;           LSA= 480
+;           LSE= 500
+;           LSU= 490
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= MVAR
+;         TPFIL= NLFL
+;        VLINIC= 6.6
+;         SELSD= SIM
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04C1:KVAB
+;          NOME= KV da Fase AB da LT 04C1-JDM/ITB
+;           TAC= JDM
+;           LIA= -99999
+;           LIE= -99999
+;           LIU= -99999
+;           LSA= 99999
+;           LSE= 99999
+;           LSU= 99999
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= KV_AB
+;         TPFIL= NLFL
+;        VLINIC= 0
+;         SELSD= NAO
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04C1:KVBC
+;          NOME= KV da Fase BC da LT 04C1-JDM/ITB
+;           TAC= JDM
+;           LIA= -99999
+;           LIE= -99999
+;           LIU= -99999
+;           LSA= 99999
+;           LSE= 99999
+;           LSU= 99999
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= KV_BC
+;         TPFIL= NLFL
+;        VLINIC= 0
+;         SELSD= NAO
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04C1:KVCA
+;          NOME= KV da Fase CA da LT 04C1-JDM/ITB
+;           TAC= JDM
+;           LIA= -99999
+;           LIE= -99999
+;           LIU= -99999
+;           LSA= 99999
+;           LSE= 99999
+;           LSU= 99999
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= KV_CA
+;         TPFIL= NLFL
+;        VLINIC= 0
+;         SELSD= NAO
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04C1:AMPA
+;          NOME= Corrente Fase A da LT 04C1-JDM/ITB
+;           TAC= JDM
+;           LIA= -1
+;           LIE= -1
+;           LIU= -1
+;           LSA= 631
+;           LSE= 1262
+;           LSU= 631
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= AMP_A
+;         TPFIL= NLFL
+;        VLINIC= 6.6
+;         SELSD= NAO
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04C1:AMPB
+;          NOME= Corrente Fase B da LT 04C1-JDM/ITB
+;           TAC= JDM
+;           LIA= -1
+;           LIE= -1
+;           LIU= -1
+;           LSA= 631
+;           LSE= 1262
+;           LSU= 631
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= AMP_B
+;         TPFIL= NLFL
+;        VLINIC= 6.6
+;         SELSD= SIM
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04C1:AMPC
+;          NOME= Corrente Fase C da LT 04C1-JDM/ITB
+;           TAC= JDM
+;           LIA= -1
+;           LIE= -1
+;           LIU= -1
+;           LSA= 631
+;           LSE= 1262
+;           LSU= 631
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= AMP_C
+;         TPFIL= NLFL
+;        VLINIC= 6.6
+;         SELSD= NAO
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04C2:MW
+;          NOME= MW da LT 04C2-JDM/ITB
+;           TAC= JDM
+;           LIA= -780
+;           LIE= -800
+;           LIU= -790
+;           LSA= 780
+;           LSE= 800
+;           LSU= 790
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= MW
+;         TPFIL= NLFL
+;        VLINIC= 6.6
+;         SELSD= SIM
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04C2:MVAR
+;          NOME= MVAR da LT 04C2-JDM/ITB
+;           TAC= JDM
+;           LIA= -480
+;           LIE= -500
+;           LIU= -490
+;           LSA= 480
+;           LSE= 500
+;           LSU= 490
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= MVAR
+;         TPFIL= NLFL
+;        VLINIC= 6.6
+;         SELSD= SIM
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04C2:KVAB
+;          NOME= KV da Fase AB da LT 04C2-JDM/ITB
+;           TAC= JDM
+;           LIA= -99999
+;           LIE= -99999
+;           LIU= -99999
+;           LSA= 99999
+;           LSE= 99999
+;           LSU= 99999
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= KV_AB
+;         TPFIL= NLFL
+;        VLINIC= 0
+;         SELSD= NAO
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04C2:KVBC
+;          NOME= KV da Fase BC da LT 04C2-JDM/ITB
+;           TAC= JDM
+;           LIA= -99999
+;           LIE= -99999
+;           LIU= -99999
+;           LSA= 99999
+;           LSE= 99999
+;           LSU= 99999
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= KV_BC
+;         TPFIL= NLFL
+;        VLINIC= 0
+;         SELSD= NAO
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04C2:KVCA
+;          NOME= KV da Fase CA da LT 04C2-JDM/ITB
+;           TAC= JDM
+;           LIA= -99999
+;           LIE= -99999
+;           LIU= -99999
+;           LSA= 99999
+;           LSE= 99999
+;           LSU= 99999
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= KV_CA
+;         TPFIL= NLFL
+;        VLINIC= 0
+;         SELSD= NAO
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04C2:AMPA
+;          NOME= Corrente Fase A da LT 04C2-JDM/ITB
+;           TAC= JDM
+;           LIA= -1
+;           LIE= -1
+;           LIU= -1
+;           LSA= 631
+;           LSE= 1262
+;           LSU= 631
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= AMP_A
+;         TPFIL= NLFL
+;        VLINIC= 6.6
+;         SELSD= NAO
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04C2:AMPB
+;          NOME= Corrente Fase B da LT 04C2-JDM/ITB
+;           TAC= JDM
+;           LIA= -1
+;           LIE= -1
+;           LIU= -1
+;           LSA= 631
+;           LSE= 1262
+;           LSU= 631
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= AMP_B
+;         TPFIL= NLFL
+;        VLINIC= 6.6
+;         SELSD= SIM
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04C2:AMPC
+;          NOME= Corrente Fase C da LT 04C2-JDM/ITB
+;           TAC= JDM
+;           LIA= -1
+;           LIE= -1
+;           LIU= -1
+;           LSA= 631
+;           LSE= 1262
+;           LSU= 631
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= AMP_C
+;         TPFIL= NLFL
+;        VLINIC= 6.6
+;         SELSD= NAO
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04F2:MW
+;          NOME= MW da LT 04F2-JDM/CMS
+;           TAC= JDM
+;           LIA= -780
+;           LIE= -800
+;           LIU= -790
+;           LSA= 780
+;           LSE= 800
+;           LSU= 790
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= MW
+;         TPFIL= NLFL
+;        VLINIC= 6.6
+;         SELSD= SIM
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04F2:MVAR
+;          NOME= MVAR da LT 04F2-JDM/CMS
+;           TAC= JDM
+;           LIA= -480
+;           LIE= -500
+;           LIU= -490
+;           LSA= 480
+;           LSE= 500
+;           LSU= 490
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= MVAR
+;         TPFIL= NLFL
+;        VLINIC= 6.6
+;         SELSD= SIM
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04F2:AMPA
+;          NOME= Corrente Fase A da LT 04F2-JDM/CMS
+;           TAC= JDM
+;           LIA= -1
+;           LIE= -1
+;           LIU= -1
+;           LSA= 631
+;           LSE= 1262
+;           LSU= 631
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= AMP_A
+;         TPFIL= NLFL
+;        VLINIC= 6.6
+;         SELSD= NAO
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04F2:AMPB
+;          NOME= Corrente Fase B da LT 04F2-JDM/CMS
+;           TAC= JDM
+;           LIA= -1
+;           LIE= -1
+;           LIU= -1
+;           LSA= 631
+;           LSE= 1262
+;           LSU= 631
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= AMP_B
+;         TPFIL= NLFL
+;        VLINIC= 6.6
+;         SELSD= SIM
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04F2:AMPC
+;          NOME= Corrente Fase C da LT 04F2-JDM/CMS
+;           TAC= JDM
+;           LIA= -1
+;           LIE= -1
+;           LIU= -1
+;           LSA= 631
+;           LSE= 1262
+;           LSU= 631
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= AMP_C
+;         TPFIL= NLFL
+;        VLINIC= 6.6
+;         SELSD= NAO
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04F2:KVAB
+;          NOME= KV da Fase AB da LT 04F2-JDM/CMS
+;           TAC= JDM
+;           LIA= 218
+;           LIE= -1
+;           LIU= 190
+;           LSA= 242
+;           LSE= 280
+;           LSU= 253
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS_LOG01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= KV_AB
+;         TPFIL= NLFL
+;        VLINIC= 236.3
+;         SELSD= NAO
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04F2:KVBC
+;          NOME= KV da Fase BC da LT 04F2-JDM/CMS
+;           TAC= JDM
+;           LIA= 218
+;           LIE= -1
+;           LIU= 190
+;           LSA= 242
+;           LSE= 280
+;           LSU= 253
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS_LOG01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= KV_BC
+;        TPFIL= NLFL
+;       VLINIC= 236.3
+;         SELSD= SIM
+;    ;[NHS] OCR= OCR_PAS01
+
+;PAS
+;            ID= JDM:04F2:KVCA
+;          NOME= KV da Fase CA da LT 04F2-JDM/CMS
+;           TAC= JDM
+;           LIA= 218
+;           LIE= -1
+;           LIU= 190
+;           LSA= 242
+;           LSE= 280
+;           LSU= 253
+;         ALRIN= NAO
+;           TCL= NLCL
+;           OCR= OCR_PAS_LOG01
+;         BNDMO= 0
+;        CDINIC= NORMAL
+;          TIPO= KV_CA
+;         TPFIL= NLFL
+;        VLINIC= 236.3
+;         SELSD= NAO
+;    ;[NHS] OCR= OCR_PAS01
+
+PAS
+            ID= JDM:RTU-LO-1-1-3
+          NOME= Valor de refer. 0 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 15
+           LIE= 0
+           LIU= 1
+           LSA= 18
+           LSE= 22
+           LSU= 20
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 0
+        IDICCP= RTU-LO-1-1-3-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-LO-1-1-3-JDM
+
+PAS
+            ID= JDM:RTU-HI-1-1-3
+          NOME= Valor de refer. 2000 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 1985
+           LIE= 1980
+           LIU= 1982
+           LSA= 2015
+           LSE= 2020
+           LSU= 2018
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 90
+        IDICCP= RTU-HI-1-1-3-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-HI-1-1-3-JDM
+
+PAS
+            ID= JDM:RTU-LO-1-1-4
+          NOME= Valor de refer. 0 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 15
+           LIE= 0
+           LIU= 1
+           LSA= 18
+           LSE= 22
+           LSU= 20
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 0
+        IDICCP= RTU-LO-1-1-4-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-LO-1-1-4-JDM
+
+PAS
+            ID= JDM:RTU-HI-1-1-4
+          NOME= Valor de refer. 2000 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 1985
+           LIE= 1980
+           LIU= 1982
+           LSA= 2015
+           LSE= 2020
+           LSU= 2018
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 90
+        IDICCP= RTU-HI-1-1-4-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-HI-1-1-4-JDM
+
+PAS
+            ID= JDM:RTU-LO-1-1-6
+          NOME= Valor de refer. 0 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 15
+           LIE= 0
+           LIU= 1
+           LSA= 18
+           LSE= 22
+           LSU= 20
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 0
+        IDICCP= RTU-LO-1-1-6-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-LO-1-1-6-JDM
+
+PAS
+            ID= JDM:RTU-HI-1-1-6
+          NOME= Valor de refer. 2000 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 1985
+           LIE= 1980
+           LIU= 1982
+           LSA= 2015
+           LSE= 2020
+           LSU= 2018
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 90
+        IDICCP= RTU-HI-1-1-6-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-HI-1-1-6-JDM
+
+PAS
+            ID= JDM:RTU-LO-1-2-2
+          NOME= Valor de refer. 0 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 15
+           LIE= 0
+           LIU= 1
+           LSA= 18
+           LSE= 22
+           LSU= 20
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 0
+        IDICCP= RTU-LO-1-2-2-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-LO-1-2-2-JDM
+
+PAS
+            ID= JDM:RTU-HI-1-2-2
+          NOME= Valor de refer. 2000 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 1985
+           LIE= 1980
+           LIU= 1982
+           LSA= 2015
+           LSE= 2020
+           LSU= 2018
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 90
+        IDICCP= RTU-HI-1-2-2-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-HI-1-2-2-JDM
+
+PAS
+            ID= JDM:RTU-LO-1-2-3
+          NOME= Valor de refer. 0 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 15
+           LIE= 0
+           LIU= 1
+           LSA= 18
+           LSE= 22
+           LSU= 20
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 0
+        IDICCP= RTU-LO-1-2-3-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-LO-1-2-3-JDM
+
+PAS
+            ID= JDM:RTU-HI-1-2-3
+          NOME= Valor de refer. 2000 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 1985
+           LIE= 1980
+           LIU= 1982
+           LSA= 2015
+           LSE= 2020
+           LSU= 2018
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 90
+        IDICCP= RTU-HI-1-2-3-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-HI-1-2-3-JDM
+
+PAS
+            ID= JDM:RTU-LO-1-2-4
+          NOME= Valor de refer. 0 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 15
+           LIE= 0
+           LIU= 1
+           LSA= 18
+           LSE= 22
+           LSU= 20
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 0
+        IDICCP= RTU-LO-1-2-4-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-LO-1-2-4-JDM
+
+PAS
+            ID= JDM:RTU-HI-1-2-4
+          NOME= Valor de refer. 2000 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 1985
+           LIE= 1980
+           LIU= 1982
+           LSA= 2015
+           LSE= 2020
+           LSU= 2018
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 90
+        IDICCP= RTU-HI-1-2-4-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-HI-1-2-4-JDM
+
+PAS
+            ID= JDM:RTU-LO-1-2-6
+          NOME= Valor de refer. 0 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 15
+           LIE= 0
+           LIU= 1
+           LSA= 18
+           LSE= 22
+           LSU= 20
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 0
+        IDICCP= RTU-LO-1-2-6-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-LO-1-2-6-JDM
+
+PAS
+            ID= JDM:RTU-HI-1-2-6
+          NOME= Valor de refer. 2000 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 1985
+           LIE= 1980
+           LIU= 1982
+           LSA= 2015
+           LSE= 2020
+           LSU= 2018
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 90
+        IDICCP= RTU-HI-1-2-6-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-HI-1-2-6-JDM
+
+PAS
+            ID= JDM:RTU-LO-1-3-2
+          NOME= Valor de refer. 0 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 15
+           LIE= 0
+           LIU= 1
+           LSA= 18
+           LSE= 22
+           LSU= 20
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 0
+        IDICCP= RTU-LO-1-3-2-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-LO-1-3-2-JDM
+
+PAS
+            ID= JDM:RTU-HI-1-3-2
+          NOME= Valor de refer. 2000 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 1985
+           LIE= 1980
+           LIU= 1982
+           LSA= 2015
+           LSE= 2020
+           LSU= 2018
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 90
+        IDICCP= RTU-HI-1-3-2-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-HI-1-3-2-JDM
+
+PAS
+            ID= JDM:RTU-LO-1-3-3
+          NOME= Valor de refer. 0 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 15
+           LIE= 0
+           LIU= 1
+           LSA= 18
+           LSE= 22
+           LSU= 20
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 0
+        IDICCP= RTU-LO-1-3-3-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-LO-1-3-3-JDM
+
+PAS
+            ID= JDM:RTU-HI-1-3-3
+          NOME= Valor de refer. 2000 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 1985
+           LIE= 1980
+           LIU= 1982
+           LSA= 2015
+           LSE= 2020
+           LSU= 2018
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 90
+        IDICCP= RTU-HI-1-3-3-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-HI-1-3-3-JDM
+
+PAS
+            ID= JDM:RTU-LO-1-3-6
+          NOME= Valor de refer. 0 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 15
+           LIE= 0
+           LIU= 1
+           LSA= 18
+           LSE= 22
+           LSU= 20
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 0
+        IDICCP= RTU-LO-1-3-6-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-LO-1-3-6-JDM
+
+PAS
+            ID= JDM:RTU-HI-1-3-6
+          NOME= Valor de refer. 2000 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 1985
+           LIE= 1980
+           LIU= 1982
+           LSA= 2015
+           LSE= 2020
+           LSU= 2018
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 90
+        IDICCP= RTU-HI-1-3-6-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-HI-1-3-6-JDM
+
+PAS
+            ID= JDM:RTU-LO-1-4-3
+          NOME= Valor de refer. 0 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 15
+           LIE= 0
+           LIU= 1
+           LSA= 18
+           LSE= 22
+           LSU= 20
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 0
+        IDICCP= RTU-LO-1-4-3-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-LO-1-4-3-JDM
+
+PAS
+            ID= JDM:RTU-HI-1-4-3
+          NOME= Valor de refer. 2000 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 1985
+           LIE= 1980
+           LIU= 1982
+           LSA= 2015
+           LSE= 2020
+           LSU= 2018
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 90
+        IDICCP= RTU-HI-1-4-3-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-HI-1-4-3-JDM
+
+PAS
+            ID= JDM:RTU-LO-1-4-4
+          NOME= Valor de refer. 0 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 15
+           LIE= 0
+           LIU= 1
+           LSA= 18
+           LSE= 22
+           LSU= 20
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 0
+        IDICCP= RTU-LO-1-4-4-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-LO-1-4-4-JDM
+
+PAS
+            ID= JDM:RTU-HI-1-4-4
+          NOME= Valor de refer. 2000 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 1985
+           LIE= 1980
+           LIU= 1982
+           LSA= 2015
+           LSE= 2020
+           LSU= 2018
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 90
+        IDICCP= RTU-HI-1-4-4-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-HI-1-4-4-JDM
+
+PAS
+            ID= JDM:RTU-LO-1-4-6
+          NOME= Valor de refer. 0 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 15
+           LIE= 0
+           LIU= 1
+           LSA= 18
+           LSE= 22
+           LSU= 20
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 0
+        IDICCP= RTU-LO-1-4-6-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-LO-1-4-6-JDM
+
+PAS
+            ID= JDM:RTU-HI-1-4-6
+          NOME= Valor de refer. 2000 do cartao ADI UTR-JDM
+           TAC= JDM
+           LIA= 1985
+           LIE= 1980
+           LIU= 1982
+           LSA= 2015
+           LSE= 2020
+           LSU= 2018
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= NIVEL
+         TPFIL= NLFL
+        VLINIC= 90
+        IDICCP= RTU-HI-1-4-6-JDM_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= RTU-HI-1-4-6-JDM
+
+PAS
+            ID= JDM:PREP-STAT
+          NOME= Status da Preparação
+           TAC= JDM
+           LIA= -8
+           LIE= -10
+           LIU= -9
+           LSA= 8
+           LSE= 10
+           LSU= 9
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= MW
+         TPFIL= NLFL
+        VLINIC= 0
+        IDICCP= PREP-JDM-STAT_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= PREP-JDM-STAT
+
+PAS
+            ID= JDM:REEN-STAT
+          NOME= Status da Reenergização
+           TAC= JDM
+           LIA= -8
+           LIE= -10
+           LIU= -9
+           LSA= 8
+           LSE= 10
+           LSU= 9
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= MW
+         TPFIL= NLFL
+        VLINIC= 0
+        IDICCP= REEN-JDM-STAT_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= REEN-JDM-STAT
+
+PAS
+            ID= JDM:REGU-STAT
+          NOME= Status da Regulação
+           TAC= JDM
+           LIA= -8
+           LIE= -10
+           LIU= -9
+           LSA= 8
+           LSE= 10
+           LSU= 9
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= MW
+         TPFIL= NLFL
+        VLINIC= 0
+        IDICCP= REGU-JDM-STAT_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= REGU-JDM-STAT
+
+PAS
+            ID= JDM:REGU-STPS
+          NOME= Valor Scan de Regulacao da Barra 69KV-JDM
+           TAC= JDM
+           LIA= 65.55
+           LIE= 20
+           LIU= 62.1
+           LSA= 72.45
+           LSE= 90
+           LSU= 75.9
+         ALRIN= NAO
+           TCL= NLCL
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= KV
+         TPFIL= NLFL
+        VLINIC= 0
+        IDICCP= JDM:UTR-069:90:STPS_A
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= JDM:UTR-069:90:STPS
+
+PAS
+            ID= JDM:02H1:AMP
+          NOME= Corrente do 02H1-JDM
+           TAC= JDM_C
+           LIA= -99999
+           LIE= -99999
+           LIU= -99999
+           LSA= 99999
+           LSE= 99999
+           LSU= 99999
+         ALRIN= NAO
+           TCL= AMPSHUNT
+           OCR= OCR_PAS01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= AMP
+         TPFIL= NLFL
+        VLINIC= 0
+         SELSD= NAO
+
+PAS
+            ID= JDM:02H2:AMP
+          NOME= Corrente do 02H2-JDM
+           TAC= JDM_C
+           LIA= -99999
+           LIE= -99999
+           LIU= -99999
+           LSA= 99999
+           LSE= 99999
+           LSU= 99999
+         ALRIN= NAO
+           TCL= AMPSHUNT
+           OCR= OCR_PAS01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= AMP
+         TPFIL= NLFL
+        VLINIC= 0
+         SELSD= NAO
+
+PAS
+            ID= JDM:02H3:AMP
+          NOME= Corrente do 02H3-JDM
+           TAC= JDM_C
+           LIA= -99999
+           LIE= -99999
+           LIU= -99999
+           LSA= 99999
+           LSE= 99999
+           LSU= 99999
+         ALRIN= NAO
+           TCL= AMPSHUNT
+           OCR= OCR_PAS01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= AMP
+         TPFIL= NLFL
+        VLINIC= 0
+         SELSD= NAO
+
+PAS
+            ID= JDM:04C1:AMP
+          NOME= Corrente da LT 04C1-JDM/ITB
+           TAC= JDM_C
+           LIA= -1
+           LIE= -1
+           LIU= -1
+           LSA= 631
+           LSE= 1262
+           LSU= 631
+         ALRIN= NAO
+           TCL= CORRENTE
+           OCR= OCR_PAS01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= AMP
+         TPFIL= NLFL
+        VLINIC= 0
+         SELSD= NAO
+
+PAS
+            ID= JDM:04C2:AMP
+          NOME= Corrente da LT 04C2-JDM/ITB
+           TAC= JDM_C
+           LIA= -1
+           LIE= -1
+           LIU= -1
+           LSA= 631
+           LSE= 1262
+           LSU= 631
+         ALRIN= NAO
+           TCL= CORRENTE
+           OCR= OCR_PAS01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= AMP
+         TPFIL= NLFL
+        VLINIC= 0
+         SELSD= NAO
+
+PAS
+            ID= JDM:04T1:AMP:S
+          NOME= Corrente Secundário do 04T1-JDM
+           TAC= JDM_C
+           LIA= -1
+           LIE= -1
+           LIU= -1
+           LSA= 1020
+           LSE= 2040
+           LSU= 1020
+         ALRIN= NAO
+           TCL= CORRENTE
+           OCR= OCR_PAS01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= AMP
+         TPFIL= NLFL
+        VLINIC= 0
+         SELSD= NAO
+    CMT= EXCLUI_NHS
+
+PAS
+            ID= JDM:04T2:AMP:S
+          NOME= Corrente Secundário do 04T2-JDM
+           TAC= JDM_C
+           LIA= -1
+           LIE= -1
+           LIU= -1
+           LSA= 1020
+           LSE= 2040
+           LSU= 1020
+         ALRIN= NAO
+           TCL= CORRENTE
+           OCR= OCR_PAS01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= AMP
+         TPFIL= NLFL
+        VLINIC= 0
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS01
+
+PAS
+            ID= JDM:04T3:AMP:S
+          NOME= Corrente Secundário do 04T3-JDM
+           TAC= JDM_C
+           LIA= -1
+           LIE= -1
+           LIU= -1
+           LSA= 1020
+           LSE= 2040
+           LSU= 1020
+         ALRIN= NAO
+           TCL= CORRENTE
+           OCR= OCR_PAS01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= AMP
+         TPFIL= NLFL
+        VLINIC= 0
+         SELSD= NAO
+    ;[NHS] OCR= OCR_PAS01
+
+PAS
+            ID= JDM:T1/2/3-S-MW
+          NOME= MW Trafos T1/T2/T3 JDM Lado 69
+           TAC= JDM_C
+           LIA= -99999
+           LIE= -99999
+           LIU= -99999
+           LSA= 99999
+           LSE= 99999
+           LSU= 99999
+         ALRIN= NAO
+           TCL= SOMA
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= MW
+         TPFIL= NLFL
+        VLINIC= 0
+           CMT= EXCLUI_NHS
+         SELSD= NAO
+
+PAS
+            ID= JDM:T1/2/3-S-MVAR
+          NOME= MVAR Trafos T1/T2/T3 JDM Lado 69
+           TAC= JDM_C
+           LIA= -99999
+           LIE= -99999
+           LIU= -99999
+           LSA= 99999
+           LSE= 99999
+           LSU= 99999
+         ALRIN= NAO
+           TCL= SOMA
+           OCR= TIPO1_MSG01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= MVAR
+         TPFIL= NLFL
+        VLINIC= 0
+           CMT= EXCLUI_NHS
+         SELSD= NAO
+
+PAS
+            ID= JDM:02N3:AMP
+          NOME= Corrente da LT 02N3-JDM/ARJ
+           TAC= JDM_C
+           LIA= -1
+           LIE= -1
+           LIU= -1
+           LSA= 432
+           LSE= 864
+           LSU= 432
+         ALRIN= NAO
+           TCL= CORRENTE
+           OCR= OCR_PAS01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= AMP
+         TPFIL= NLFL
+        VLINIC= 0
+         SELSD= NAO
+
+PAS
+            ID= JDM:02C4:AMP
+          NOME= Corrente da LT 02C4-JDM/GRU
+           TAC= JDM_C
+           LIA= -1
+           LIE= -1
+           LIU= -1
+           LSA= 504
+           LSE= 1008
+           LSU= 504
+         ALRIN= NAO
+           TCL= CORRENTE
+           OCR= OCR_PAS01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= AMP
+         TPFIL= NLFL
+        VLINIC= 0
+         SELSD= NAO
+
+PAS
+            ID= JDM:02V1:AMP
+          NOME= Corrente da LT  02V1-VRD/JDM
+           TAC= JDM_C
+           LIA= -99999
+           LIE= -99999
+           LIU= -99999
+           LSA= 99999
+           LSE= 99999
+           LSU= 99999
+         ALRIN= NAO
+           TCL= CORRENTE
+           OCR= OCR_PAS01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= AMP
+         TPFIL= NLFL
+        VLINIC= 0
+         SELSD= NAO
+
+PAS
+            ID= JDM:02V2:AMP
+          NOME= Corrente da LT 02V2-JDM/TAIÇOCA
+           TAC= JDM_C
+           LIA= -1
+           LIE= -1
+           LIU= -1
+           LSA= 432
+           LSE= 864
+           LSU= 432
+         ALRIN= NAO
+           TCL= CORRENTE
+           OCR= OCR_PAS01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= AMP
+         TPFIL= NLFL
+        VLINIC= 0
+         SELSD= NAO
+
+PAS
+            ID= JDM:02V3:AMP
+          NOME= Corrente da LT 02V3-JDM/TCC
+           TAC= JDM_C
+           LIA= -1
+           LIE= -1
+           LIU= -1
+           LSA= 432
+           LSE= 864
+           LSU= 432
+         ALRIN= NAO
+           TCL= CORRENTE
+           OCR= OCR_PAS01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= AMP
+         TPFIL= NLFL
+        VLINIC= 0
+         SELSD= NAO
+
+PAS
+            ID= JDM:02V4:AMP
+          NOME= Corrente da LT 02V4-VRD/JDM
+           TAC= JDM_C
+           LIA= -1
+           LIE= -1
+           LIU= -1
+           LSA= 99999
+           LSE= 99999
+           LSU= 99999
+         ALRIN= NAO
+           TCL= CORRENTE
+           OCR= OCR_PAS01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= AMP
+         TPFIL= NLFL
+        VLINIC= 0
+         SELSD= NAO
+
+PAS
+            ID= JDM:02V5:AMP
+          NOME= Corrente da LT 02V5-JDM/ATL
+           TAC= JDM_C
+           LIA= -99999
+           LIE= -99999
+           LIU= -99999
+           LSA= 486
+           LSE= 99999
+           LSU= 540
+         ALRIN= NAO
+           TCL= CORRENTE
+           OCR= OCR_PAS01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= AMP
+         TPFIL= NLFL
+        VLINIC= 0
+         SELSD= NAO
+
+PAS
+            ID= JDM:02C2:AMP
+          NOME= Corrente da LT 02C2-JDM/ARJ
+           TAC= JDM_C
+           LIA= -1
+           LIE= -1
+           LIU= -1
+           LSA= 432
+           LSE= 864
+           LSU= 432
+         ALRIN= NAO
+           TCL= CORRENTE
+           OCR= OCR_PAS01
+         BNDMO= 0
+        CDINIC= NORMAL
+          TIPO= AMP
+         TPFIL= NLFL
+        VLINIC= 0
+         SELSD= NAO
+; *** Arquivo com 128 PAS(s)                           
+; *** Arquivo com 94 PAS(s)                           
+                           
+
+; *** Arquivo com 94 PAS(s)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include SNMP/pas.dat
+
+

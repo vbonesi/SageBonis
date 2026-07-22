@@ -1,0 +1,38 @@
+LSC
+	ID = RDP51
+	NOME = Ligacao de Aquisicao IEC61850 - RDP51
+	MAP = RDP
+	GSD = JDM
+	NSRV1 = localhost
+	NSRV2 = localhost
+	TCV = CNVO
+	TIPO = AD
+	TTP = MMST
+	VERBD = SCL_AUTO
+
+LSC
+	ID = RDP52
+	NOME = Ligacao de Aquisicao IEC61850 - RDP52
+	MAP = RDP
+	GSD = JDM
+	NSRV1 = localhost
+	NSRV2 = localhost
+	TCV = CNVO
+	TIPO = AD
+	TTP = MMST
+	VERBD = SCL_AUTO
+
+LSC
+	ID = RDP53
+	NOME = Ligacao de Aquisicao IEC61850 - RDP53
+	MAP = RDP
+	GSD = JDM
+	NSRV1 = localhost
+	NSRV2 = localhost
+	TCV = CNVO
+	TIPO = AD
+	TTP = MMST
+	VERBD = SCL_AUTO
+
+
+Arquivo gerado automaticamente por pysage-tools versao 3.0.0, feito por Automa Power (VB, YS e MF).

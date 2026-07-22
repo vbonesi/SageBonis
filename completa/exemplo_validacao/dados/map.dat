@@ -1,0 +1,124 @@
+
+
+MAP
+ID=	JDM
+NARRT=	Alarme de JDM
+ORDEM=	98
+
+MAP
+ID=	ALRAPL
+NARRT=	Alarmes de ALRAPL
+ORDEM=	17
+
+MAP
+ID=	ALRCAL
+NARRT=	Alarmes de ALRCAL
+ORDEM=	18
+
+MAP
+ID=	AOPER
+NARRT=	Alarmes de AOPER
+ORDEM=	10
+
+MAP
+ID=	CNTRL
+NARRT=	Alarmes de CNTRL
+ORDEM=	11
+
+MAP
+ID=	COMD
+NARRT=	Alarmes de COMD
+ORDEM=	12
+
+MAP
+ID=	GERAL
+NARRT=	Alarmes de GERAL
+ORDEM=	99
+
+MAP
+ID=	PROCSC
+NARRT=	Alarmes de PROCSC
+ORDEM=	14
+
+MAP
+ID=	CALC
+NARRT=	Alarmes de Calculos
+ORDEM=	15
+
+MAP
+; ESC - Engenharia de Sistemas de Controle Ltda
+; Projeto: SE  JARDIM  -  500kV
+; Arquivo com dados da entidade map
+; Data: 07/11/2012
+; ================================================
+;
+;
+ID=	CONFIG
+NARRT=	Alarmes de CONFIG
+ORDEM=	16
+
+MAP
+ID=	F1_V7
+NARRT=	Alarmes IEC/61850 IED F1_V7
+ORDEM=	20
+
+MAP
+; ================================================
+; Interest Engenharia
+; Projeto: SE  JARDIM - 05V5 - 500kV
+; Arquivo com dados da entidade map
+; Data: 28/11/2013
+; ================================================
+;
+ID=	F2_V7
+NARRT=	Alarmes IEC/61850 IED F2_V7
+ORDEM=	21
+
+MAP
+ID=	F1_V5
+NARRT=	Alarmes IEC/61850 IED F1_V5
+ORDEM=	22
+
+MAP
+ID=	F2_V5
+NARRT=	Alarmes IEC/61850 IED F2_V5
+ORDEM=	23
+
+MAP
+ID=	ADVER
+NARRT=	Lista de Alarme de Advert.
+ORDEM=	7
+
+MAP
+ID=	URGEN
+NARRT=	Lista de Alarme de Urgen.
+ORDEM=	8
+
+;MAP
+;ID=	05E1
+;NARRT=	Alarmes do 05E1
+;ORDEM=	19
+
+MAP
+ID=	05T6
+NARRT=	Alarmes do 05E1
+ORDEM=	40
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include RDP/map.dat
+

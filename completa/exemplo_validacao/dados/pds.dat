@@ -1,0 +1,2996 @@
+#include coringa4S8/pds.dat
+#include SNMP/pds.dat                            
+
+
+PDS
+            ID= JDM:IHM:43:N2
+          NOME= Seleção IHM Central Operação em Nível 2
+           OCR= OCR_NOR_MSG01
+         ALINT= NAO
+         ALRIN= SIM
+           TAC= CALC_TAC
+           TCL= NOT
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SOEIN= NAO
+           CMT= EXCLUI_NHS
+    ;[NHS] OCR= OCR_SEC_MSG01
+
+PDS
+            ID= JDM:00:DMY1
+          NOME= DUMMY 1
+           OCR= OCR_LIG_ADV01
+         ALINT= SIM
+         ALRIN= NAO
+           TAC= LOCAL
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SOEIN= NAO
+        IDICCP= JDM_00_DMY1
+
+;PDS
+;            ID= JDM:14C1:52
+;          NOME= Disjuntor 14C1
+;           OCR= OCR_DIS_URG01
+;         ALRIN= NAO
+;           TAC= JDM
+;           TCL= NLCL
+;          TIPO= DISJ
+;         STINI= A
+;         STNOR= A
+;        CDINIC= NORMAL
+;         TPFIL= NLFL
+;         SELSD= SIM
+    ;[NHS] OCR= OCR_DIS_CRO01
+
+
+PDS
+            ID= JDM:02A1:86:ATRB
+          NOME= Atuacao Rele de Bloqueio
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04B1:27:ASTU
+          NOME= Atuacao ECE SubTensao Estagio 1
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04B1:86:ATRB
+          NOME= Atuacao Rele de Bloqueio
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04C1:86:ATRB
+          NOME= Atuação Relé de Bloqueio
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04C2:86:ATRB
+          NOME= Atuação Rele de Bloqueio
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04F2:86:ATRB
+          NOME= Atuacao Rele de Bloqueio
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+;PDS
+;            ID= JDM:14C1:00:APDP
+;;          NOME= Trip Discordancia de Polos
+;           OCR= OCR_NOR_IPU01
+;         ALRIN= NAO
+;           TAC= JDM
+;           TCL= NLCL
+;          TIPO= PTIP
+;         STINI= A
+;         STNOR= A
+;        CDINIC= NORMAL
+;         TPFIL= NLFL
+;         SELSD= NAO
+    ;[NHS] OCR= OCR_IMP_CRO01
+
+PDS
+            ID= JDM:14C1:00:BLQF
+          NOME= Bloqueio de Função
+           OCR= OCR_NOR_IPA01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTIP
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_IMP_CRO01
+
+PDS
+            ID= JDM:14C1:62BF:FLDI
+          NOME= Atuação Falha de Disjuntor
+           OCR= OCR_NOR_IPU01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTIP
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_IMP_CRO01
+
+PDS
+            ID= JDM:14C2:00:BLQF
+          NOME= Bloqueio de Funcao
+           OCR= OCR_NOR_IPA01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTIP
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_IMP_CRO01
+
+PDS
+            ID= JDM:14C2:62BF:FLDI
+          NOME= Atuacao Falha de Disjuntor
+           OCR= OCR_NOR_IPU01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTIP
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_IMP_CRO01
+
+PDS
+            ID= JDM:14D1:00:BLQF
+          NOME= Bloqueio de Funcao
+           OCR= OCR_NOR_IPA01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTIP
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+        IDICCP= JDM:14D1:00:MDES_D
+         SELSD= NAO
+    ;[NHS] OCR= OCR_IMP_CRO01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= JDM:14D1:00:MDES
+
+PDS
+            ID= JDM:14D1:50BF:FLDI
+          NOME= Atuacao Falha de Disjuntor
+           OCR= OCR_NOR_IPU01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTIP
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_IMP_CRO01
+
+PDS
+            ID= JDM:14F2:00:BLQF
+          NOME= Bloqueio de Funcao
+           OCR= OCR_NOR_IPA01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTIP
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_IMP_CRO01
+
+PDS
+            ID= JDM:14F2:50BF:FLDI
+          NOME= Atuacao Falha de Disjuntor
+           OCR= OCR_NOR_IPU01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTIP
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_IMP_CRO01
+
+PDS
+            ID= JDM:02A1:63:RGFS
+          NOME= Trip Rele de Gas Trafo 2.Grau
+           OCR= OCR_NOR_IPU01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTIP
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_IMP_CRO01
+
+PDS
+            ID= JDM:02A1:50/51:SCSN
+          NOME= Trip SobreCorrente 50/51 Neutro 69KV
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:02A1:50/51:SCLS
+          NOME= Trip SobreCorrente 50/51 Fases 69KV
+           OCR= OCR_NOR_IPU01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTIP
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_IMP_CRO01
+
+PDS
+            ID= JDM:02BP-1:27:SUBT
+          NOME= Trip Rele SubTensao
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:02BP-2:27:SUBT
+          NOME= Trip Rele SubTensao
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04B1:27:ASTD
+          NOME= Atuacao ECE SubTensao Estagio 2
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04B1:27:ASTT
+          NOME= Atuacao ECE SubTensao Estagio 3
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04B1:27:ASTQ
+          NOME= Atuacao ECE SubTensao Estagio 4
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04B1:27:ASTC
+          NOME= Atuacao ECE SubTensao Estagio 5
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04C1:00:OSEG
+          NOME= Oscilo - Partida/Defeito
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C1:00:DTPP
+          NOME= Desligamento Mini Disj. TPs Prot/Med
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C1:21:PDLC
+          NOME= Trip Line Check
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04C1:21:PPPA
+          NOME= PP-Partida Fase A
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C1:21:PSPA
+          NOME= PS-Partida Fase A
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C1:21:PPTF
+          NOME= PP-Trip Fases
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C1:59:SOIT
+          NOME= Trip SobreTensão Inst/Temp
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04C1:21:PSTF
+          NOME= PS-Trip Fases
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C1:67N:DNPD
+          NOME= Trip SobreCorrente Dir Neutro
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04C1:21:PSPB
+          NOME= PS-Partida Fase B
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C1:21:PSPC
+          NOME= PS-Partida Fase C
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C1:85:RCRP
+          NOME= PP/PA-Recepção Permissivo
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C1:PP/PA:TLFG
+          NOME= PP/PA-Teleproteção Falha Geral
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+        IDICCP= JDM:04C1:85:TAT1_D
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= JDM:04C1:85:TAT1
+
+PDS
+            ID= JDM:04C1:85:TRTT
+          NOME= PP/PA-Recepção Transfer Trip
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04C1:PP/PA:TLPT
+          NOME= PP/PA-Teleproteção em Teste
+           OCR= OCR_NOR_LOG01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+        IDICCP= JDM:04C1:85:TLT1_D
+         SELSD= NAO
+    ;[NHS] OCR= OCR_SEC_MSG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= JDM:04C1:85:TLT1
+
+PDS
+            ID= JDM:04C1:85:TRTP
+          NOME= PP/PA-Transmissão Permissivo
+           OCR= OCR_NOR_ADV01
+         ALINT= SIM
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C1:85:TTTT
+          NOME= Transmissão Transfer Trip
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C2:21:PSPA
+          NOME= PS - Partida Fase A
+           OCR= OCR_NOR_LOG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C2:21:PPPB
+          NOME= PP - Partida Fase B
+           OCR= OCR_NOR_LOG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C2:21:PPPA
+          NOME= PP - Partida Fase A
+           OCR= OCR_NOR_LOG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C2:21:TTTT
+          NOME= Transmissão Transfer Trip
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C2:21:FIRP
+          NOME= PP-Falha Interna
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C2:79:ODRA
+          NOME= Ordem de Religamento Automatico
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_MSG01
+
+PDS
+            ID= JDM:04C2:21:CPTS
+          NOME= Proteção em Teste
+           OCR= OCR_SEC_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+        IDICCP= JDM:04C2:21:CTSP_D
+         SELSD= NAO
+    ;[NHS] OCR= OCR_SEC_LOG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= JDM:04C2:21:CTSP
+
+PDS
+            ID= JDM:04C2:21:PPTF
+          NOME= PP - Trip de Fases
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C2:85:TRTT
+          NOME= PP/PA-Recepção Transfer Trip
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04C2:21:PSPC
+          NOME= PS - Partida Fase C
+           OCR= OCR_NOR_LOG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C2:RDP:OSFG
+          NOME= Oscilo - Partida/Defeito
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C2:21:PSTF
+          NOME= PS - Trip de fases
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C2:21:PPPC
+          NOME= PP - Partida Fase C
+           OCR= OCR_NOR_LOG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C2:21:PSPB
+          NOME= PS - Partida Fase B
+           OCR= OCR_NOR_LOG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C2:PP/PA:TLPT
+          NOME= PP/PA-Teleproteção em Teste
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+        IDICCP= JDM:04C2:85:TLT1_D
+         SELSD= NAO
+    ;[NHS] OCR= OCR_SEC_MSG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= JDM:04C2:85:TLT1
+
+PDS
+            ID= JDM:04C2:PP/PA:TLFG
+          NOME= PP/PA-Teleproteção Falha Geral
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+        IDICCP= JDM:04C2:85:TAT1_D
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= JDM:04C2:85:TAT1
+
+PDS
+            ID= JDM:04C2:85:TTTT
+          NOME= PP/PA-Transmissão Transfer Trip
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C2:85:RCRP
+          NOME= PP/PA-Recepção Permissivo
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C2:21:PDTZ
+          NOME= Atuação Tempo Zona 3
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04C2:21:PDQZ
+          NOME= Atuação Tempo Zona 4
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04C2:21:DNPD
+          NOME= Trip Sobrecorrente Direcional Neutro
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04C2:21:PDLC
+          NOME= Trip Line Check
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04C2:00:DTPP
+          NOME= Desligamento Mini Disj TP de Proteção
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C2:59:SOIT
+          NOME= Trip SobreTensão Inst/Temp
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04C2:21:PDPZ
+          NOME= Atuação Tempo Zona 1
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04C2:21:PDSZ
+          NOME= Atuação Tempo Zona 2
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+;PDS
+;            ID= JDM:14C1:00:PBSS
+;          NOME= Baixa Pressão Sist. Extinção SF6 2.Grau
+;           OCR= OCR_NOR_ADV01
+;         ALRIN= NAO
+;           TAC= JDM
+;           TCL= NLCL
+;          TIPO= PTNI
+;         STINI= A
+;         STNOR= A
+;        CDINIC= NORMAL
+;         TPFIL= NLFL
+;         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:14C1:52:ANDJ
+          NOME= Defeito Comando Hidráulico
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04C1:79:ODRA
+          NOME= Ordem de Religamento Automático
+           OCR= OCR_NOR_MSG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_MSG01
+
+PDS
+            ID= JDM:04C1:21:PPPB
+          NOME= PP-Partida Fase B
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C1:21:PPPC
+          NOME= PP-Partida Fase C
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C1:21:PDPZ
+          NOME= Atuação Tempo Zona 1
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04C1:21:PDSZ
+          NOME= Atuação Tempo Zona 2
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04C1:21:PDTZ
+          NOME= Atuação Tempo Zona 3
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04C1:21:PDQZ
+          NOME= Atuação Tempo Zona 4
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04C1:21:CTSP
+          NOME= Proteção em Teste
+           OCR= OCR_SEC_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_SEC_LOG01
+
+PDS
+            ID= JDM:04C1:21:FIRE
+          NOME= Falha Interna Relé
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C1:21:TTTT
+          NOME= Tranmissão Transfer Trip
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04C2:85:TRTP
+          NOME= Transmissão Permissivo
+           OCR= OCR_NOR_ADV01
+         ALINT= SIM
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04F2:00:OSGA
+          NOME= Oscilógrafo Grupo de Alarmes
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04F2:85:TAI1
+          NOME= Teleproteção Defeito Interno
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04F2:21:PPTF
+          NOME= PP- Trip Fases
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04F2:21:PPPA
+          NOME= PP- Partida Fase A
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04F2:21:TTTT
+          NOME= PP/PS- Transmissão Transfer Trip
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04F2:85:TLT1
+          NOME= Teleproteção em Teste
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_SEC_MSG01
+
+PDS
+            ID= JDM:04F2:85:TRTP
+          NOME= Transmissão Permissivo
+           OCR= OCR_NOR_ADV01
+         ALINT= SIM
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04F2:21:PPPB
+          NOME= PP- Partida Fase B
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04F2:21:CPTS
+          NOME= PP/PS- Proteção em Teste
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_SEC_LOG01
+
+PDS
+            ID= JDM:04F2:59:SOIT
+          NOME= Trip SobreTensão Inst/Temp
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04F2:21:PPPC
+          NOME= PP- Partida Fase C
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04F2:21:FIRE
+          NOME= PP/PS- Falha Interna Relé
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04F2:21:PDPZ
+          NOME= Atuação Tempo Zona 1
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04F2:21:PDSZ
+          NOME= Atuação Tempo Zona 2
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04F2:21:PSPA
+          NOME= PS- Partida Fase A
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04F2:21:PSPB
+          NOME= PS- Partida Fase B
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04F2:21:PSTF
+          NOME= PS- Trip Fases
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04F2:21:PDLC
+          NOME= Trip Line Check
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04F2:85:TTTT
+          NOME= Transmissão Transfer Trip
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04F2:85:TRTT
+          NOME= Recepção Transfer Trip
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04F2:21:PDTZ
+          NOME= Atuação Tempo Zona 3
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04F2:21:PDQZ
+          NOME= Atuação Tempo Zona 4
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04F2:85:RCRP
+          NOME= Recepção Permissivo
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04F2:67:PDSD
+          NOME= Trip SobreCorrente Direcional
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04F2:00:DTPP
+          NOME= Desligamento Mini Disj. TPs Prot/Med
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04F2:79:ODRA
+          NOME= Ordem de Religamento Automático
+           OCR= OCR_NOR_MSG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_MSG01
+
+PDS
+            ID= JDM:04F2:21:PSPC
+          NOME= PS- Partida Fase C
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04F2:79:RBLQ
+          NOME= Religamento Bloqueado
+           OCR= OCR_NOR_MSG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_MSG01
+
+PDS
+            ID= JDM:14C1:00:ABEM
+          NOME= Abertura de Emergencia
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:14C2:00:ABEM
+          NOME= Abertura de Emergencia
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:14D1:00:ABEM
+          NOME= Abertura de Emergancia
+           OCR= OCR_NOR_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+        IDICCP= JDM:14D1:00:FCAM_FACD_D
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= JDM:14D1:00:FCAM_FACD
+
+PDS
+            ID= JDM:04B1:00:ESAC
+          NOME= Esquema Alivio Carga
+           OCR= OCR_ATV_MSG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_ATV_MSG01
+
+PDS
+            ID= JDM:32A1-8:89_A
+          NOME= Seccionadora 32A1-8
+           OCR= OCR_CHA_ADV01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= CHAVE
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SOEIN= SIM
+           CMT= EXCLUI_NHS
+         SELSD= SIM
+
+PDS
+            ID= JDM:32BP-1:89_A
+          NOME= Seccionadora 32BP-1
+           OCR= OCR_CHA_ADV01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= CHAVE
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SOEIN= SIM
+           CMT= EXCLUI_NHS
+         SELSD= SIM
+;PDS                            
+;ID= JDM:32BP-2:89_A                            
+;NOME= Seccionadora 32BP-2                            
+;OCR= OCR_CHA_ADV01                            
+;ALRIN= SIM                            
+;TAC= JDM                            
+;TCL= NLCL                            
+;TIPO= CHAVE                            
+;STINI= A                            
+;STNOR= A                            
+;CDINIC= NORMAL                            
+;SELSD= SIM                            
+;TPFIL= NLFL                            
+;SOEIN= SIM                            
+
+;PDS
+;            ID= JDM:34C1-1:89
+;          NOME= Seccionadora 34C1-1
+;           OCR= OCR_CHA_ADV01
+;         ALRIN= NAO
+;           TAC= JDM
+;           TCL= NLCL
+;          TIPO= CHAVE
+;         STINI= A
+;         STNOR= A
+;        CDINIC= NORMAL
+;         TPFIL= NLFL
+;         SELSD= SIM
+    ;[NHS] OCR= OCR_CHA_ADV01
+
+;PDS
+;            ID= JDM:34C1-2:89
+;          NOME= Seccionadora 34C1-2
+;           OCR= OCR_CHA_ADV01
+;         ALRIN= NAO
+;           TAC= JDM
+;           TCL= NLCL
+;          TIPO= CHAVE
+;         STINI= A
+;         STNOR= A
+;        CDINIC= NORMAL
+;         TPFIL= NLFL
+;         SELSD= SIM
+    ;[NHS] OCR= OCR_CHA_ADV01
+
+;PDS
+;            ID= JDM:34C1-4:89
+;          NOME= Seccionadora 34C1-4
+;           OCR= OCR_CHA_ADV01
+;         ALRIN= NAO
+;           TAC= JDM
+;           TCL= NLCL
+;          TIPO= CHAVE
+;         STINI= A
+;         STNOR= A
+;        CDINIC= NORMAL
+;         TPFIL= NLFL
+;         SELSD= SIM
+    ;[NHS] OCR= OCR_CHA_ADV01
+
+;PDS
+;            ID= JDM:34C1-5:89
+;          NOME= Seccionadora 34C1-5
+;           OCR= OCR_CHA_ADV01
+;         ALRIN= NAO
+;           TAC= JDM
+;           TCL= NLCL
+;          TIPO= CHAVE
+;         STINI= A
+;         STNOR= A
+;        CDINIC= NORMAL
+;         TPFIL= NLFL
+;         SELSD= SIM
+    ;[NHS] OCR= OCR_CHA_ADV01
+
+;PDS
+;            ID= JDM:34C1-6:89
+;          NOME= Seccionadora 34C1-6
+;           OCR= OCR_CHA_ADV01
+;         ALRIN= NAO
+;           TAC= JDM
+;           TCL= NLCL
+;          TIPO= CHAVE
+;         STINI= A
+;         STNOR= A
+;        CDINIC= NORMAL
+;         TPFIL= NLFL
+;         SELSD= SIM
+    ;[NHS] OCR= OCR_CHA_ADV01
+
+PDS
+            ID= JDM:34D1-1:89_A
+          NOME= Seccionadora 34D1-1
+           OCR= OCR_CHA_ADV01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= CHAVE
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SOEIN= SIM
+           CMT= EXCLUI_NHS
+         SELSD= SIM
+
+PDS
+            ID= JDM:34D1-2:89_A
+          NOME= Seccionadora 34D1-2
+           OCR= OCR_CHA_ADV01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= CHAVE
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SOEIN= SIM
+           CMT= EXCLUI_NHS
+         SELSD= SIM
+
+PDS
+            ID= JDM:34F2-1:89_A
+          NOME= Seccionadora 34F2-1 Aberta
+           OCR= OCR_CHA_ADV01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= CHAVE
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SOEIN= SIM
+           CMT= EXCLUI_NHS
+         SELSD= SIM
+
+PDS
+            ID= JDM:34F2-2:89_F
+          NOME= Seccionadora 34F2-2 Fechada
+           OCR= OCR_CHA_ADV01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= CHAVE
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SOEIN= SIM
+           CMT= EXCLUI_NHS
+         SELSD= SIM
+
+PDS
+            ID= JDM:34F2-4:89_A
+          NOME= Seccionadora 34F2-4 Aberta
+           OCR= OCR_CHA_ADV01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= CHAVE
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SOEIN= SIM
+           CMT= EXCLUI_NHS
+         SELSD= SIM
+
+PDS
+            ID= JDM:34F2-5:89_A
+          NOME= Seccionadora 34F2-5 Aberta
+           OCR= OCR_CHA_ADV01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= CHAVE
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SOEIN= SIM
+           CMT= EXCLUI_NHS
+         SELSD= SIM
+
+PDS
+            ID= JDM:34F2-6:89_F
+          NOME= Seccionadora 34F2-6 Fechada
+           OCR= OCR_CHA_ADV01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= CHAVE
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SOEIN= SIM
+           CMT= EXCLUI_NHS
+         SELSD= SIM
+		 
+PDS
+            ID= JDM:12T5:52.
+          NOME= Disjuntor 12T5
+           OCR= OCR_DIS_URG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= DISJ
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= SIM
+    ;[NHS] OCR= OCR_DIS_CRO01
+
+PDS
+            ID= JDM:CONTR.ISOL-1-1-5
+          NOME= Controle Isolado CARTAO TDO-JDM
+           OCR= OCR_BLQ01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR01
+
+PDS
+            ID= JDM:FALHA-1-1-5
+          NOME= FALHA CARTAO TDO-JDM
+           OCR= OCR_BLQ01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_BLQ01
+
+PDS
+            ID= JDM:CONTR.ISOL-1-2-5
+          NOME= Controle Isolado CARTAO TDO-JDM
+           OCR= OCR_BLQ01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR01
+
+PDS
+            ID= JDM:FALHA-1-2-5
+          NOME= FALHA CARTAO TDO-JDM
+           OCR= OCR_BLQ01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR01
+
+PDS
+            ID= JDM:CONTR.ISOL-1-3-4
+          NOME= Controle Isolado CARTAO TDO-JDM
+           OCR= OCR_BLQ01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR01
+
+PDS
+            ID= JDM:FALHA-1-3-4
+          NOME= FALHA CARTAO TDO-JDM
+           OCR= OCR_BLQ01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_LOC01
+
+PDS
+            ID= JDM:CONTR.ISOL-1-3-5
+          NOME= Controle Isolado CARTAO TDO-JDM
+           OCR= OCR_BLQ01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR01
+
+PDS
+            ID= JDM:FALHA-1-3-5
+          NOME= FALHA CARTAO TDO-JDM
+           OCR= OCR_BLQ01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR01
+
+PDS
+            ID= JDM:CONTR.ISOL-1-4-5
+          NOME= Controle Isolado CARTAO TDO-JDM
+           OCR= OCR_BLQ01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_BLQ01
+
+PDS
+            ID= JDM:FALHA-1-4-5
+          NOME= FALHA CARTAO TDO-JDM
+           OCR= OCR_BLQ01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR01
+
+PDS
+            ID= JDM:FALHA-1-1-3
+          NOME= FALHA CARTAO ADI-JDM
+           OCR= OCR_BLQ01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR01
+
+PDS
+            ID= JDM:FALHA-1-1-4
+          NOME= FALHA CARTAO ADI-JDM
+           OCR= OCR_BLQ01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR01
+
+PDS
+            ID= JDM:FALHA-1-1-6
+          NOME= FALHA CARTAO ADI-JDM
+           OCR= OCR_BLQ01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_LOC01
+
+PDS
+            ID= JDM:FALHA-1-2-2
+          NOME= FALHA CARTAO ADI-JDM
+           OCR= OCR_BLQ01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR01
+
+PDS
+            ID= JDM:FALHA-1-2-3
+          NOME= FALHA CARTAO ADI-JDM
+           OCR= OCR_BLQ01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR01
+
+PDS
+            ID= JDM:FALHA-1-2-4
+          NOME= FALHA CARTAO ADI-JDM
+           OCR= OCR_BLQ01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR01
+
+PDS
+            ID= JDM:FALHA-1-2-6
+          NOME= FALHA CARTAO ADI-JDM
+           OCR= OCR_BLQ01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR01
+
+PDS
+            ID= JDM:FALHA-1-3-2
+          NOME= FALHA CARTAO ADI-JDM
+           OCR= OCR_BLQ01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR01
+
+PDS
+            ID= JDM:FALHA-1-3-3
+          NOME= FALHA CARTAO ADI-JDM
+           OCR= OCR_BLQ01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR01
+
+PDS
+            ID= JDM:FALHA-1-3-6
+          NOME= FALHA CARTAO ADI-JDM
+           OCR= OCR_BLQ01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR01
+
+PDS
+            ID= JDM:FALHA-1-4-6
+          NOME= FALHA CARTAO ADI-JDM
+           OCR= OCR_BLQ01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR01
+
+PDS
+            ID= JDM:FAL-V28-CH1
+          NOME= FAL CARTAO V28 Canal 1 de JDM
+           OCR= OCR_FAL01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR01
+
+PDS
+            ID= JDM:FLASHCARD_FORA
+          NOME= FlashCard Fora em JDM
+           OCR= OCR_FAL01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR01
+
+PDS
+            ID= JDM:TOOL-INICIADO
+          NOME= Secao do Tool Iniciado em JDM
+           OCR= OCR_FAL01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR01
+
+PDS
+            ID= JDM:RESET-UTR
+          NOME= Reset UTR de JDM
+           OCR= OCR_FAL01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR01
+
+PDS
+            ID= JDM:FALHA-UTR
+          NOME= FALHA CARTOES UTR-JDM
+           OCR= OCR_BLQ01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR01
+
+PDS
+            ID= JDM:UTR_LOGICA
+          NOME= Estado da UTR JDM
+         ALRIN= SIM
+           TAC= LOCAL_TAC
+           TCL= NLCL
+          TIPO= UTR
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+           CMT= EXCLUI_NHS
+         SELSD= NAO
+
+PDS
+            ID= JDM:UTR-069:90:RGAT
+          NOME= Regulacao
+           OCR= OCR_AUT_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_AUT_ADV01
+
+PDS
+            ID= JDM:UTR-069:90:RGAN
+          NOME= Regulacao em Andamento
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:UTR-069:90:RGBQ
+          NOME= Regulacao Bloqueada
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:UTR-069:90:RGDI
+          NOME= Regulacao Disponavel
+           OCR= OCR_NOR_MSG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:UTR-069:90:PAUT
+          NOME= Programacao de mudanca de Faixas de Tensao
+           OCR= OCR_AUT_MSG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_AUT_MSG01
+
+PDS
+            ID= JDM:UTR-069:00:HHVR
+          NOME= Horario Verao
+           OCR= OCR_ATV_MSG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_ATV_MSG01
+
+PDS
+            ID= JDM:UTR-069:90:HPN1
+          NOME= Hora Prevista para Mudanca Faixa Tensao
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= MANUAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:UTR-069:90:HPN2
+          NOME= Hora Prevista para Mudanca Faixa Tensao
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= MANUAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:UTR-069:90:HPN3
+          NOME= Hora Prevista para Mudanca Faixa Tensao
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= MANUAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04T1:00:CAUT
+          NOME= Comutador em Automatico
+           OCR= OCR_SEC_MSG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_SEC_MSG01
+
+PDS
+            ID= JDM:04T1:43LRM:L
+          NOME= Chave 43LRM em Local
+           OCR= OCR_SEC_MSG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_SEC_MSG01
+
+PDS
+            ID= JDM:04T1:00:CCMD
+          NOME= Comutador em Comandado
+           OCR= OCR_SEC_MSG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_SEC_MSG01
+
+PDS
+            ID= JDM:04T1:00:CIND
+          NOME= Comutador em Individual
+           OCR= OCR_SEC_MSG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_SEC_MSG01
+
+PDS
+            ID= JDM:04T2:00:CAUT
+          NOME= Comutador em Automatico
+           OCR= OCR_SEC_MSG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_SEC_MSG01
+
+PDS
+            ID= JDM:SART069:00:FCUC
+          NOME= Falha Comunicacao Unidade de Controle
+           OCR= OCR_NOR_ADV01
+         ALINT= SIM
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SOEIN= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04T2:00:CCMD
+          NOME= Comutador em Comandado
+           OCR= OCR_SEC_MSG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_SEC_MSG01
+
+PDS
+            ID= JDM:04T2:00:CIND
+          NOME= Comutador em Individual
+           OCR= OCR_SEC_MSG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_SEC_MSG01
+
+PDS
+            ID= JDM:04T3:00:CAUT
+          NOME= Comutador em Automatico
+           OCR= OCR_SEC_MSG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_SEC_MSG01
+
+PDS
+            ID= JDM:04T3:43LRM:L
+          NOME= Chave 43LRM em Local
+           OCR= OCR_SEC_MSG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_SEC_MSG01
+
+PDS
+            ID= JDM:04T3:00:CCMD
+          NOME= Comutador em Comandado
+           OCR= OCR_SEC_MSG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_SEC_MSG01
+
+PDS
+            ID= JDM:04T3:00:CIND
+          NOME= Comutador em Individual
+           OCR= OCR_SEC_MSG01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_SEC_MSG01
+
+PDS
+            ID= JDM:04T1:00:CFAL
+          NOME= Comutacao em Falha
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04T1:00:CFPA
+          NOME= Comutador Fora de Passo
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04T2:00:CFAL
+          NOME= Comutacao em Falha
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04T2:00:CFPA
+          NOME= Comutador Fora de Passo
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04T3:00:CFAL
+          NOME= Comutacao em Falha
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_CRO01
+
+PDS
+            ID= JDM:04T3:00:CFPA
+          NOME= Comutador Fora de Passo
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04TN:00:CFPA
+          NOME= Comutador Fora de Passo
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+PDS
+            ID= JDM:04T1:00:CLIA
+          NOME= Comutador Limite Inferior Atingido
+           OCR= OCR_NOR_ADV01
+         ALRIN= NAO
+           TAC= JDM
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SELSD= NAO
+    ;[NHS] OCR= OCR_NOR_LOG01
+
+;PDS
+;            ID= JDM:34C1-7:89
+;          NOME= Seccionadora 34C1-7
+;           OCR= OCR_CHA_ADV01
+;         ALRIN= NAO
+;           TAC= JDM
+;           TCL= NLCL
+;          TIPO= CHAVE
+;         STINI= A
+;         STNOR= A
+;        CDINIC= NORMAL
+;         TPFIL= NLFL
+;         SELSD= SIM
+    ;[NHS] OCR= OCR_CHA_ADV01
+
+PDS
+            ID= JDM:34F2-7:89_F
+          NOME= Seccionadora 34F2-7 Fechada
+           OCR= OCR_CHA_ADV01
+         ALRIN= SIM
+           TAC= JDM
+           TCL= NLCL
+          TIPO= CHAVE
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SOEIN= SIM
+           CMT= EXCLUI_NHS
+         SELSD= SIM
+
+PDS
+            ID= UTR_LOGICA_JDD
+          NOME= Estado da UTR JDD
+         ALRIN= SIM
+           TAC= LOCAL_TAC
+           TCL= NLCL
+          TIPO= UTR
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+           CMT= EXCLUI_NHS
+         SELSD= NAO
+
+PDS
+            ID= JDM:COM_SAGE
+          NOME= Referencia controle de comunicacao dados
+           OCR= OCR_MON01
+         ALRIN= SIM
+           TAC= CALC_TAC
+           TCL= NLCL
+          TIPO= FLCN
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+
+PDS
+            ID= JDM:IHM-C:43:N2N3
+          NOME= Selecao Navel de Operacao N2/N3
+           OCR= OCR_NOR_ADV01
+         ALINT= SIM
+         ALRIN= NAO
+           TAC= LOCAL_TAC
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NAOSUP
+         TPFIL= NLFL
+         SOEIN= NAO
+           CMT= EXCLUI_NHS
+         OBSRV= Ponto Interno do SAGE
+
+PDS
+            ID= JDM:IHM-C:43:N2
+          NOME= Selecao IHM Central Operacao em Nivel N2
+           OCR= OCR_I_SEC_MSG01
+         ALINT= SIM
+         ALRIN= NAO
+           TAC= LOCAL
+           TCL= NLCL
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NAOSUP
+         TPFIL= NLFL
+         SOEIN= NAO
+           CMT= EXCLUI_NHS
+         OBSRV= SAGE/Local
+    ;[NHS] OCR= OCR_SEC_MSG01
+
+PDS
+            ID= JDM:IHM-C:43:N3
+          NOME= Selecao IHM Central Operacao em Nivel N3
+           OCR= OCR_I_SEC_MSG01
+         ALINT= SIM
+         ALRIN= NAO
+           TAC= CALC
+           TCL= NOT
+          TIPO= PTNI
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SOEIN= NAO
+        IDICCP= JDM:IHM:43:N2_D
+         OBSRV= SAGE/Local
+    ;[NHS] OCR= OCR_SEC_MSG01
+    ;[NHS] CMT= NHS_KEEP_ID
+     ;[NHS] ID= JDM:IHM:43:N2
+; *** Arquivo com 333 PDS(s)                            
+;ID= JDM:32BP-2:89_A                            
+; *** Arquivo com 276 PDS(s)                            
+;OCR= OCR_CHA_ADV01                            
+
+; *** Arquivo com 276 PDS(s)
+PDS
+            ID= JDM:00:DMY2
+          NOME= DUMMY 2
+           OCR= OCR_LIG_ADV01
+         ALINT= SIM
+         ALRIN= NAO
+           TAC= tac_cnul
+           TCL= NLCL
+          TIPO= OUTROS
+         STINI= A
+         STNOR= A
+        CDINIC= NORMAL
+         TPFIL= NLFL
+         SOEIN= NAO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include RDP/pds.dat
+

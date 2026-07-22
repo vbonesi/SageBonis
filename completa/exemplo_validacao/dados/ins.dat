@@ -1,0 +1,30 @@
+
+INS
+ID=	JDM
+NOME=	JARDIM
+TIPO=	SUB
+
+INS
+ID=	JDMUB1
+NOME=	JDM-BAY14T4
+TELA=	JDM_230_BAY_04T4
+TIPO=	SUB
+
+INS
+ID=	JDMUB2
+NOME=	JD-BAY12T4
+TELA=	JDM_69_BAY_04T4
+TIPO=	SUB
+
+INS
+; *************************************************************
+; ** RINUS - Solucoes em Automacao
+; ** Eduardo Fracassi
+; ** 2009 31-jul
+; *************************************************************
+; *** Arquivo com 4 INS(s)
+ID=	JDMTRF
+NOME=	JDM-TRAF 04T4
+TELA=	JDM_230_69_ALR_04T4
+TIPO=	SUB
+

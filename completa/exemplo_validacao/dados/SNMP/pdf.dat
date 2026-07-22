@@ -1,0 +1,3221 @@
+PDF
+	ID = GNSS1_S2_.2.1.2.2.1.8.1
+	PNT = JDM:SD:GNSS1:FC01
+	NV2 = GNSS1_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 1
+
+PDF
+	ID = GNSS2_S2_.2.1.2.2.1.8.1
+	PNT = JDM:SD:GNSS2:FC01
+	NV2 = GNSS2_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 1
+
+PDF
+	ID = GNSS1_S2_.2.1.2.2.1.8.2
+	PNT = JDM:SD:GNSS1:FC02
+	NV2 = GNSS1_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 2
+
+PDF
+	ID = GNSS2_S2_.2.1.2.2.1.8.2
+	PNT = JDM:SD:GNSS2:FC02
+	NV2 = GNSS2_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 2
+
+PDF
+	ID = GNSS1_S2_.2.1.2.2.1.8.3
+	PNT = JDM:SD:GNSS1:FC03
+	NV2 = GNSS1_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 3
+
+PDF
+	ID = GNSS2_S2_.2.1.2.2.1.8.3
+	PNT = JDM:SD:GNSS2:FC03
+	NV2 = GNSS2_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 3
+
+PDF
+	ID = GNSS1_S2_.2.1.2.2.1.8.4
+	PNT = JDM:SD:GNSS1:FC04
+	NV2 = GNSS1_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 4
+
+PDF
+	ID = GNSS2_S2_.2.1.2.2.1.8.4
+	PNT = JDM:SD:GNSS2:FC04
+	NV2 = GNSS2_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 4
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.1
+	PNT = JDM:SD:SW1PBA:FC0/1
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 1
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.1
+	PNT = JDM:SD:SW1PBB:FC0/1
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 1
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.1
+	PNT = JDM:SD:SW2PBA:FC0/1
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 1
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.1
+	PNT = JDM:SD:SW2PBB:FC0/1
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 1
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.1
+	PNT = JDM:SD:SW3PBA:FC0/1
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 1
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.1
+	PNT = JDM:SD:SW3PBB:FC0/1
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 1
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.1
+	PNT = JDM:SD:SW1SBA:FC0/1
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 1
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.1
+	PNT = JDM:SD:SW1SBB:FC0/1
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 1
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.1
+	PNT = JDM:SD:SW2SBA:FC0/1
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 1
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.1
+	PNT = JDM:SD:SW2SBB:FC0/1
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 1
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.1
+	PNT = JDM:SD:SW3SBA:FC0/1
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 1
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.1
+	PNT = JDM:SD:SW3SBB:FC0/1
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 1
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.10
+	PNT = JDM:SD:SW1PBA:FC2/2
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 2
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.10
+	PNT = JDM:SD:SW1PBB:FC2/2
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 2
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.10
+	PNT = JDM:SD:SW2PBA:FC2/2
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 2
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.10
+	PNT = JDM:SD:SW2PBB:FC2/2
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 2
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.10
+	PNT = JDM:SD:SW3PBA:FC2/2
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 2
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.10
+	PNT = JDM:SD:SW3PBB:FC2/2
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 2
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.10
+	PNT = JDM:SD:SW1SBA:FC2/2
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 2
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.10
+	PNT = JDM:SD:SW1SBB:FC2/2
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 2
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.10
+	PNT = JDM:SD:SW2SBA:FC2/2
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 2
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.10
+	PNT = JDM:SD:SW2SBB:FC2/2
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 2
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.10
+	PNT = JDM:SD:SW3SBA:FC2/2
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 2
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.10
+	PNT = JDM:SD:SW3SBB:FC2/2
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 2
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.11
+	PNT = JDM:SD:SW1PBA:FC2/3
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 3
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.11
+	PNT = JDM:SD:SW1PBB:FC2/3
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 3
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.11
+	PNT = JDM:SD:SW2PBA:FC2/3
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 3
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.11
+	PNT = JDM:SD:SW2PBB:FC2/3
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 3
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.11
+	PNT = JDM:SD:SW3PBA:FC2/3
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 3
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.11
+	PNT = JDM:SD:SW3PBB:FC2/3
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 3
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.11
+	PNT = JDM:SD:SW1SBA:FC2/3
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 3
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.11
+	PNT = JDM:SD:SW1SBB:FC2/3
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 3
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.11
+	PNT = JDM:SD:SW2SBA:FC2/3
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 3
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.11
+	PNT = JDM:SD:SW2SBB:FC2/3
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 3
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.11
+	PNT = JDM:SD:SW3SBA:FC2/3
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 3
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.11
+	PNT = JDM:SD:SW3SBB:FC2/3
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 3
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.12
+	PNT = JDM:SD:SW1PBA:FC2/4
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 4
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.12
+	PNT = JDM:SD:SW1PBB:FC2/4
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 4
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.12
+	PNT = JDM:SD:SW2PBA:FC2/4
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 4
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.12
+	PNT = JDM:SD:SW2PBB:FC2/4
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 4
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.12
+	PNT = JDM:SD:SW3PBA:FC2/4
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 4
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.12
+	PNT = JDM:SD:SW3PBB:FC2/4
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 4
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.12
+	PNT = JDM:SD:SW1SBA:FC2/4
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 4
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.12
+	PNT = JDM:SD:SW1SBB:FC2/4
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 4
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.12
+	PNT = JDM:SD:SW2SBA:FC2/4
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 4
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.12
+	PNT = JDM:SD:SW2SBB:FC2/4
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 4
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.12
+	PNT = JDM:SD:SW3SBA:FC2/4
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 4
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.12
+	PNT = JDM:SD:SW3SBB:FC2/4
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 4
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.13
+	PNT = JDM:SD:SW1PBA:FC3/1
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 5
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.13
+	PNT = JDM:SD:SW1PBB:FC3/1
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 5
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.13
+	PNT = JDM:SD:SW2PBA:FC3/1
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 5
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.13
+	PNT = JDM:SD:SW2PBB:FC3/1
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 5
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.13
+	PNT = JDM:SD:SW3PBA:FC3/1
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 5
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.13
+	PNT = JDM:SD:SW3PBB:FC3/1
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 5
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.13
+	PNT = JDM:SD:SW1SBA:FC3/1
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 5
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.13
+	PNT = JDM:SD:SW1SBB:FC3/1
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 5
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.13
+	PNT = JDM:SD:SW2SBA:FC3/1
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 5
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.13
+	PNT = JDM:SD:SW2SBB:FC3/1
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 5
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.13
+	PNT = JDM:SD:SW3SBA:FC3/1
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 5
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.13
+	PNT = JDM:SD:SW3SBB:FC3/1
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 5
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.14
+	PNT = JDM:SD:SW1PBA:FC3/2
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 6
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.14
+	PNT = JDM:SD:SW1PBB:FC3/2
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 6
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.14
+	PNT = JDM:SD:SW2PBA:FC3/2
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 6
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.14
+	PNT = JDM:SD:SW2PBB:FC3/2
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 6
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.14
+	PNT = JDM:SD:SW3PBA:FC3/2
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 6
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.14
+	PNT = JDM:SD:SW3PBB:FC3/2
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 6
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.14
+	PNT = JDM:SD:SW1SBA:FC3/2
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 6
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.14
+	PNT = JDM:SD:SW1SBB:FC3/2
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 6
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.14
+	PNT = JDM:SD:SW2SBA:FC3/2
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 6
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.14
+	PNT = JDM:SD:SW2SBB:FC3/2
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 6
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.14
+	PNT = JDM:SD:SW3SBA:FC3/2
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 6
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.14
+	PNT = JDM:SD:SW3SBB:FC3/2
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 6
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.15
+	PNT = JDM:SD:SW1PBA:FC3/3
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 7
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.15
+	PNT = JDM:SD:SW1PBB:FC3/3
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 7
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.15
+	PNT = JDM:SD:SW2PBA:FC3/3
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 7
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.15
+	PNT = JDM:SD:SW2PBB:FC3/3
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 7
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.15
+	PNT = JDM:SD:SW3PBA:FC3/3
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 7
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.15
+	PNT = JDM:SD:SW3PBB:FC3/3
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 7
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.15
+	PNT = JDM:SD:SW1SBA:FC3/3
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 7
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.15
+	PNT = JDM:SD:SW1SBB:FC3/3
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 7
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.15
+	PNT = JDM:SD:SW2SBA:FC3/3
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 7
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.15
+	PNT = JDM:SD:SW2SBB:FC3/3
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 7
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.15
+	PNT = JDM:SD:SW3SBA:FC3/3
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 7
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.15
+	PNT = JDM:SD:SW3SBB:FC3/3
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 7
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.16
+	PNT = JDM:SD:SW1PBA:FC3/4
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 8
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.16
+	PNT = JDM:SD:SW1PBB:FC3/4
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 8
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.16
+	PNT = JDM:SD:SW2PBA:FC3/4
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 8
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.16
+	PNT = JDM:SD:SW2PBB:FC3/4
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 8
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.16
+	PNT = JDM:SD:SW3PBA:FC3/4
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 8
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.16
+	PNT = JDM:SD:SW3PBB:FC3/4
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 8
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.16
+	PNT = JDM:SD:SW1SBA:FC3/4
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 8
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.16
+	PNT = JDM:SD:SW1SBB:FC3/4
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 8
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.16
+	PNT = JDM:SD:SW2SBA:FC3/4
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 8
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.16
+	PNT = JDM:SD:SW2SBB:FC3/4
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 8
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.16
+	PNT = JDM:SD:SW3SBA:FC3/4
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 8
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.16
+	PNT = JDM:SD:SW3SBB:FC3/4
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 8
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.17
+	PNT = JDM:SD:SW1PBA:FC4/1
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 9
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.17
+	PNT = JDM:SD:SW1PBB:FC4/1
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 9
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.17
+	PNT = JDM:SD:SW2PBA:FC4/1
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 9
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.17
+	PNT = JDM:SD:SW2PBB:FC4/1
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 9
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.17
+	PNT = JDM:SD:SW3PBA:FC4/1
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 9
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.17
+	PNT = JDM:SD:SW3PBB:FC4/1
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 9
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.17
+	PNT = JDM:SD:SW1SBA:FC4/1
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 9
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.17
+	PNT = JDM:SD:SW1SBB:FC4/1
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 9
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.17
+	PNT = JDM:SD:SW2SBA:FC4/1
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 9
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.17
+	PNT = JDM:SD:SW2SBB:FC4/1
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 9
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.17
+	PNT = JDM:SD:SW3SBA:FC4/1
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 9
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.17
+	PNT = JDM:SD:SW3SBB:FC4/1
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 9
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.18
+	PNT = JDM:SD:SW1PBA:FC4/2
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 10
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.18
+	PNT = JDM:SD:SW1PBB:FC4/2
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 10
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.18
+	PNT = JDM:SD:SW2PBA:FC4/2
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 10
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.18
+	PNT = JDM:SD:SW2PBB:FC4/2
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 10
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.18
+	PNT = JDM:SD:SW3PBA:FC4/2
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 10
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.18
+	PNT = JDM:SD:SW3PBB:FC4/2
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 10
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.18
+	PNT = JDM:SD:SW1SBA:FC4/2
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 10
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.18
+	PNT = JDM:SD:SW1SBB:FC4/2
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 10
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.18
+	PNT = JDM:SD:SW2SBA:FC4/2
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 10
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.18
+	PNT = JDM:SD:SW2SBB:FC4/2
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 10
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.18
+	PNT = JDM:SD:SW3SBA:FC4/2
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 10
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.18
+	PNT = JDM:SD:SW3SBB:FC4/2
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 10
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.19
+	PNT = JDM:SD:SW1PBA:FC4/3
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 11
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.19
+	PNT = JDM:SD:SW1PBB:FC4/3
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 11
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.19
+	PNT = JDM:SD:SW2PBA:FC4/3
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 11
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.19
+	PNT = JDM:SD:SW2PBB:FC4/3
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 11
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.19
+	PNT = JDM:SD:SW3PBA:FC4/3
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 11
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.19
+	PNT = JDM:SD:SW3PBB:FC4/3
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 11
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.19
+	PNT = JDM:SD:SW1SBA:FC4/3
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 11
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.19
+	PNT = JDM:SD:SW1SBB:FC4/3
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 11
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.19
+	PNT = JDM:SD:SW2SBA:FC4/3
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 11
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.19
+	PNT = JDM:SD:SW2SBB:FC4/3
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 11
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.19
+	PNT = JDM:SD:SW3SBA:FC4/3
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 11
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.19
+	PNT = JDM:SD:SW3SBB:FC4/3
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 11
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.2
+	PNT = JDM:SD:SW1PBA:FC0/2
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 12
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.2
+	PNT = JDM:SD:SW1PBB:FC0/2
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 12
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.2
+	PNT = JDM:SD:SW2PBA:FC0/2
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 12
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.2
+	PNT = JDM:SD:SW2PBB:FC0/2
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 12
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.2
+	PNT = JDM:SD:SW3PBA:FC0/2
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 12
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.2
+	PNT = JDM:SD:SW3PBB:FC0/2
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 12
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.2
+	PNT = JDM:SD:SW1SBA:FC0/2
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 12
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.2
+	PNT = JDM:SD:SW1SBB:FC0/2
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 12
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.2
+	PNT = JDM:SD:SW2SBA:FC0/2
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 12
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.2
+	PNT = JDM:SD:SW2SBB:FC0/2
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 12
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.2
+	PNT = JDM:SD:SW3SBA:FC0/2
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 12
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.2
+	PNT = JDM:SD:SW3SBB:FC0/2
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 12
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.20
+	PNT = JDM:SD:SW1PBA:FC4/4
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 13
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.20
+	PNT = JDM:SD:SW1PBB:FC4/4
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 13
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.20
+	PNT = JDM:SD:SW2PBA:FC4/4
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 13
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.20
+	PNT = JDM:SD:SW2PBB:FC4/4
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 13
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.20
+	PNT = JDM:SD:SW3PBA:FC4/4
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 13
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.20
+	PNT = JDM:SD:SW3PBB:FC4/4
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 13
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.20
+	PNT = JDM:SD:SW1SBA:FC4/4
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 13
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.20
+	PNT = JDM:SD:SW1SBB:FC4/4
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 13
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.20
+	PNT = JDM:SD:SW2SBA:FC4/4
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 13
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.20
+	PNT = JDM:SD:SW2SBB:FC4/4
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 13
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.20
+	PNT = JDM:SD:SW3SBA:FC4/4
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 13
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.20
+	PNT = JDM:SD:SW3SBB:FC4/4
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 13
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.21
+	PNT = JDM:SD:SW1PBA:FC5/1
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 14
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.21
+	PNT = JDM:SD:SW1PBB:FC5/1
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 14
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.21
+	PNT = JDM:SD:SW2PBA:FC5/1
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 14
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.21
+	PNT = JDM:SD:SW2PBB:FC5/1
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 14
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.21
+	PNT = JDM:SD:SW3PBA:FC5/1
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 14
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.21
+	PNT = JDM:SD:SW3PBB:FC5/1
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 14
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.21
+	PNT = JDM:SD:SW1SBA:FC5/1
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 14
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.21
+	PNT = JDM:SD:SW1SBB:FC5/1
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 14
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.21
+	PNT = JDM:SD:SW2SBA:FC5/1
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 14
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.21
+	PNT = JDM:SD:SW2SBB:FC5/1
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 14
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.21
+	PNT = JDM:SD:SW3SBA:FC5/1
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 14
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.21
+	PNT = JDM:SD:SW3SBB:FC5/1
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 14
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.22
+	PNT = JDM:SD:SW1PBA:FC5/2
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 15
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.22
+	PNT = JDM:SD:SW1PBB:FC5/2
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 15
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.22
+	PNT = JDM:SD:SW2PBA:FC5/2
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 15
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.22
+	PNT = JDM:SD:SW2PBB:FC5/2
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 15
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.22
+	PNT = JDM:SD:SW3PBA:FC5/2
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 15
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.22
+	PNT = JDM:SD:SW3PBB:FC5/2
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 15
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.22
+	PNT = JDM:SD:SW1SBA:FC5/2
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 15
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.22
+	PNT = JDM:SD:SW1SBB:FC5/2
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 15
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.22
+	PNT = JDM:SD:SW2SBA:FC5/2
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 15
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.22
+	PNT = JDM:SD:SW2SBB:FC5/2
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 15
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.22
+	PNT = JDM:SD:SW3SBA:FC5/2
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 15
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.22
+	PNT = JDM:SD:SW3SBB:FC5/2
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 15
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.23
+	PNT = JDM:SD:SW1PBA:FC5/3
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 16
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.23
+	PNT = JDM:SD:SW1PBB:FC5/3
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 16
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.23
+	PNT = JDM:SD:SW2PBA:FC5/3
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 16
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.23
+	PNT = JDM:SD:SW2PBB:FC5/3
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 16
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.23
+	PNT = JDM:SD:SW3PBA:FC5/3
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 16
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.23
+	PNT = JDM:SD:SW3PBB:FC5/3
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 16
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.23
+	PNT = JDM:SD:SW1SBA:FC5/3
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 16
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.23
+	PNT = JDM:SD:SW1SBB:FC5/3
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 16
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.23
+	PNT = JDM:SD:SW2SBA:FC5/3
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 16
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.23
+	PNT = JDM:SD:SW2SBB:FC5/3
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 16
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.23
+	PNT = JDM:SD:SW3SBA:FC5/3
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 16
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.23
+	PNT = JDM:SD:SW3SBB:FC5/3
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 16
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.24
+	PNT = JDM:SD:SW1PBA:FC5/4
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 17
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.24
+	PNT = JDM:SD:SW1PBB:FC5/4
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 17
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.24
+	PNT = JDM:SD:SW2PBA:FC5/4
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 17
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.24
+	PNT = JDM:SD:SW2PBB:FC5/4
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 17
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.24
+	PNT = JDM:SD:SW3PBA:FC5/4
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 17
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.24
+	PNT = JDM:SD:SW3PBB:FC5/4
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 17
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.24
+	PNT = JDM:SD:SW1SBA:FC5/4
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 17
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.24
+	PNT = JDM:SD:SW1SBB:FC5/4
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 17
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.24
+	PNT = JDM:SD:SW2SBA:FC5/4
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 17
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.24
+	PNT = JDM:SD:SW2SBB:FC5/4
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 17
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.24
+	PNT = JDM:SD:SW3SBA:FC5/4
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 17
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.24
+	PNT = JDM:SD:SW3SBB:FC5/4
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 17
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.25
+	PNT = JDM:SD:SW1PBA:FC6/1
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 18
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.25
+	PNT = JDM:SD:SW1PBB:FC6/1
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 18
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.25
+	PNT = JDM:SD:SW2PBA:FC6/1
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 18
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.25
+	PNT = JDM:SD:SW2PBB:FC6/1
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 18
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.25
+	PNT = JDM:SD:SW3PBA:FC6/1
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 18
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.25
+	PNT = JDM:SD:SW3PBB:FC6/1
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 18
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.25
+	PNT = JDM:SD:SW1SBA:FC6/1
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 18
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.25
+	PNT = JDM:SD:SW1SBB:FC6/1
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 18
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.25
+	PNT = JDM:SD:SW2SBA:FC6/1
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 18
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.25
+	PNT = JDM:SD:SW2SBB:FC6/1
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 18
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.25
+	PNT = JDM:SD:SW3SBA:FC6/1
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 18
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.25
+	PNT = JDM:SD:SW3SBB:FC6/1
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 18
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.26
+	PNT = JDM:SD:SW1PBA:FC6/2
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 19
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.26
+	PNT = JDM:SD:SW1PBB:FC6/2
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 19
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.26
+	PNT = JDM:SD:SW2PBA:FC6/2
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 19
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.26
+	PNT = JDM:SD:SW2PBB:FC6/2
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 19
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.26
+	PNT = JDM:SD:SW3PBA:FC6/2
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 19
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.26
+	PNT = JDM:SD:SW3PBB:FC6/2
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 19
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.26
+	PNT = JDM:SD:SW1SBA:FC6/2
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 19
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.26
+	PNT = JDM:SD:SW1SBB:FC6/2
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 19
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.26
+	PNT = JDM:SD:SW2SBA:FC6/2
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 19
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.26
+	PNT = JDM:SD:SW2SBB:FC6/2
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 19
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.26
+	PNT = JDM:SD:SW3SBA:FC6/2
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 19
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.26
+	PNT = JDM:SD:SW3SBB:FC6/2
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 19
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.27
+	PNT = JDM:SD:SW1PBA:FC6/3
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 20
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.27
+	PNT = JDM:SD:SW1PBB:FC6/3
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 20
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.27
+	PNT = JDM:SD:SW2PBA:FC6/3
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 20
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.27
+	PNT = JDM:SD:SW2PBB:FC6/3
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 20
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.27
+	PNT = JDM:SD:SW3PBA:FC6/3
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 20
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.27
+	PNT = JDM:SD:SW3PBB:FC6/3
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 20
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.27
+	PNT = JDM:SD:SW1SBA:FC6/3
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 20
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.27
+	PNT = JDM:SD:SW1SBB:FC6/3
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 20
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.27
+	PNT = JDM:SD:SW2SBA:FC6/3
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 20
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.27
+	PNT = JDM:SD:SW2SBB:FC6/3
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 20
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.27
+	PNT = JDM:SD:SW3SBA:FC6/3
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 20
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.27
+	PNT = JDM:SD:SW3SBB:FC6/3
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 20
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.28
+	PNT = JDM:SD:SW1PBA:FC6/4
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 21
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.28
+	PNT = JDM:SD:SW1PBB:FC6/4
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 21
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.28
+	PNT = JDM:SD:SW2PBA:FC6/4
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 21
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.28
+	PNT = JDM:SD:SW2PBB:FC6/4
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 21
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.28
+	PNT = JDM:SD:SW3PBA:FC6/4
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 21
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.28
+	PNT = JDM:SD:SW3PBB:FC6/4
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 21
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.28
+	PNT = JDM:SD:SW1SBA:FC6/4
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 21
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.28
+	PNT = JDM:SD:SW1SBB:FC6/4
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 21
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.28
+	PNT = JDM:SD:SW2SBA:FC6/4
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 21
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.28
+	PNT = JDM:SD:SW2SBB:FC6/4
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 21
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.28
+	PNT = JDM:SD:SW3SBA:FC6/4
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 21
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.28
+	PNT = JDM:SD:SW3SBB:FC6/4
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 21
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.3
+	PNT = JDM:SD:SW1PBA:FC0/3
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 22
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.3
+	PNT = JDM:SD:SW1PBB:FC0/3
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 22
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.3
+	PNT = JDM:SD:SW2PBA:FC0/3
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 22
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.3
+	PNT = JDM:SD:SW2PBB:FC0/3
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 22
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.3
+	PNT = JDM:SD:SW3PBA:FC0/3
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 22
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.3
+	PNT = JDM:SD:SW3PBB:FC0/3
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 22
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.3
+	PNT = JDM:SD:SW1SBA:FC0/3
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 22
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.3
+	PNT = JDM:SD:SW1SBB:FC0/3
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 22
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.3
+	PNT = JDM:SD:SW2SBA:FC0/3
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 22
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.3
+	PNT = JDM:SD:SW2SBB:FC0/3
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 22
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.3
+	PNT = JDM:SD:SW3SBA:FC0/3
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 22
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.3
+	PNT = JDM:SD:SW3SBB:FC0/3
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 22
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.4
+	PNT = JDM:SD:SW1PBA:FC0/4
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 23
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.4
+	PNT = JDM:SD:SW1PBB:FC0/4
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 23
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.4
+	PNT = JDM:SD:SW2PBA:FC0/4
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 23
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.4
+	PNT = JDM:SD:SW2PBB:FC0/4
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 23
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.4
+	PNT = JDM:SD:SW3PBA:FC0/4
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 23
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.4
+	PNT = JDM:SD:SW3PBB:FC0/4
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 23
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.4
+	PNT = JDM:SD:SW1SBA:FC0/4
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 23
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.4
+	PNT = JDM:SD:SW1SBB:FC0/4
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 23
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.4
+	PNT = JDM:SD:SW2SBA:FC0/4
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 23
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.4
+	PNT = JDM:SD:SW2SBB:FC0/4
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 23
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.4
+	PNT = JDM:SD:SW3SBA:FC0/4
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 23
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.4
+	PNT = JDM:SD:SW3SBB:FC0/4
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 23
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.5
+	PNT = JDM:SD:SW1PBA:FC1/1
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 24
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.5
+	PNT = JDM:SD:SW1PBB:FC1/1
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 24
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.5
+	PNT = JDM:SD:SW2PBA:FC1/1
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 24
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.5
+	PNT = JDM:SD:SW2PBB:FC1/1
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 24
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.5
+	PNT = JDM:SD:SW3PBA:FC1/1
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 24
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.5
+	PNT = JDM:SD:SW3PBB:FC1/1
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 24
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.5
+	PNT = JDM:SD:SW1SBA:FC1/1
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 24
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.5
+	PNT = JDM:SD:SW1SBB:FC1/1
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 24
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.5
+	PNT = JDM:SD:SW2SBA:FC1/1
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 24
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.5
+	PNT = JDM:SD:SW2SBB:FC1/1
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 24
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.5
+	PNT = JDM:SD:SW3SBA:FC1/1
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 24
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.5
+	PNT = JDM:SD:SW3SBB:FC1/1
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 24
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.6
+	PNT = JDM:SD:SW1PBA:FC1/2
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 25
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.6
+	PNT = JDM:SD:SW1PBB:FC1/2
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 25
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.6
+	PNT = JDM:SD:SW2PBA:FC1/2
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 25
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.6
+	PNT = JDM:SD:SW2PBB:FC1/2
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 25
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.6
+	PNT = JDM:SD:SW3PBA:FC1/2
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 25
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.6
+	PNT = JDM:SD:SW3PBB:FC1/2
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 25
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.6
+	PNT = JDM:SD:SW1SBA:FC1/2
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 25
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.6
+	PNT = JDM:SD:SW1SBB:FC1/2
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 25
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.6
+	PNT = JDM:SD:SW2SBA:FC1/2
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 25
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.6
+	PNT = JDM:SD:SW2SBB:FC1/2
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 25
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.6
+	PNT = JDM:SD:SW3SBA:FC1/2
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 25
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.6
+	PNT = JDM:SD:SW3SBB:FC1/2
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 25
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.7
+	PNT = JDM:SD:SW1PBA:FC1/3
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 26
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.7
+	PNT = JDM:SD:SW1PBB:FC1/3
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 26
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.7
+	PNT = JDM:SD:SW2PBA:FC1/3
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 26
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.7
+	PNT = JDM:SD:SW2PBB:FC1/3
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 26
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.7
+	PNT = JDM:SD:SW3PBA:FC1/3
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 26
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.7
+	PNT = JDM:SD:SW3PBB:FC1/3
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 26
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.7
+	PNT = JDM:SD:SW1SBA:FC1/3
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 26
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.7
+	PNT = JDM:SD:SW1SBB:FC1/3
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 26
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.7
+	PNT = JDM:SD:SW2SBA:FC1/3
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 26
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.7
+	PNT = JDM:SD:SW2SBB:FC1/3
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 26
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.7
+	PNT = JDM:SD:SW3SBA:FC1/3
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 26
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.7
+	PNT = JDM:SD:SW3SBB:FC1/3
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 26
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.8
+	PNT = JDM:SD:SW1PBA:FC1/4
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 27
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.8
+	PNT = JDM:SD:SW1PBB:FC1/4
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 27
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.8
+	PNT = JDM:SD:SW2PBA:FC1/4
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 27
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.8
+	PNT = JDM:SD:SW2PBB:FC1/4
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 27
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.8
+	PNT = JDM:SD:SW3PBA:FC1/4
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 27
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.8
+	PNT = JDM:SD:SW3PBB:FC1/4
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 27
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.8
+	PNT = JDM:SD:SW1SBA:FC1/4
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 27
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.8
+	PNT = JDM:SD:SW1SBB:FC1/4
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 27
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.8
+	PNT = JDM:SD:SW2SBA:FC1/4
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 27
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.8
+	PNT = JDM:SD:SW2SBB:FC1/4
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 27
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.8
+	PNT = JDM:SD:SW3SBA:FC1/4
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 27
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.8
+	PNT = JDM:SD:SW3SBB:FC1/4
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 27
+
+PDF
+	ID = SW1PBA_S2_.2.1.2.2.1.8.9
+	PNT = JDM:SD:SW1PBA:FC2/1
+	NV2 = SW1PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 28
+
+PDF
+	ID = SW1PBB_S2_.2.1.2.2.1.8.9
+	PNT = JDM:SD:SW1PBB:FC2/1
+	NV2 = SW1PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 28
+
+PDF
+	ID = SW2PBA_S2_.2.1.2.2.1.8.9
+	PNT = JDM:SD:SW2PBA:FC2/1
+	NV2 = SW2PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 28
+
+PDF
+	ID = SW2PBB_S2_.2.1.2.2.1.8.9
+	PNT = JDM:SD:SW2PBB:FC2/1
+	NV2 = SW2PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 28
+
+PDF
+	ID = SW3PBA_S2_.2.1.2.2.1.8.9
+	PNT = JDM:SD:SW3PBA:FC2/1
+	NV2 = SW3PBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 28
+
+PDF
+	ID = SW3PBB_S2_.2.1.2.2.1.8.9
+	PNT = JDM:SD:SW3PBB:FC2/1
+	NV2 = SW3PBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 28
+
+PDF
+	ID = SW1SBA_S2_.2.1.2.2.1.8.9
+	PNT = JDM:SD:SW1SBA:FC2/1
+	NV2 = SW1SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 28
+
+PDF
+	ID = SW1SBB_S2_.2.1.2.2.1.8.9
+	PNT = JDM:SD:SW1SBB:FC2/1
+	NV2 = SW1SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 28
+
+PDF
+	ID = SW2SBA_S2_.2.1.2.2.1.8.9
+	PNT = JDM:SD:SW2SBA:FC2/1
+	NV2 = SW2SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 28
+
+PDF
+	ID = SW2SBB_S2_.2.1.2.2.1.8.9
+	PNT = JDM:SD:SW2SBB:FC2/1
+	NV2 = SW2SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 28
+
+PDF
+	ID = SW3SBA_S2_.2.1.2.2.1.8.9
+	PNT = JDM:SD:SW3SBA:FC2/1
+	NV2 = SW3SBA_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 28
+
+PDF
+	ID = SW3SBB_S2_.2.1.2.2.1.8.9
+	PNT = JDM:SD:SW3SBB:FC2/1
+	NV2 = SW3SBB_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 28
+
+PDF
+	ID = RB1_S2_.2.1.2.2.1.8.1
+	PNT = JDM:SD:RB1:FC01
+	NV2 = RB1_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 1
+
+PDF
+	ID = RB2_S2_.2.1.2.2.1.8.1
+	PNT = JDM:SD:RB2:FC01
+	NV2 = RB2_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 1
+
+PDF
+	ID = RB1_S2_.2.1.2.2.1.8.2
+	PNT = JDM:SD:RB1:FC02
+	NV2 = RB1_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 2
+
+PDF
+	ID = RB2_S2_.2.1.2.2.1.8.2
+	PNT = JDM:SD:RB2:FC02
+	NV2 = RB2_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 2
+
+PDF
+	ID = RB1_S2_.2.1.2.2.1.8.3
+	PNT = JDM:SD:RB1:FC03
+	NV2 = RB1_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 3
+
+PDF
+	ID = RB2_S2_.2.1.2.2.1.8.3
+	PNT = JDM:SD:RB2:FC03
+	NV2 = RB2_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 3
+
+PDF
+	ID = RB1_S2_.2.1.2.2.1.8.4
+	PNT = JDM:SD:RB1:FC04
+	NV2 = RB1_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 4
+
+PDF
+	ID = RB2_S2_.2.1.2.2.1.8.4
+	PNT = JDM:SD:RB2:FC04
+	NV2 = RB2_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 4
+
+PDF
+	ID = RB1_S2_.2.1.2.2.1.8.5
+	PNT = JDM:SD:RB1:FC5C
+	NV2 = RB1_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 5
+
+PDF
+	ID = RB2_S2_.2.1.2.2.1.8.5
+	PNT = JDM:SD:RB2:FC5C
+	NV2 = RB2_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 5
+
+PDF
+	ID = RB1_S2_.2.1.2.2.1.8.6
+	PNT = JDM:SD:RB1:FC1A
+	NV2 = RB1_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 6
+
+PDF
+	ID = RB2_S2_.2.1.2.2.1.8.6
+	PNT = JDM:SD:RB2:FC1A
+	NV2 = RB2_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 6
+
+PDF
+	ID = RB1_S2_.2.1.2.2.1.8.7
+	PNT = JDM:SD:RB1:FC2B
+	NV2 = RB1_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 7
+
+PDF
+	ID = RB2_S2_.2.1.2.2.1.8.7
+	PNT = JDM:SD:RB2:FC2B
+	NV2 = RB2_ASIM
+	TPPNT = PDS
+	KCONV = NOR
+	DESC1 = Falha Porta Comunicação Dispositivo
+	ORDEM = 7

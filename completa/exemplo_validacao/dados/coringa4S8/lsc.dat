@@ -1,0 +1,14 @@
+
+LSC
+; ===== 04S1 - LT NS Socorro
+GSD=	JDM
+ID=	JDM4S8
+MAP=	JDM
+NOME=	Ligacao MODBUS Qualimetro 04S8
+NSRV1=	localhost
+NSRV2=	localhost
+TCV=	CNVJ
+TIPO=	AA
+TTP=	TMBUS
+VERBD=	14/10/2018
+

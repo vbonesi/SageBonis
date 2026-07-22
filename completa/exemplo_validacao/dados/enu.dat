@@ -1,0 +1,55 @@
+#include coringa4S8/enu.dat
+#include SNMP/enu.dat
+
+ENU
+CXU=	CA_JDM_CXU
+ID=	JDM_CXU_ENUP
+ORDEM=	PRI
+TDESC=	 0
+TRANS=	 0
+VLUTR=	 1
+
+ENU
+CXU=	CA_JDM_CXU
+ID=	JDM_CXU_ENUR
+ORDEM=	REV
+TDESC=	 0
+TRANS=	 0
+VLUTR=	 17
+
+ENU
+CXU=	COR_CXU
+ID=	COR_CXU_ENUP
+ORDEM=	PRI
+TDESC=	 10
+TRANS=	 100
+VLUTR=	 9600
+
+ENU
+; **** Arquivo com 4 ENU(s)
+;   ***********************************
+;   ***    Aquisicao Jardins I101   ***
+;   ***********************************
+CXU=	COR_CXU
+ID=	COR_CXU_ENUR
+ORDEM=	REV
+TDESC=	 10
+TRANS=	 100
+VLUTR=	 9600
+
+ENU
+CXU=	JDM_CXU
+ID=	JDM_CXU_ENUPP
+ORDEM=	PRI
+TDESC=	 0
+TRANS=	 0
+VLUTR=	 19200
+
+ENU
+CXU=	JDM_CXU
+ID=	JDM_CXU_ENURR
+ORDEM=	REV
+TDESC=	 0
+TRANS=	 0
+VLUTR=	 19200
+

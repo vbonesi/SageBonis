@@ -1,0 +1,163 @@
+#include coringa4S8/tac.dat
+#include SNMP/tac.dat
+
+
+TAC
+ID=	CALC_TAC
+NOME=	Terminal para Calculos
+TPAQS=	ACSC
+LSC=	CALC_LSC
+
+TAC
+ID=	LOCAL_TAC
+NOME=	Terminal de Pontos Logicos Locais
+TPAQS=	ASAC
+LSC=	LOCL_LSC
+
+TAC
+ID=	MAN_TAC
+NOME=	Terminal de Pontos Manuais
+TPAQS=	ASAC
+LSC=	LOCL_LSC
+
+TAC
+ID=	JDM
+NOME=	Terminal Aquisicao/Controle de JDM
+INS=	JDM
+TPAQS=	ASAC
+LSC=	JDM
+
+TAC
+; *************************************************************
+; ** RINUS - Solucoes em Automacao
+; ** Eduardo Fracassi
+; ** 2009 31-jul
+; *************************************************************
+; *** Arquivo com 11 TAC(s)
+ID=	JDM_C
+NOME=	Terminal de Calculos
+TPAQS=	ACSC
+LSC=	CALC_LSC
+
+TAC
+ID=	JDM_M
+TPAQS=	ASAC
+LSC=	LOCL_LSC
+
+TAC
+;   ************************
+;   *** Base SE Jardins  ***
+;   ************************
+ID=	CALC
+INS=	JDM
+TPAQS=	ACSC
+LSC=	CALC
+
+TAC
+ID=	LOCAL
+INS=	JDM
+TPAQS=	ASAC
+LSC=	LOCAL
+
+TAC
+ID=	JDM_CALC
+NOME=	Terminal para Calculos
+INS=	JDM
+TPAQS=	ACSC
+LSC=	CALC_LSC
+
+TAC
+; ESC - Engenharia de Sistemas de Controle Ltda
+; Projeto: SE  JARDIM  -  500kV
+; Arquivo com dados da entidade tac
+; Data: 07/11/2012
+; ================================================
+;
+;
+ID=	JDM_FIL
+NOME=	Terminal de Filtros SE Jardins
+INS=	JDM
+TPAQS=	AFIL
+LSC=	JDM_LSC
+
+TAC
+ID=	JDM_TAC
+NOME=	Terminal Aq./Contr. de Jardim 500kv
+INS=	JDM
+TPAQS=	ASAC
+LSC=	JDM_LSC
+
+TAC
+ID=	n1
+NOME=	Aquisicao do IED n1
+INS=	JDM
+TPAQS=	ASAC
+LSC=	F1_V7
+
+TAC
+; ================================================
+; Interest Engenharia
+; Projeto: SE  JARDIM - 05V5 - 500kV
+; Arquivo com dados da entidade tac
+; Data: 28/11/2013
+; ================================================
+;
+ID=	n1_FIL
+NOME=	Terminal Filtro do IED n1
+INS=	JDM
+TPAQS=	AFIL
+LSC=	F1_V7
+
+TAC
+ID=	o1
+NOME=	Aquisicao do IED o1
+INS=	JDM
+TPAQS=	ASAC
+LSC=	F2_V7
+
+TAC
+ID=	p1
+NOME=	Aquisicao do IED p1
+INS=	JDM
+TPAQS=	ASAC
+LSC=	F1_V5
+
+TAC
+ID=	q2
+NOME=	Aquisicao do IED q2
+INS=	JDM
+TPAQS=	ASAC
+LSC=	F2_V5
+
+TAC
+ID=     tac_cnul
+NOME=   tac dummy cnul
+INS=    JDM
+TPAQS=  ASAC
+LSC=    CNUL_LSC
+
+TAC
+ID= CALC_DIN
+NOME= Monitoramento de Falha de Comunicação
+INS= JDM
+TPAQS= ACDI
+LSC= CALC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include RDP/tac.dat
+
+

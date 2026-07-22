@@ -1,0 +1,25 @@
+
+SEV
+ID=	ADVER
+NOME=	Severidade de Advertencia
+
+SEV
+ID=	FATAL
+NOME=	Severidade Fatal
+
+SEV
+ID=	NORML
+NOME=	Severidade de Informacao
+
+SEV
+ID=	PANIC
+NOME=	Severidade de Panico
+
+SEV
+ID=	SNULA
+NOME=	Nulo
+
+SEV
+ID=	URGEN
+NOME=	Severidade de Urgencia
+

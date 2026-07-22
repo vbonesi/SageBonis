@@ -1,0 +1,242 @@
+#include coringa4S8/nv2.dat
+#include SNMP/nv2.dat
+
+
+NV2
+ID=	JDM_ADNP_1_AANL
+NV1=	JDM_ADNP_1
+ORDEM=	 1
+TN2=	AANL
+TPPNT=	PAF
+
+NV2
+ID=	JDM_ADNP_1_ADUP
+NV1=	JDM_ADNP_1
+ORDEM=	 2
+TN2=	ADUP
+TPPNT=	PDF
+
+NV2
+ID=	JDM_ADNP_1_ASIM
+NV1=	JDM_ADNP_1
+ORDEM=	 3
+TN2=	ASIM
+TPPNT=	PDF
+
+NV2
+ID=	JDM_ADNP_1_ASTP
+NV1=	JDM_ADNP_1
+ORDEM=	 4
+TN2=	ASTP
+TPPNT=	PAF
+
+NV2
+ID=	JDM_CDNP_2_CDUP
+NV1=	JDM_CDNP_2
+ORDEM=	 1
+TN2=	CDUP
+TPPNT=	CGF
+
+NV2
+ID=	JDM_CDNP_2_CSTP
+NV1=	JDM_CDNP_2
+ORDEM=	 2
+TN2=	CSTP
+TPPNT=	CGF
+
+NV2
+ID=	JDM_GDNP_3_CGCD
+NV1=	JDM_GDNP_3
+ORDEM=	 1
+TN2=	CGCD
+TPPNT=	CGF
+
+NV2
+ID=	COR_DDNP_1_ASIM
+NV1=	COR_DDNP_1
+ORDEM=	 1
+TN2=	ASIM
+TPPNT=	PDF
+
+NV2
+;NV2
+;            ID= COR_DDNP_1_DTTA
+;           NV1= COR_DDNP_1
+;         ORDEM= 3
+;           TN2= DTTA
+;         TPPNT= PTF
+ID=	COR_DDNP_1_APFL
+NV1=	COR_DDNP_1
+ORDEM=	 2
+TN2=	APFL
+TPPNT=	PAF
+
+NV2
+ID=	COR_ODNP_2_CSIM
+NV1=	COR_ODNP_2
+ORDEM=	 1
+TN2=	CSIM
+TPPNT=	CGF
+
+NV2
+ID=	COR_ODNP_2_CDUP
+NV1=	COR_ODNP_2
+ORDEM=	 2
+TN2=	CDUP
+TPPNT=	CGF
+
+NV2
+ID=	COR_ODNP_2_CSTP
+NV1=	COR_ODNP_2
+ORDEM=	 3
+TN2=	CSTP
+TPPNT=	CGF
+
+NV2
+; **** Arquivo com 28 NV2(s)
+ID=	COR_ODNP_2_CGCD
+NV1=	COR_ODNP_2
+ORDEM=	 4
+TN2=	CGCD
+TPPNT=	CGF
+
+;NV2
+;ID=	JDM_A101_1_ASIM
+;NV1=	JDM_A101_1
+;ORDEM=	 1
+;TN2=	ASIM
+;TPPNT=	PDF
+;CONFIG=	Aquisicao de Binary Input
+
+;NV2
+;ID=	JDM_A101_1_APFL
+;NV1=	JDM_A101_1
+;ORDEM=	 2
+;TN2=	APFL
+;TPPNT=	PAF
+;CONFIG=	Aquisicao de Analog Input
+
+;NV2
+; ESC - Engenharia de Sistemas de Controle Ltda
+; Projeto: SE  JARDIM  -  500kV
+; Arquivo com dados da entidade nv2
+; Data: 07/11/2012
+; ================================================
+;
+;
+;ID=	JDM_C101_2_CSIM
+;NV1=	JDM_C101_2
+;ORDEM=	 1
+;TN2=	CSIM
+;TPPNT=	CGF
+;CONFIG=	Controle Supervisorio Single Command
+
+NV2
+ID=	n11_AAAQ
+NV1=	n11
+ORDEM=	 2
+TN2=	AAAQ
+TPPNT=	PAF
+CONFIG=	PAF
+
+NV2
+ID=	o11_AAAQ
+NV1=	o11
+ORDEM=	 2
+TN2=	AAAQ
+TPPNT=	PAF
+CONFIG=	PAF
+
+; ================================================
+; Interest Engenharia
+; Projeto: SE  JARDIM - 05V5 - 500kV
+; Arquivo com dados da entidade nv2
+; Data: 28/11/2013
+; ================================================
+;
+
+NV2
+;------------------------------------------
+ID=	p11_ATTA
+NV1=	p11
+ORDEM=	 1
+TN2=	ATTA
+TPPNT=	PTF
+CONFIG=	PTF
+
+;NV2
+;------------------------------------------
+;ID=	p15_AAAQ
+;NV1=	p15
+;ORDEM=	 2
+;TN2=	AAAQ
+;TPPNT=	PAF
+;CONFIG=	PAF
+
+NV2
+;------------------------------------------
+ID=	q21_ATTA
+NV1=	q21
+ORDEM=	 1
+TN2=	ATTA
+TPPNT=	PTF
+CONFIG=	PTF
+
+;NV2
+;------------------------------------------
+;ID=	q25_AAAQ
+;NV1=	q25
+;ORDEM=	 2
+;TN2=	AAAQ
+;TPPNT=	PAF
+;CONFIG=	PAF
+
+NV2
+;Aquisicao DNP3 do N1.75
+ID=	GE_ADNP_1_ASIM
+NV1=	GE_ADNP_1
+ORDEM=	 1
+TN2=	ASIM
+TPPNT=	PDF
+CONFIG=	Aquisicao de Binary Input
+
+NV2
+ID=	GE_ADNP_1_APFL
+NV1=	GE_ADNP_1
+ORDEM=	 2
+TN2=	APFL
+TPPNT=	PAF
+CONFIG=	Aquisicao de Analog Input
+
+NV2
+; ESC - Engenharia de Sistemas de Controle Ltda
+; Projeto: SE  JARDIM  -  500kV
+; Arquivo com dados da entidade nv2
+; Data: 07/11/2012
+; ================================================
+;
+;
+ID=	GE_CDNP_2_CSIM
+NV1=	GE_CDNP_2
+ORDEM=	 1
+TN2=	CSIM
+TPPNT=	CGF
+CONFIG=	Controle Supervisorio Single Command
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include RDP/nv2.dat
+

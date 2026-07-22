@@ -1,0 +1,20 @@
+MUL
+	ID = RDP51
+	CNF = RDP51
+	GSD = JDM
+	ORDEM = 87
+
+MUL
+	ID = RDP52
+	CNF = RDP52
+	GSD = JDM
+	ORDEM = 88
+
+MUL
+	ID = RDP53
+	CNF = RDP53
+	GSD = JDM
+	ORDEM = 89
+
+
+Arquivo gerado automaticamente por pysage-tools versao 3.0.0, feito por Automa Power (VB, YS e MF).

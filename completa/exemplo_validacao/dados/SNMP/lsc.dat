@@ -1,0 +1,191 @@
+LSC
+	ID = GNSS1
+	NOME = GNSS1 SNMP
+	MAP = GERAL
+	GSD = JDM
+	NSRV1 = localhost
+	NSRV2 = localhost
+	TCV = CNVI
+	TIPO = AA
+	TTP = TSNMP
+	VERBD = SCL_AUTO
+
+LSC
+	ID = GNSS2
+	NOME = GNSS2 SNMP
+	MAP = GERAL
+	GSD = JDM
+	NSRV1 = localhost
+	NSRV2 = localhost
+	TCV = CNVI
+	TIPO = AA
+	TTP = TSNMP
+	VERBD = SCL_AUTO
+
+LSC
+	ID = SW1PBA
+	NOME = SW1PBA SNMP
+	MAP = GERAL
+	GSD = JDM
+	NSRV1 = localhost
+	NSRV2 = localhost
+	TCV = CNVI
+	TIPO = AA
+	TTP = TSNMP
+	VERBD = SCL_AUTO
+
+LSC
+	ID = SW1PBB
+	NOME = SW1PBB SNMP
+	MAP = GERAL
+	GSD = JDM
+	NSRV1 = localhost
+	NSRV2 = localhost
+	TCV = CNVI
+	TIPO = AA
+	TTP = TSNMP
+	VERBD = SCL_AUTO
+
+LSC
+	ID = SW2PBA
+	NOME = SW2PBA SNMP
+	MAP = GERAL
+	GSD = JDM
+	NSRV1 = localhost
+	NSRV2 = localhost
+	TCV = CNVI
+	TIPO = AA
+	TTP = TSNMP
+	VERBD = SCL_AUTO
+
+LSC
+	ID = SW2PBB
+	NOME = SW2PBB SNMP
+	MAP = GERAL
+	GSD = JDM
+	NSRV1 = localhost
+	NSRV2 = localhost
+	TCV = CNVI
+	TIPO = AA
+	TTP = TSNMP
+	VERBD = SCL_AUTO
+
+LSC
+	ID = SW3PBA
+	NOME = SW3PBA SNMP
+	MAP = GERAL
+	GSD = JDM
+	NSRV1 = localhost
+	NSRV2 = localhost
+	TCV = CNVI
+	TIPO = AA
+	TTP = TSNMP
+	VERBD = SCL_AUTO
+
+LSC
+	ID = SW3PBB
+	NOME = SW3PBB SNMP
+	MAP = GERAL
+	GSD = JDM
+	NSRV1 = localhost
+	NSRV2 = localhost
+	TCV = CNVI
+	TIPO = AA
+	TTP = TSNMP
+	VERBD = SCL_AUTO
+
+LSC
+	ID = SW1SBA
+	NOME = SW1SBA SNMP
+	MAP = GERAL
+	GSD = JDM
+	NSRV1 = localhost
+	NSRV2 = localhost
+	TCV = CNVI
+	TIPO = AA
+	TTP = TSNMP
+	VERBD = SCL_AUTO
+
+LSC
+	ID = SW1SBB
+	NOME = SW1SBB SNMP
+	MAP = GERAL
+	GSD = JDM
+	NSRV1 = localhost
+	NSRV2 = localhost
+	TCV = CNVI
+	TIPO = AA
+	TTP = TSNMP
+	VERBD = SCL_AUTO
+
+LSC
+	ID = SW2SBA
+	NOME = SW2SBA SNMP
+	MAP = GERAL
+	GSD = JDM
+	NSRV1 = localhost
+	NSRV2 = localhost
+	TCV = CNVI
+	TIPO = AA
+	TTP = TSNMP
+	VERBD = SCL_AUTO
+
+LSC
+	ID = SW2SBB
+	NOME = SW2SBB SNMP
+	MAP = GERAL
+	GSD = JDM
+	NSRV1 = localhost
+	NSRV2 = localhost
+	TCV = CNVI
+	TIPO = AA
+	TTP = TSNMP
+	VERBD = SCL_AUTO
+
+LSC
+	ID = SW3SBA
+	NOME = SW3SBA SNMP
+	MAP = GERAL
+	GSD = JDM
+	NSRV1 = localhost
+	NSRV2 = localhost
+	TCV = CNVI
+	TIPO = AA
+	TTP = TSNMP
+	VERBD = SCL_AUTO
+
+LSC
+	ID = SW3SBB
+	NOME = SW3SBB SNMP
+	MAP = GERAL
+	GSD = JDM
+	NSRV1 = localhost
+	NSRV2 = localhost
+	TCV = CNVI
+	TIPO = AA
+	TTP = TSNMP
+	VERBD = SCL_AUTO
+
+LSC
+	ID = RB1
+	NOME = RB1 SNMP
+	MAP = GERAL
+	GSD = JDM
+	NSRV1 = localhost
+	NSRV2 = localhost
+	TCV = CNVI
+	TIPO = AA
+	TTP = TSNMP
+	VERBD = SCL_AUTO
+
+LSC
+	ID = RB2
+	NOME = RB2 SNMP
+	MAP = GERAL
+	GSD = JDM
+	NSRV1 = localhost
+	NSRV2 = localhost
+	TCV = CNVI
+	TIPO = AA
+	TTP = TSNMP
+	VERBD = SCL_AUTO

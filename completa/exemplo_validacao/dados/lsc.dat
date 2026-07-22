@@ -1,0 +1,185 @@
+#include coringa4S8/lsc.dat
+#include SNMP/lsc.dat
+
+LSC
+GSD=	JDM
+ID=	CALC_LSC
+MAP=	ALRCAL
+NOME=	Ligacao Virtual de Calculos
+TCV=	NLCN
+TIPO=	AA
+TTP=	NLTP
+VERBD=	11/01/2007
+
+LSC
+GSD=	JDM
+ID=	LOCL_LSC
+MAP=	ALRCAL
+NOME=	Ligacao de Pontos Logicos Locais
+TCV=	NLCN
+TIPO=	AA
+TTP=	NLTP
+VERBD=	11/01/2007
+
+LSC
+GSD=    JDM
+ID=     CNUL_LSC
+MAP=    ALRCAL
+NOME=   LSC TCV Nulo
+TCV=    CNVD
+TIPO=   AA
+TTP=    NLTP
+VERBD=  11/01/2007
+
+LSC
+GSD=	JDM
+ID=	JDM
+MAP=	JDM
+NOME=	Ligacao Aquisicao DNP3 SE Jardim
+NSRV1=	localhost
+NSRV2=	localhost
+TCV=	CNVH
+TIPO=	AA
+TTP=	IEC3S
+VERBD=	05/01/2009
+
+LSC
+; **** Arquivo com 9 LSC(s)
+GSD=	JDM
+ID=	COR_LSC
+MAP=	GERAL
+NOME=	Ligacao de Distribuicao DNP3 CORS
+NSRV1=	localhost
+NSRV2=	localhost
+TCV=	CNVH
+TIPO=	DD
+TTP=	UDPF3
+VERBD=	05/01/2009
+
+LSC
+GSD=	JDM
+ID=	CALC
+MAP=	CALC
+NOME=	Ligacao de Calculos
+TCV=	NLCN
+TTP=	NLTP
+VERBD=	01/09/2009
+
+LSC
+;   *********************************
+;   ***   SE Jardins IEC870-101   ***
+;   *********************************
+GSD=	JDM
+ID=	LOCAL
+MAP=	CALC
+NOME=	Ligacao de Pontos Logicos
+TCV=	NLCN
+TIPO=	AA
+TTP=	NLTP
+VERBD=	01/09/2009
+
+
+;LSC
+; ESC - Engenharia de Sistemas de Controle Ltda
+; Projeto: SE  JARDIM  -  500kV
+; Arquivo com dados da entidade lsc
+; Data: 07/11/2012
+; ================================================
+;
+;
+;GSD=	JDM
+;ID=	JDM_LSC
+;MAP=	GERAL
+;NOME=	Ligacao Jardim
+;NSRV1=	localhost
+;NSRV2=	localhost
+;TCV=	CNVG
+;TIPO=	AA
+;TTP=	IEC1S
+;VERBD=	FEV12
+
+LSC
+GSD=	JDM
+ID=	F1_V7
+MAP=	F1_V7
+NOME=	IED F1_V7 proto IEC/61850
+NSRV1=	localhost
+NSRV2=	localhost
+TCV=	CNVO
+TIPO=	AD
+TTP=	MMST
+VERBD=	SCL_AUTO
+
+LSC
+; ================================================
+; Interest Engenharia
+; Projeto: SE  JARDIM - 05V5 - 500 kV
+; Arquivo com dados da entidade lsc
+; Data: 28/11/2013
+; ================================================
+;
+GSD=	JDM
+ID=	F2_V7
+MAP=	F2_V7
+NOME=	IED F2_V7 proto IEC/61850
+NSRV1=	localhost
+NSRV2=	localhost
+TCV=	CNVO
+TIPO=	AD
+TTP=	MMST
+VERBD=	SCL_AUTO
+
+LSC
+GSD=	JDM
+ID=	F1_V5
+MAP=	F1_V5
+NOME=	IED F1_V5 proto IEC/61850
+NSRV1=	localhost
+NSRV2=	localhost
+TCV=	CNVO
+TIPO=	AD
+TTP=	MMST
+VERBD=	SCL_AUTO
+
+LSC
+GSD=	JDM
+ID=	F2_V5
+MAP=	F2_V5
+NOME=	IED F2_V5 proto IEC/61850
+NSRV1=	localhost
+NSRV2=	localhost
+TCV=	CNVO
+TIPO=	AD
+TTP=	MMST
+VERBD=	SCL_AUTO
+
+LSC
+;Aquisicao DNP3 N1.75
+GSD=	JDM
+ID=	JDM_LSC
+MAP=	GERAL
+NOME=	Ligacao Jardim
+NSRV1=	localhost
+NSRV2=	localhost
+TCV=	CNVH
+TIPO=	AA
+TTP=	UDPF3
+VERBD=	MAI23
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include RDP/lsc.dat
+

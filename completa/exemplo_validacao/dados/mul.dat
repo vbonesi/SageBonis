@@ -1,0 +1,70 @@
+
+
+MUL
+CNF=	n1
+GSD=	JDM
+ID=	n1
+ORDEM=	 108
+
+MUL
+; ================================================
+; Interest Engenharia
+; Projeto: SE  JARDIM - 05V5 - 500kV
+; Arquivo com dados da entidade mul
+; Data: 28/11/2013
+; ================================================
+;
+CNF=	o1
+GSD=	JDM
+ID=	o1
+ORDEM=	 109
+
+MUL
+CNF=	p1
+GSD=	JDM
+ID=	p1
+ORDEM=	 110
+
+MUL
+CNF=	q2
+GSD=	JDM
+ID=	q2
+ORDEM=	 111
+
+;MUL
+;CNF=	UP87RBX
+;GSD=	JDM
+;ID=	UP87RBX
+;ORDEM=	 117
+
+MUL
+CNF=	UP87TCZ
+GSD=	JDM
+ID=	UP87TCZ
+ORDEM=	 118
+
+MUL
+CNF=	UP87NCZ
+GSD=	JDM
+ID=	UP87NCZ
+ORDEM=	 122
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include RDP/mul.dat
+

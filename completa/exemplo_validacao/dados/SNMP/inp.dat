@@ -1,0 +1,18 @@
+;************ GE GRID SOLUTIONS ************
+;********** Dados da Entidade INP **********
+;** Arquivo gerado em 13/05/2026 16:17:31 **
+;** Autor: Nicholas
+;** Empresa: Automa
+;********************************************************
+
+
+INP
+            NOH = srv1-dc-ssl-jdm
+          ORDEM = 1
+            PRO = gsnmp
+
+INP
+            NOH = srv2-dc-ssl-jdm
+          ORDEM = 1
+            PRO = gsnmp
+

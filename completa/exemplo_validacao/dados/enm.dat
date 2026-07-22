@@ -1,0 +1,66 @@
+
+ENM
+ID=	n11
+MUL=	n1
+ORDEM=	 1
+
+ENM
+ID=	n12
+MUL=	n1
+ORDEM=	 2
+
+ENM
+ID=	o11
+MUL=	o1
+ORDEM=	 1
+
+ENM
+; ================================================
+; Interest Engenharia
+; Projeto: SE  JARDIM - 05V5 - 500kV
+; Arquivo com dados da entidade enm
+; Data: 28/11/2013
+; ================================================
+;
+ID=	o12
+MUL=	o1
+ORDEM=	 2
+
+ENM
+ID=	p11
+MUL=	p1
+ORDEM=	 1
+
+ENM
+ID=	p12
+MUL=	p1
+ORDEM=	 2
+
+ENM
+ID=	q21
+MUL=	q2
+ORDEM=	 1
+
+ENM
+ID=	q22
+MUL=	q2
+ORDEM=	 2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include RDP/enm.dat
+

@@ -1,0 +1,356 @@
+
+
+TCL
+DESCR=	Ausencia de Calculo
+ID=	NLCL
+NSEQ=	 0
+
+TCL
+DESCR=	Calculo de Potencia Aparente
+ID=	PA
+NSEQ=	 1
+
+TCL
+DESCR=	Calculo de Conectividade Linha Barra c/Trafo
+ID=	CON_T
+NSEQ=	 2
+
+TCL
+DESCR=	Calculo de Conectividade Linha Barra s/Trafo
+ID=	CON
+NSEQ=	 3
+
+TCL
+DESCR=	Posicao em kV de tap de trafo em steps de 1.5kV
+ID=	TAP_S15
+NSEQ=	 4
+
+TCL
+DESCR=	Somatorio (geracao de usina, area, intercambio)
+ID=	SOMA
+NSEQ=	 5
+
+TCL
+DESCR=	Calculo de estado de energizacao de trecho OU
+ID=	EG_OU
+NSEQ=	 6
+
+TCL
+DESCR=	Calculo de estado de energizacao de trecho E
+ID=	EG_E
+NSEQ=	 7
+
+TCL
+DESCR=	Calculo de fator de potencia
+ID=	FPOT
+NSEQ=	 9
+
+TCL
+DESCR=	Calculo OU
+ID=	OU
+NSEQ=	 10
+
+TCL
+DESCR=	Posicao Chave de Transferencia (3 estados)
+ID=	POSCHV
+NSEQ=	 11
+
+TCL
+DESCR=	Posicao do Tap Selecionado
+ID=	COMTAP
+NSEQ=	 12
+
+TCL
+DESCR=	Calculo AND e NOT
+ID=	ANDNOT
+NSEQ=	 13
+
+TCL
+DESCR=	Temporizador generico
+ID=	TIMER
+NSEQ=	 14
+
+TCL
+DESCR=	Subtracao` `Subtracao
+ID=	SUB
+NSEQ=	 15
+
+TCL
+DESCR=	Multiplicacao` `Multiplicacao
+ID=	MULT
+NSEQ=	 16
+
+TCL
+DESCR=	Divisao` `Divisao
+ID=	DIV
+NSEQ=	 17
+
+TCL
+DESCR=	Raiz Quadrada
+ID=	RAIZ2
+NSEQ=	 18
+
+TCL
+DESCR=	Inverte o Sinal
+ID=	NEGA
+NSEQ=	 19
+
+TCL
+DESCR=	Calculo de Medidas no Medidor ION-7600 16
+ID=	M1_2A16
+NSEQ=	 20
+
+TCL
+DESCR=	Calculo de Medidas no Medidor ION-7600 32
+ID=	M2_1A32
+NSEQ=	 21
+
+TCL
+DESCR=	Adequacao de TAP - Valor Intermediario/Deslocamento
+ID=	TAP_CALC
+NSEQ=	 22
+
+TCL
+DESCR=	Calculo de Corrente de SHUNTS
+ID=	AMPSHUNT
+NSEQ=	 23
+
+TCL
+DESCR=	Intertrav Calculado Equipamentos
+ID=	ITCL
+NSEQ=	 24
+
+TCL
+DESCR=	Intertrav Calculado Transf. Proteção
+ID=	IT43
+NSEQ=	 25
+
+TCL
+DESCR=	Conversão de TAP Totalizado/Analogico
+ID=	CLONET
+NSEQ=	 26
+
+TCL
+DESCR=	Inversão de Ponto Digital
+ID=	NOT
+NSEQ=	 27
+
+TCL
+DESCR=	Calculo para Intertravamento
+ID=	OUINT
+NSEQ=	 28
+
+TCL
+DESCR=	Calculo para Intertravamento Disjuntor
+ID=	ITDJ
+NSEQ=	 29
+
+TCL
+DESCR=	Calculo para Intertravamento Seccionadora
+ID=	ITSC
+NSEQ=	 30
+
+TCL
+DESCR=	Calculo Libera 43T
+ID=	79HAB
+NSEQ=	 31
+
+TCL
+DESCR=	Calculo Libera 43T
+ID=	79SRMT
+NSEQ=	 32
+
+TCL
+DESCR=	Calculo Libera 43T
+ID=	79MONO
+NSEQ=	 33
+
+TCL
+DESCR=	Calculo Libera 43T
+ID=	79TRI
+NSEQ=	 34
+
+TCL
+DESCR=	Calculo Dinamico
+ID=	DINAMICO
+NSEQ=	 255
+
+TCL
+DESCR=	Calculo Libera 43T
+ID=	ITCL2
+NSEQ=	 35
+
+TCL
+DESCR=	Intertrav Calculado BAY
+ID=	ITLR
+NSEQ=	 36
+
+TCL
+DESCR=	Intertrav Rele P442
+ID=	ITRELE
+NSEQ=	 37
+
+TCL
+DESCR=	Conversão PTS - PAS
+ID=	CLONE
+NSEQ=	 38
+
+TCL
+DESCR=	Calculo Libera 43T
+ID=	ITCAD
+NSEQ=	 39
+
+TCL
+DESCR=	Calculo Libera 43T
+ID=	85ANTL
+NSEQ=	 40
+
+TCL
+DESCR=	Calculo INT 86
+ID=	INT86
+NSEQ=	 41
+
+TCL
+DESCR=	Concatenar 2 floats 16 em 1 de 32
+ID=	216to32
+NSEQ=	 42
+
+TCL
+DESCR=	32 Bits para KRON Mult-k plus
+ID=	KRONI754
+NSEQ=	 43
+
+TCL
+DESCR=	32 Bits para ABB IDM-96
+ID=	KWH
+NSEQ=	 44
+
+TCL
+DESCR=	GGE Ligado/Desligado
+ID=	PAPA
+NSEQ=	 45
+
+TCL
+DESCR=	Calculo da Corrente via Tensao/Pot.Ativa/Pot.Reativa
+ID=	CORRENTE
+NSEQ=	 8
+
+TCL
+DESCR=	Intertravamento Ponto Duplo
+ID=	ITVPD
+NSEQ=	 46
+
+TCL
+DESCR=	Intertravamento por Cartão
+ID=	ITVCAR
+NSEQ=	 47
+
+TCL
+DESCR=	OU com Inversão de Ponto
+ID=	OUNOT
+NSEQ=	 48
+
+TCL
+DESCR=	NOTOU com Inversão de Ponto
+ID=	NOTOU
+NSEQ=	 49
+
+TCL
+DESCR=	Calculo da Seleção de Tensão B2
+ID=	TENB2
+NSEQ=	 50
+
+TCL
+DESCR=	Calculo da Medição do TP B1
+ID=	TPB1
+NSEQ=	 51
+
+TCL
+DESCR=	Intertv Comando Equipamentos
+ID=	INTCMD
+NSEQ=	 52
+
+TCL
+DESCR=	Calculo BCD
+ID=	BCD
+NSEQ=	 53
+
+TCL
+DESCR=	Soma Interpretada de Duas Parcelas
+FORMULA=	P1+P2
+ID=	SOMA2
+NSEQ=	 0
+
+TCL
+DESCR=	Calculo associado a regra 1
+FORMULA=	P1 < 450
+ID=	C_REGRA1
+NSEQ=	 0
+
+TCL
+DESCR=	Calculo associado a regra 2
+FORMULA=	P1 > 550
+ID=	C_REGRA2
+NSEQ=	 0
+
+TCL
+DESCR=	SVC DW Para DIGITAIS
+ID=	DWTODIG
+NSEQ=	 54
+
+TCL
+DESCR=	Intertravamento Comando Equipamentos
+ID=	INTEQP
+NSEQ=	 55
+
+TCL
+DESCR=	Intertv Cmd's SVC SE/COL
+ID=	INTUCD
+NSEQ=	 56
+
+TCL
+DESCR=	Intertv Cmd's Equiptos SVC SE/COL
+ID=	INTSVC
+NSEQ=	 57
+
+TCL
+DESCR=	Calculo Intertravamento de Equipamento
+ID=	ITEQP
+NSEQ=	 58
+
+TCL
+DESCR=	Calculo Energia consumida kWh
+ID=	SUBKWH
+NSEQ=	 59
+
+TCL
+DESCR= 32 bits ION7650
+ID= ION7650
+NSEQ= 60
+
+TCL
+DESCR= KV_T5
+ID= KV_T5
+NSEQ= 70
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include RDP/tcl.dat
+

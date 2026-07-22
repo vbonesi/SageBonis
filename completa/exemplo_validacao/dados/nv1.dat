@@ -1,0 +1,136 @@
+#include coringa4S8/nv1.dat
+#include SNMP/nv1.dat
+
+NV1
+ID=	JDM_ADNP_1
+CNF=	L_JDM_CNF
+ORDEM=	 1
+TN1=	ADNP
+CONFIG=	Aquisicao de Dados Exigida pelo DNP
+
+NV1
+ID=	JDM_CDNP_2
+CNF=	L_JDM_CNF
+ORDEM=	 2
+TN1=	CDNP
+CONFIG=	Controle Supervisorio pelo DNP
+
+NV1
+ID=	JDM_GDNP_3
+CNF=	L_JDM_CNF
+ORDEM=	 3
+TN1=	GDNP
+CONFIG=	Controle Comunicacao pelo DNP
+
+NV1
+ID=	COR_DDNP_1
+CNF=	COR_CNF
+ORDEM=	 1
+TN1=	DDNP
+CONFIG=	Classe= 1
+
+NV1
+; **** Arquivo com 15 NV1(s)
+ID=	COR_ODNP_2
+CNF=	COR_CNF
+ORDEM=	 2
+TN1=	ODNP
+CONFIG=	Roteamento de Controle Supervisorio
+
+NV1
+;ID=	JDM_A101_1
+ID=	GE_ADNP_1
+CNF=	JDM_CNF
+ORDEM=	 1
+TN1=	ADNP
+CONFIG=	Aq. Dados de JARDIM 500 do N1.75
+
+NV1
+; ESC - Engenharia de Sistemas de Controle Ltda
+; Projeto: SE  JARDIM  -  500kV
+; Arquivo com dados da entidade nv1
+; Data: 07/11/2012
+; ================================================
+;
+;
+;ID=	JDM_C101_2
+ID=	GE_CDNP_2
+CNF=	JDM_CNF
+ORDEM=	 2
+TN1=	CDNP
+CONFIG=	Cont. Superv. JARDIM 500 do N1.75
+
+NV1
+ID=	n11
+CNF=	n1
+ORDEM=	 1
+TN1=	NLN1
+CONFIG=	F1_V7PROT
+
+
+NV1
+ID=	o11
+CNF=	o1
+ORDEM=	 1
+TN1=	NLN1
+CONFIG=	F2_V7PROT
+
+; ================================================
+; Interest Engenharia
+; Projeto: SE  JARDIM - 05V5 - 500kV
+; Arquivo com dados da entidade nv1
+; Data: 28/11/2013
+; ================================================
+;
+
+NV1
+;------------------------------------------
+ID=	p11
+CNF=	p1
+ORDEM=	 1
+TN1=	NLN1
+CONFIG=	F1_V5CFG
+
+
+;NV1
+;------------------------------------------
+;ID=	p15
+;CNF=	p1
+;ORDEM=	 5
+;TN1=	NLN1
+;CONFIG=	F1_V5ANN
+
+NV1
+;------------------------------------------
+ID=	q21
+CNF=	q2
+ORDEM=	 1
+TN1=	NLN1
+CONFIG=	F2_V5CFG
+
+;NV1
+;------------------------------------------
+;ID=	q25
+;CNF=	q2
+;ORDEM=	 5
+;TN1=	NLN1
+;CONFIG=	F2_V5ANN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include RDP/nv1.dat
+

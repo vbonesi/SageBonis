@@ -1,0 +1,189 @@
+#include SNMP/inp.dat
+
+
+INP
+NOH=	srv1-dc-ssl-jdm
+ORDEM=	 1
+PRO=	mcast
+
+INP
+NOH=	srv1-dc-ssl-jdm
+ORDEM=	 1
+PRO=	gmcd
+
+INP
+NOH=	srv1-dc-ssl-jdm
+ORDEM=	 1
+PRO=	rarqd
+
+INP
+NOH=	srv1-dc-ssl-jdm
+ORDEM=	 1
+PRO=	alr
+
+INP
+NOH=	srv1-dc-ssl-jdm
+ORDEM=	 1
+PRO=	sac
+
+INP
+NOH=	srv1-dc-ssl-jdm
+ORDEM=	 1
+PRO=	cnul
+
+INP
+NOH=	srv1-dc-ssl-jdm
+ORDEM=	 1
+PRO=	sdd
+
+INP
+NOH=	srv1-dc-ssl-jdm
+ORDEM=	 1
+PRO=	i61850
+
+INP
+NOH=	srv1-dc-ssl-jdm
+ORDEM=	 1
+PRO=	calc
+
+INP
+NOH=	srv1-dc-ssl-jdm
+ORDEM=	 1
+PRO=	hist
+
+INP
+NOH=	srv1-dc-ssl-jdm
+ORDEM=	 1
+PRO=	serv
+
+INP
+NOH=	srv1-dc-ssl-jdm
+ORDEM=	 1
+PRO=	RegCond
+
+INP
+NOH=	srv1-dc-ssl-jdm
+ORDEM=	 1
+PRO=	dnp3
+
+;INP
+;NOH=	srv1-dc-ssl-jdm
+;ORDEM=	 1
+;PRO=	i101
+
+INP
+NOH=	srv1-dc-ssl-jdm
+ORDEM=	 1
+PRO=	DumpBd
+
+INP
+NOH=	srv1-dc-ssl-jdm
+ORDEM=	 1
+PRO=	modb
+
+INP
+NOH=	srv1-dc-ssl-jdm
+ORDEM=	 1
+PRO=	siccp
+
+INP
+NOH=	srv2-dc-ssl-jdm
+ORDEM=	 2
+PRO=	mcast
+
+INP
+NOH=	srv2-dc-ssl-jdm
+ORDEM=	 2
+PRO=	gmcd
+
+INP
+NOH=	srv2-dc-ssl-jdm
+ORDEM=	 2
+PRO=	rarqd
+
+INP
+NOH=	srv2-dc-ssl-jdm
+ORDEM=	 2
+PRO=	alr
+
+INP
+NOH=	srv2-dc-ssl-jdm
+ORDEM=	 2
+PRO=	sac
+
+INP
+NOH=	srv2-dc-ssl-jdm
+ORDEM=	 2
+PRO=	cnul
+
+INP
+NOH=	srv2-dc-ssl-jdm
+ORDEM=	 2
+PRO=	sdd
+
+INP
+NOH=	srv2-dc-ssl-jdm
+ORDEM=	 2
+PRO=	i61850
+
+INP
+NOH=	srv2-dc-ssl-jdm
+ORDEM=	 2
+PRO=	calc
+
+INP
+NOH=	srv2-dc-ssl-jdm
+ORDEM=	 2
+PRO=	hist
+
+INP
+NOH=	srv2-dc-ssl-jdm
+ORDEM=	 2
+PRO=	serv
+
+INP
+NOH=	srv2-dc-ssl-jdm
+ORDEM=	 2
+PRO=	RegCond
+
+INP
+NOH=	srv2-dc-ssl-jdm
+ORDEM=	 2
+PRO=	dnp3
+
+;INP
+;NOH=	srv2-dc-ssl-jdm
+;ORDEM=	 2
+;PRO=	i101
+
+INP
+NOH=	srv2-dc-ssl-jdm
+ORDEM=	 2
+PRO=	DumpBd
+
+INP
+NOH=	srv2-dc-ssl-jdm
+ORDEM=	 2
+PRO=	modb
+
+INP
+NOH=	srv2-dc-ssl-jdm
+ORDEM=	 2
+PRO=	siccp
+
+INP
+NOH=	ihm-dc-ssl-jdm
+ORDEM=	 3
+PRO=	mcast
+
+INP
+NOH=	ihm-dc-ssl-jdm
+ORDEM=	 3
+PRO=	gmcd
+
+INP
+; **** Arquivo com 29 INP(s)
+NOH=	ihm-dc-ssl-jdm
+ORDEM=	 3
+PRO=	rarqd
+

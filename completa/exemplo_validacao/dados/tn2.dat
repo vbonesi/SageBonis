@@ -1,0 +1,211 @@
+
+TN2
+DESCR=	Ausência de entidade no nível 2
+ID=	NLN2
+NSEQ=	 0
+
+TN2
+DESCR=	Aquisição digital UTR da "Conitel Polling Word"
+ID=	ACPW
+NSEQ=	 1
+
+TN2
+DESCR=	Aquisição digital UTR da "SOE Polling Word"
+ID=	ASPW
+NSEQ=	 2
+
+TN2
+DESCR=	Aquisição digital UTR da "Terminal Status Word"
+ID=	ATSW
+NSEQ=	 3
+
+TN2
+DESCR=	Aquisição digital UTR simples (non-latch)
+ID=	ASIM
+NSEQ=	 4
+
+TN2
+DESCR=	Aquisição digital UTR com retenção (latch)
+ID=	ALAT
+NSEQ=	 5
+
+TN2
+DESCR=	Aquisição digital UTR com memorização (mcd)
+ID=	AMCD
+NSEQ=	 6
+
+TN2
+DESCR=	Aquisição analógica UTR
+ID=	AANL
+NSEQ=	 7
+
+TN2
+DESCR=	Aquisição totalizadores UTR tipo "A"
+ID=	ATTA
+NSEQ=	 8
+
+TN2
+DESCR=	Aquisição totalizadores UTR tipo "C"
+ID=	ATTC
+NSEQ=	 9
+
+TN2
+DESCR=	Distribuição digital UTR da "Conitel Polling Word"
+ID=	DCPW
+NSEQ=	 10
+
+TN2
+DESCR=	Distribuição digital UTR da "SOE Polling Word"
+ID=	DSPW
+NSEQ=	 11
+
+TN2
+DESCR=	Distribuição digital UTR da "Terminal Status Word"
+ID=	DTSW
+NSEQ=	 12
+
+TN2
+DESCR=	Distribuição digital UTR simples (non-latch)
+ID=	DSIM
+NSEQ=	 13
+
+TN2
+DESCR=	Distribuição digital UTR com retenção (latch)
+ID=	DLAT
+NSEQ=	 14
+
+TN2
+DESCR=	Distribuição digital UTR com memorização (mcd)
+ID=	DMCD
+NSEQ=	 15
+
+TN2
+DESCR=	Distribuição analógica UTR
+ID=	DANL
+NSEQ=	 16
+
+TN2
+DESCR=	Distribuição totalizadores UTR tipo "A"
+ID=	DTTA
+NSEQ=	 17
+
+TN2
+DESCR=	Distribuição totalizadores UTR tipo "C"
+ID=	DTTC
+NSEQ=	 18
+
+TN2
+DESCR=	Aquisição digital com atributos de qualidade
+ID=	ADAQ
+NSEQ=	 19
+
+TN2
+DESCR=	Aquisição analógica com atributos de qualidade
+ID=	AAAQ
+NSEQ=	 20
+
+TN2
+DESCR=	Distribuição digital com atributos de qualidade
+ID=	DDAQ
+NSEQ=	 21
+
+TN2
+DESCR=	Distribuição analógica com atributos de qualidade
+ID=	DAAQ
+NSEQ=	 22
+
+TN2
+DESCR=	Telesinais fisicos em protocolo SINSC
+ID=	STSF
+NSEQ=	 23
+
+TN2
+DESCR=	Telemedidas do tipo 1 em protocolo SINSC
+ID=	STM1
+NSEQ=	 24
+
+TN2
+DESCR=	Telemedidas do tipo 2 em protocolo SINSC
+ID=	STM2
+NSEQ=	 25
+
+TN2
+DESCR=	Telesinais de sistema externo em protocolo SINSC
+ID=	STSE
+NSEQ=	 26
+
+TN2
+DESCR=	Telemedidas de sistema externo em protocolo SINSC
+ID=	STME
+NSEQ=	 27
+
+TN2
+DESCR=	Valores calculados de sistema externo em protocolo SINSC
+ID=	STMC
+NSEQ=	 28
+
+TN2
+DESCR=	Medições de Nível de Reservatório  em protocolo SINSC
+ID=	SNVL
+NSEQ=	 29
+
+TN2
+DESCR=	Medições de Energia em Protocolo SINSC
+ID=	SNER
+NSEQ=	 30
+
+TN2
+DESCR=	Gestão de Comunicação de Dados em Multiligações
+ID=	GCMD
+NSEQ=	 31
+
+TN2
+DESCR=	Aquisição ou distribuição de pontos digitais duplos ou com controle
+ID=	ADUP
+NSEQ=	 32
+
+TN2
+DESCR=	Aquisição ou distribuição de posição de equip. ou medida analógica c/controle
+ID=	ASTP
+NSEQ=	 33
+
+TN2
+DESCR=	Aquisição ou distribuição de medida analógica em ponto flutuante
+ID=	APFL
+NSEQ=	 34
+
+TN2
+DESCR=	Controle supervisório para comando simples ou latch
+ID=	CSIM
+NSEQ=	 35
+
+TN2
+DESCR=	Controle supervisório para comando duplo ou 1-pulse
+ID=	CDUP
+NSEQ=	 36
+
+TN2
+DESCR=	Controle supervisório para comando de regulação de posição ou N-pulse
+ID=	CREL
+NSEQ=	 37
+
+TN2
+DESCR=	Controle supervisório para comando de set point
+ID=	CSTP
+NSEQ=	 38
+
+TN2
+DESCR=	Controle de gestão da comunicação de dados
+ID=	CGCD
+NSEQ=	 39
+
+TN2
+DESCR=	Aquisição ou distribuição de medida analógica em bitstring de 32 bits
+ID=	AA32
+NSEQ=	 40
+
+TN2
+DESCR=	Aquisição ou distribuição de medida analógica em bitstring de 16 bits
+ID=	AA16
+NSEQ=	 41
+

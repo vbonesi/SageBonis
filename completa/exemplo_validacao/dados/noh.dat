@@ -1,0 +1,19 @@
+
+NOH
+ENDIP=	200.64.40.1
+ID=	srv1-dc-ssl-jdm
+NOME=	srv1-dc-ssl-jdm
+NTATV=	 4
+
+NOH
+ENDIP=	200.64.40.2
+ID=	srv2-dc-ssl-jdm
+NOME=	srv2-dc-ssl-jdm
+NTATV=	 4
+
+NOH
+ENDIP=	200.64.40.3
+ID=	ihm-dc-ssl-jdm
+NOME=	ihm-dc-ssl-jdm
+NTATV=	 4
+

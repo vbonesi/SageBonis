@@ -1,0 +1,55 @@
+
+TDD
+; **** Arquivo com 6 TDD(s)
+ID=	COR_TDD
+NOME=	Distribuicao SE Jardim
+LSC=	COR_LSC
+
+TDD
+ID=	COR_TDD2
+NOME=	Distribuicao SE Jardim
+LSC=	COR_LSC
+
+TDD
+ID=	COR_TDD3
+NOME=	Distribuicao SE Jardim
+LSC=	COR_LSC
+
+TDD
+ID=	n1
+NOME=	mySPCSO20_229
+LSC=	F1_V7
+
+TDD
+ID=	o1
+NOME=	mySPCSO20_229
+LSC=	F2_V7
+
+TDD
+ID=	p1
+NOME=	mySPCSO20_229
+LSC=	F1_V5
+
+TDD
+ID=	q2
+NOME=	mySPCSO20_229
+LSC=	F2_V5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include RDP/tdd.dat
+

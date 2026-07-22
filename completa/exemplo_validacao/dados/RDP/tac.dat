@@ -1,0 +1,23 @@
+TAC
+	ID = RDP51
+	NOME = Aquisicao do IED RDP51
+	INS = JDM
+	LSC = RDP51
+	TPAQS = ASAC
+
+TAC
+	ID = RDP52
+	NOME = Aquisicao do IED RDP52
+	INS = JDM
+	LSC = RDP52
+	TPAQS = ASAC
+
+TAC
+	ID = RDP53
+	NOME = Aquisicao do IED RDP53
+	INS = JDM
+	LSC = RDP53
+	TPAQS = ASAC
+
+
+Arquivo gerado automaticamente por pysage-tools versao 3.0.0, feito por Automa Power (VB, YS e MF).

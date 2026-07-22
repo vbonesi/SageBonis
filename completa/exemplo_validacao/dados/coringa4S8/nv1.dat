@@ -1,0 +1,10 @@
+
+NV1
+; ===== 04S1 - LT NS Socorro
+;KF1
+ID=	JDMS8_AMDB_1
+CNF=	JDMS8_CNF
+ORDEM=	 1
+TN1=	AMDB
+CONFIG=	Aquisicao MODBUS MM 04S8
+

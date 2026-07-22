@@ -1636,12 +1636,16 @@ CABECALHOS_PONTO_ANALOGICO = ["ID_Logico", "ID_Fisico", "NOME", "NV2", "KCONV1",
 CABECALHOS_COMANDO_AVULSO = ["ID", "ID_Fisico", "NOME", "NV2", "KCONV", "TAC", "PAC", "PINT",
                              "TIPOE", "TPCTL", "Gera"]
 CABECALHOS_CANAIS_DISTRIBUICAO = ["Nome", "TDD", "Metodo", "Valor1", "Valor2", "Ativo"]
-CABECALHOS_DISTRIBUICAO_PONTOS = ["ID_Logico", "Canal", "Ativo"]
+# IDExplicito só é usado quando o canal tem Metodo=Explicito (achado real: nem toda
+# distribuição deriva o ID por prefixo/sufixo -- algumas bases usam um esquema de ID
+# totalmente independente do ID_Logico do lado da aquisição).
+CABECALHOS_DISTRIBUICAO_PONTOS = ["ID_Logico", "Canal", "IDExplicito", "Ativo"]
 
 # Métodos aceitos na coluna "Metodo" de CanaisDistribuicao (case-insensitive).
 _METODO_PREFIXO = ("prefixo", "prefix")
 _METODO_SUFIXO = ("sufixo", "suffix")
 _METODO_SUBSTITUIR = ("substituir", "replace")
+_METODO_EXPLICITO = ("explicito", "explícito", "explicit")
 
 
 def _valor(row, headers, nome_coluna, default=""):
@@ -1717,7 +1721,9 @@ def _carregar_canais_distribuicao(doc):
 
 
 def _carregar_distribuicoes_por_ponto(doc):
-    """{ID_Logico: [nome_canal, ...]} só das linhas Ativas."""
+    """{ID_Logico: [(nome_canal, id_explicito), ...]} só das linhas Ativas.
+    'id_explicito' só é usado quando o canal correspondente tem Metodo=Explicito
+    (ver _gerar_distribuicao); nos demais casos fica vazio e é ignorado."""
     dist = {}
     if not _aba_existe_ci(doc, NOME_ABA_DISTRIBUICAO_PONTOS):
         return dist
@@ -1728,22 +1734,31 @@ def _carregar_distribuicoes_por_ponto(doc):
     for row in linhas:
         id_logico = _valor(row, headers, "ID_Logico")
         canal = _valor(row, headers, "Canal")
+        id_explicito = _valor(row, headers, "IDExplicito")
         ativo = _valor(row, headers, "Ativo").lower()
         if id_logico and canal and ativo in _VALORES_ATIVO:
-            dist.setdefault(id_logico, []).append(canal)
+            dist.setdefault(id_logico, []).append((canal, id_explicito))
     return dist
 
 
 def _gerar_distribuicao(id_logico, entidade_pnt, canais, distribuicoes):
     """Lista de linhas PDD/PAD (uma por canal ativo do ponto). 'entidade_pnt' é "PDS"
     ou "PAS" -- o atributo de FK que aponta de volta ao ponto lógico chama-se igual
-    (PDD.PDS / PAD.PAS)."""
+    (PDD.PDS / PAD.PAS). Canal com Metodo=Explicito usa o IDExplicito do próprio
+    ponto (ver DistribuicaoPontos) em vez de transformar o ID_Logico -- sem
+    IDExplicito preenchido, esse canal é ignorado pra esse ponto (nunca gera um
+    ID vazio)."""
     linhas = []
-    for canal_nome in distribuicoes.get(id_logico, []):
+    for canal_nome, id_explicito in distribuicoes.get(id_logico, []):
         canal = canais.get(canal_nome.strip().lower())
         if canal is None:
             continue  # canal inativo ou inexistente -- ignora silenciosamente (opt-in)
-        novo_id = _aplicar_metodo(id_logico, canal["Metodo"], canal["Valor1"], canal["Valor2"])
+        if str(canal["Metodo"]).strip().lower() in _METODO_EXPLICITO:
+            if not id_explicito:
+                continue
+            novo_id = id_explicito
+        else:
+            novo_id = _aplicar_metodo(id_logico, canal["Metodo"], canal["Valor1"], canal["Valor2"])
         linhas.append({"ID": novo_id, entidade_pnt: id_logico, "TDD": canal["TDD"], "ORDEM": "1"})
     return linhas
 
@@ -2121,35 +2136,42 @@ def _extrair_comandos_avulsos(entidades, ids_logicos_com_ponto):
 
 
 def _inferir_metodo(id_logico, id_transformado):
-    """Tenta inferir (Metodo, Valor1) de um par (ID lógico, ID já transformado numa
-    distribuição existente). Reconhece Prefixo/Sufixo com confiança (basta conferir se
-    um é sufixo/prefixo literal do outro); quando não dá pra inferir, devolve
-    ("Substituir", None) -- o usuário confere/completa Valor1/Valor2 manualmente."""
+    """Tenta inferir (Metodo, Valor1) de um par (ID lógico, ID já usado numa
+    distribuição existente). Reconhece Prefixo/Sufixo com confiança (basta conferir
+    se um é sufixo/prefixo literal do outro); quando não dá pra inferir, devolve
+    ("Explicito", None) -- achado real (conv_iccp104): nem toda distribuição deriva
+    o ID por transformação simples, algumas usam um esquema totalmente
+    independente. É mais seguro assumir isso do que arriscar uma regra de
+    Substituir que não generaliza pros outros pontos do mesmo canal."""
     if not id_transformado or id_transformado == id_logico:
         return None, None
     if id_transformado.endswith(id_logico):
         return "Prefixo", id_transformado[:-len(id_logico)]
     if id_transformado.startswith(id_logico):
         return "Sufixo", id_transformado[len(id_logico):]
-    return "Substituir", None
+    return "Explicito", None
 
 
 def _extrair_canais_e_distribuicao(entidades):
     """(linhas_canais, linhas_distribuicao) a partir de PDD/PAD já existentes. Um canal
     novo por TDD distinto encontrado (Metodo/Valor1 inferidos do 1º par visto para
-    aquele TDD); linhas de DistribuicaoPontos ligam cada ID lógico ao TDD/canal."""
+    aquele TDD); linhas de DistribuicaoPontos ligam cada ID lógico ao TDD/canal,
+    sempre com o ID observado em IDExplicito (só é lido de volta se o canal acabar
+    resolvendo pra Metodo=Explicito; inofensivo/ignorado nos outros casos)."""
     canais_vistos = {}
     distribuicao = []
     for ent, attr_pnt in (("pdd", "PDS"), ("pad", "PAS")):
         for row in _linhas_ativas_como_dicts(*entidades.get(ent, (None, None))):
             id_logico, tdd = row.get(attr_pnt, ""), row.get("TDD", "")
+            id_atual = row.get("ID", "")
             if not id_logico or not tdd:
                 continue
             if tdd not in canais_vistos:
-                metodo, valor1 = _inferir_metodo(id_logico, row.get("ID", ""))
+                metodo, valor1 = _inferir_metodo(id_logico, id_atual)
                 canais_vistos[tdd] = {"Nome": tdd, "TDD": tdd, "Metodo": metodo or "",
                                       "Valor1": valor1 or "", "Valor2": "", "Ativo": "S"}
-            distribuicao.append({"ID_Logico": id_logico, "Canal": tdd, "Ativo": "S"})
+            distribuicao.append({"ID_Logico": id_logico, "Canal": tdd,
+                                  "IDExplicito": id_atual, "Ativo": "S"})
     return list(canais_vistos.values()), distribuicao
 
 
@@ -2472,8 +2494,187 @@ def gerir_includes(*args):
 
 
 # ===============================================================
+# ===== TRILHA COMPLETA: ASSISTENTE DE PROTOCOLO/IED ==============
+# ===============================================================
+# Cria a infraestrutura de canal de um IED (LSC/CNF/CXU/UTR/ENU + TAC-ou-TDD + os
+# NV1/NV2 "grupo" padrão do protocolo) a partir da aba de config "IEDs". Depois de
+# rodar, você referencia os NV2 criados aqui nas abas PontoDigital/PontoAnalogico/
+# ComandoAvulso (Unificação de Pontos) para gerar os pontos individuais -- esta
+# parte só monta a "casca" onde os pontos vão morar; não cria PDF/PDS/PAF/PAS/
+# CGF/CGS (isso já é papel do unificar_pontos).
+#
+# Protocolo 104 confirmado contra base real (conv_iccp104/GRD, aquisição E
+# distribuição): LSC.TCV=CNVM/TTP=CX104 nos dois lados; CNF.CONFIG de aquisição
+# tem IGNERS/SINCR/INVAL além de PlPr/LiPr/PlRe/LiRe, o de distribuição só tem
+# PlPr/LiPr/PlRe/LiRe; TAC só existe na aquisição, TDD só na distribuição; ENU
+# sempre em par PRI/REV (redundância de rede) mesmo quando só há 1 UTR. Grupos
+# NV1/TN1 confirmados: aquisição=A<proto> (leitura) / C<proto> (comando);
+# distribuição=D<proto> (leitura) / O<proto> (comando). Simplificação assumida
+# (a base real de aquisição separa em mais NV1; a de distribuição já junta tudo
+# num só, como fizemos aqui): 1 NV1 de leitura com ASIM+ADUP+APFL, 1 NV1 de
+# comando com CDUP -- reorganize manualmente se quiser replicar exatamente um
+# padrão com mais grupos.
+
+NOME_ABA_IEDS = "IEDs"
+CABECALHOS_IEDS = [
+    "ID", "Protocolo", "Direcao", "Nome", "GSD", "MAP", "NSRV1", "NSRV2",
+    "PlPr", "LiPr", "PlRe", "LiRe", "IGNERS", "SINCR", "INVAL",
+    "AQANL", "AQPOL", "AQTOT", "INTGR", "NFAIL", "SFAIL", "FAILP", "FAILR",
+    "NTENT", "RESPT", "TDESC", "TRANS", "VLUTR", "Redundante", "Gera",
+]
+
+# Parâmetros fixos por protocolo (TCV/TTP da LSC, iguais em aquisição e
+# distribuição). Só 104 confirmado contra base real por enquanto -- adicionar
+# 101/103/DNP3/MODBUS/61850/SNMP aqui quando confirmados contra bases reais.
+PARAMS_PROTOCOLO = {
+    "104": {"tcv": "CNVM", "ttp": "CX104"},
+}
+
+_DEFAULTS_IED = {
+    "MAP": "GERAL", "NSRV1": "localhost", "NSRV2": "localhost",
+    "IGNERS": "0", "SINCR": "0", "INVAL": "103",
+    "AQANL": "1000", "AQPOL": "1000", "AQTOT": "0",
+    "NFAIL": "2", "SFAIL": "200", "FAILP": "0", "FAILR": "0",
+    "NTENT": "4", "RESPT": "1500", "TDESC": "15", "TRANS": "12", "VLUTR": "0",
+}
+# INTGR (intervalo de integridade) varia MUITO entre aquisição (minutos) e
+# distribuição (dezenas de ms) -- default por Direção em vez de um valor único.
+_DEFAULT_INTGR_POR_DIRECAO = {"aquisicao": "180000", "distribuicao": "50"}
+
+
+def _campo_ied(linha, headers, nome):
+    """Valor de um campo da aba IEDs, com fallback pro default sensato (a
+    própria célula sempre vence se estiver preenchida)."""
+    valor = _valor(linha, headers, nome)
+    if valor:
+        return valor
+    if nome == "INTGR":
+        direcao = _valor(linha, headers, "Direcao").strip().lower()
+        return _DEFAULT_INTGR_POR_DIRECAO.get(direcao, "180000")
+    return _DEFAULTS_IED.get(nome, "")
+
+
+def _prefixo_tn1(protocolo, direcao, papel):
+    """papel: "leitura" ou "comando". Confirmado contra base real: aquisição usa
+    A<proto>/C<proto>; distribuição usa D<proto>/O<proto>."""
+    aquisicao = direcao.strip().lower() == "aquisicao"
+    if papel == "leitura":
+        return ("A" if aquisicao else "D") + protocolo
+    return ("C" if aquisicao else "O") + protocolo
+
+
+def _gerar_infra_ied(linha, headers):
+    """Lógica PURA: {entidade: [linha_dict, ...]} a upsertar para 1 linha ativa da
+    aba IEDs. Testável fora do LibreOffice (mesmo espírito das demais frentes)."""
+    saida = {"lsc": [], "cnf": [], "cxu": [], "utr": [], "enu": [],
+             "nv1": [], "nv2": [], "tac": [], "tdd": []}
+    id_ied = _valor(linha, headers, "ID")
+    protocolo = _valor(linha, headers, "Protocolo")
+    direcao = _valor(linha, headers, "Direcao")
+    params = PARAMS_PROTOCOLO.get(protocolo)
+    if not id_ied or params is None:
+        return saida  # protocolo desconhecido (ainda) ou linha incompleta
+
+    aquisicao = direcao.strip().lower() == "aquisicao"
+
+    saida["lsc"].append({
+        "ID": id_ied,
+        "NOME": _valor(linha, headers, "Nome") or ("Canal %s %s" % (protocolo, id_ied)),
+        "GSD": _valor(linha, headers, "GSD"), "MAP": _campo_ied(linha, headers, "MAP"),
+        "NSRV1": _campo_ied(linha, headers, "NSRV1"), "NSRV2": _campo_ied(linha, headers, "NSRV2"),
+        "TCV": params["tcv"], "TTP": params["ttp"], "TIPO": "AA" if aquisicao else "DD",
+    })
+
+    if aquisicao:
+        config_cnf = "IGNERS= %s SINCR= %s INVAL= %s PlPr= %s LiPr= %s PlRe= %s LiRe= %s" % (
+            _campo_ied(linha, headers, "IGNERS"), _campo_ied(linha, headers, "SINCR"),
+            _campo_ied(linha, headers, "INVAL"),
+            _valor(linha, headers, "PlPr"), _valor(linha, headers, "LiPr"),
+            _valor(linha, headers, "PlRe"), _valor(linha, headers, "LiRe"),
+        )
+    else:
+        config_cnf = "PlPr= %s LiPr= %s PlRe= %s LiRe= %s" % (
+            _valor(linha, headers, "PlPr"), _valor(linha, headers, "LiPr"),
+            _valor(linha, headers, "PlRe"), _valor(linha, headers, "LiRe"),
+        )
+    saida["cnf"].append({"ID": id_ied, "LSC": id_ied, "CONFIG": config_cnf})
+
+    saida["cxu"].append({
+        "ID": id_ied, "GSD": _valor(linha, headers, "GSD"), "ORDEM": "1",
+        "AQANL": _campo_ied(linha, headers, "AQANL"), "AQPOL": _campo_ied(linha, headers, "AQPOL"),
+        "AQTOT": _campo_ied(linha, headers, "AQTOT"), "INTGR": _campo_ied(linha, headers, "INTGR"),
+        "NFAIL": _campo_ied(linha, headers, "NFAIL"), "SFAIL": _campo_ied(linha, headers, "SFAIL"),
+        "FAILP": _campo_ied(linha, headers, "FAILP"), "FAILR": _campo_ied(linha, headers, "FAILR"),
+    })
+
+    # UTR = a remota física -- só duplica se houver redundância de equipamento de
+    # verdade. ENU = enlace de rede -- sempre em par PRI/REV, mesmo com 1 UTR só
+    # (confirmado no exemplo real de distribuição: 1 UTR, 2 ENU).
+    redundante = _valor(linha, headers, "Redundante").strip().lower() in _VALORES_ATIVO
+    for ordem in (("PRI", "REV") if redundante else ("PRI",)):
+        saida["utr"].append({
+            "ID": "%s_%s" % (id_ied, ordem), "CNF": id_ied, "CXU": id_ied,
+            "ENUTR": "9", "ORDEM": ordem,
+            "NTENT": _campo_ied(linha, headers, "NTENT"), "RESPT": _campo_ied(linha, headers, "RESPT"),
+        })
+    for ordem in ("PRI", "REV"):
+        saida["enu"].append({
+            "ID": "%s_%s" % (id_ied, ordem), "CXU": id_ied, "ORDEM": ordem,
+            "TDESC": _campo_ied(linha, headers, "TDESC"), "TRANS": _campo_ied(linha, headers, "TRANS"),
+            "VLUTR": _campo_ied(linha, headers, "VLUTR"),
+        })
+
+    if aquisicao:
+        saida["tac"].append({"ID": id_ied, "NOME": _valor(linha, headers, "Nome"),
+                              "LSC": id_ied, "TPAQS": "ASAC"})
+    else:
+        saida["tdd"].append({"ID": "%s_DIG" % id_ied, "LSC": id_ied,
+                              "NOME": "Distribuição Digital %s" % id_ied})
+        saida["tdd"].append({"ID": "%s_ANA" % id_ied, "LSC": id_ied,
+                              "NOME": "Distribuição Analógica %s" % id_ied})
+
+    # NV1/NV2 "grupo" padrão: 1 de leitura (digital+analógico) + 1 de comando.
+    for papel, ordem_nv1, grupos_tn2 in (
+        ("leitura", "1", [("ASIM", "PDF", "Digital Single-Point"),
+                          ("ADUP", "PDF", "Digital Double-Point"),
+                          ("APFL", "PAF", "Analógica Point Float")]),
+        ("comando", "3", [("CDUP", "CGF", "Comando Duplo")]),
+    ):
+        tn1 = _prefixo_tn1(protocolo, direcao, papel)
+        nv1_id = "%s_%s_%s" % (id_ied, tn1, ordem_nv1)
+        saida["nv1"].append({
+            "ID": nv1_id, "CNF": id_ied, "ORDEM": ordem_nv1, "TN1": tn1,
+            "CONFIG": "Nível 1 %s %s %s" % ("Físico" if aquisicao else "Distribuição", tn1, id_ied),
+        })
+        for ordem_nv2, (tn2, tppnt, desc) in enumerate(grupos_tn2, start=1):
+            saida["nv2"].append({
+                "ID": "%s_%s" % (nv1_id, tn2), "NV1": nv1_id, "ORDEM": str(ordem_nv2),
+                "TN2": tn2, "TPPNT": tppnt,
+                "CONFIG": "%s %s %s" % ("Aquisição" if aquisicao else "Distribuição", desc, id_ied),
+            })
+    return saida
+
+
+def gerar_ied(*args):
+    """Macro: lê a aba 'IEDs' (criada vazia na 1ª execução) e cria a
+    infraestrutura de canal (LSC/CNF/CXU/UTR/ENU/TAC-ou-TDD/NV1/NV2) de cada
+    linha ativa. Os NV2 criados aqui são os que você referencia depois em
+    PontoDigital/PontoAnalogico/ComandoAvulso para gerar os pontos individuais."""
+    doc = XSCRIPTCONTEXT.getDocument()  # type: ignore
+    _garantir_aba_config(doc, NOME_ABA_IEDS, CABECALHOS_IEDS)
+    headers, linhas = _ler_entidade(_get_sheet(doc, NOME_ABA_IEDS))
+    if not headers:
+        return
+    col_gera = _idx_coluna(headers, CABEÇALHO_COLUNA_CONTROLE)
+    saidas = [_gerar_infra_ied(row, headers) for row in linhas if _is_ponto_ativo(row, col_gera)]
+    saida = _mesclar_saidas(*saidas) if saidas else {}
+    for entidade, linhas_saida in saida.items():
+        _upsert_linhas_entidade(doc, entidade.upper(), linhas_saida)
+
+
+# ===============================================================
 # ================= EXPOSIÇÃO PARA LIBREOFFICE ==================
 # ===============================================================
 g_exportedScripts = (importar_dats, exportar_dats, importar_parcial, exportar_parcial,
                      atualizar_amostras_cores, verificar_base, unificar_pontos, extrair_pontos,
-                     trocar_id_global, estatistica_base, gerir_includes)
+                     trocar_id_global, estatistica_base, gerir_includes, gerar_ied)

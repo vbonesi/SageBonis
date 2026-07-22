@@ -39,6 +39,7 @@ ITENS_COMPLETA = [
     ("trocar_id_global", "Trocar ID"),
     ("estatistica_base", "Estatística"),
     ("gerir_includes", "Gerir Includes"),
+    ("gerar_ied", "Gerar IED"),
 ]
 
 

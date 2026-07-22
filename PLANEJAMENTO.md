@@ -101,9 +101,26 @@ para o **Assistente de Protocolo/IED** (item 3), que já nasce dependente disso.
 grupos compactos". A GE é o **blueprint pronto** dele. Esforço médio‑alto.
 
 ### 3. Assistente de protocolo / IED  ·  origem: GE  ·  prioridade 🥉
-A partir de **IED + protocolo (DNP3/101/104/61850) + tipo**, gera o esqueleto padrão
-de aquisição/distribuição (ex.: para DNP3, as linhas ASIM/APFL/ADUP/CSIM/CDUP).
-Escopo bem definido; depende de modelar NV1/NV2.
+A partir de **IED + protocolo + direção (aquisição/distribuição)**, gera o esqueleto
+padrão de infraestrutura de canal (LSC/CNF/CXU/UTR/ENU/TAC-ou-TDD/NV1/NV2), que
+depois alimenta a Unificação de Pontos (item 2) via os NV2 criados.
+
+**Escopo final acordado** (ordem de implementação): **104 → 101 → 103 → DNP3 →
+MODBUS → 61850 → SNMP → ICCP/SICCP**, com aquisição **e** distribuição para
+104/101/DNP3 **e ICCP/SICCP** (os demais só aquisição, seguindo o que a própria
+macro GE de referência já limitava). Fora do escopo por ora: OPC UA e C37.118 —
+sem base real disponível pra validar; retomar se aparecer uma.
+
+**Entregue**: **104** (aquisição e distribuição), confirmado contra base real
+(`conv_iccp104`, GRD — CNF.CONFIG, TCV/TTP, grupos NV1/NV2 por TN1
+A104/C104/D104/O104). `gerar_ied` cria a infraestrutura; validado via UNO real,
+incluindo integração ponta-a-ponta com `unificar_pontos` (NV2 criado aqui →
+consumido por um ponto novo em `PontoDigital`). Detalhes em
+[completa/README.md](completa/README.md).
+
+**Ainda pendente**: 101, 103, DNP3, MODBUS, 61850, SNMP, ICCP/SICCP — cada um
+precisa de pesquisa própria (endereçamento, `CNF.CONFIG`, grupos NV1/NV2
+específicos) antes de implementar, seguindo o mesmo padrão do 104.
 
 ### Ganhos rápidos (baixo esforço, alto retorno) — ✅ entregues
 - **Troca de ID global** (`trocar_id_global`) — renomeia um ponto e propaga a todas as

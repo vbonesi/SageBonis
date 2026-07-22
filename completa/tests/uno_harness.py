@@ -31,10 +31,18 @@ _SYNC_MACRO = os.path.join(os.path.dirname(_RAIZ_COMPLETA), "sync_macro.py")
 
 
 class TesteUno:
-    def __init__(self, porta=2100, timeout_conexao=40, timeout_boot=20):
+    def __init__(self, porta=2100, timeout_conexao=40, timeout_boot=20,
+                 ods_origem=None, py_origem=None):
+        """ods_origem/py_origem: por padrão usa completa/SageBonis.ods +
+        completa/ImportadorSAGE.py (injetando o .py na cópia, garantindo que o
+        teste sempre rode contra o código MAIS RECENTE). Passe outros caminhos
+        pra testar outras combinações -- ex.: paridade de import/export contra
+        o SageBonis.ods da raiz (Trilha Simples)."""
         self.porta = porta
         self.timeout_conexao = timeout_conexao
         self.timeout_boot = timeout_boot
+        self.ods_origem = ods_origem or ODS_REAL
+        self.py_origem = py_origem or PY_ATUAL
         self.profile_dir = None
         self.copia_ods = None
         self.processo = None
@@ -46,10 +54,10 @@ class TesteUno:
         self.profile_dir = tempfile.mkdtemp(prefix="sagebonis_lo_profile_")
         fd, self.copia_ods = tempfile.mkstemp(suffix=".ods", prefix="sagebonis_teste_")
         os.close(fd)
-        shutil.copy2(ODS_REAL, self.copia_ods)
+        shutil.copy2(self.ods_origem, self.copia_ods)
         subprocess.run(
             [sys.executable, _SYNC_MACRO, "inject", "--ods", self.copia_ods,
-             "--py", PY_ATUAL, "--no-backup"],
+             "--py", self.py_origem, "--no-backup"],
             check=True, capture_output=True,
         )
         self.processo = subprocess.Popen(
@@ -159,6 +167,14 @@ class TesteUno:
         col = {h: i for i, h in enumerate(headers)}
         for campo, valor in valores.items():
             sheet.getCellByPosition(col[campo], linha_num).setString(valor)
+
+    def definir_celula(self, nome_aba, col, linha, valor):
+        """Escreve numa célula por coordenada direta (0-indexed) -- útil pra
+        abas não-tabulares como 'Geral' (caminhos de importação/exportação)."""
+        self.get_sheet(nome_aba).getCellByPosition(col, linha).setString(valor)
+
+    def ler_celula(self, nome_aba, col, linha):
+        return self.get_sheet(nome_aba).getCellByPosition(col, linha).getString()
 
     def proxima_linha_livre(self, nome_aba):
         sheet = self.get_sheet(nome_aba)

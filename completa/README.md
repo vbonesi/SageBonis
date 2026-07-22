@@ -364,9 +364,18 @@ python completa/tests/run_all.py --sem-uno   # só os smoke tests (sem soffice)
   protocolos via macro de verdade e confirma que o upsert não mexeu nos dados reais
   pré-existentes (ex.: `mul`/`enm` de 61850). **Nunca escreve no `.ods` rastreado.** Requer
   `soffice` no `PATH`. O ciclo de vida (subir/derrubar processo, profile, cópia temporária) é
-  todo administrado por `uno_harness.py` (`class TesteUno`, use como *context manager*).
+  todo administrado por `uno_harness.py` (`class TesteUno`, use como *context manager*, aceita
+  `ods_origem`/`py_origem` pra apontar pra outra planilha/macro).
+- **Teste de paridade import/export** (`teste_paridade_import_export.py`) — critério de
+  maturidade da convergência (`PLANEJAMENTO.md`): gera uma base `.dat` sintética pequena
+  (autocontida, sem depender de nenhum caminho externo), importa numa cópia do `SageBonis.ods`
+  em branco da raiz rodando o `ImportadorSAGE.py` da Simples, e noutra cópia do MESMO arquivo em
+  branco rodando o `ImportadorSAGE.py` da Completa — depois exporta as duas de volta e faz diff
+  byte-a-byte. Falha se qualquer `.dat` divergir entre as trilhas.
 - Ao adicionar um protocolo/recurso novo, estenda o smoke test correspondente e, se a mudança
-  envolver criação de aba/entidade nova, adicione um caso em `teste_uno_protocolos.py`.
+  envolver criação de aba/entidade nova, adicione um caso em `teste_uno_protocolos.py`. Se
+  mexer no núcleo de import/export compartilhado com a Simples, rode
+  `teste_paridade_import_export.py` antes de commitar.
 
 ## Status
 🚧 Em desenvolvimento, mas os 3 itens do roadmap original (verificador, unificação

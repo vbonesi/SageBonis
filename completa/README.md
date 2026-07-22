@@ -88,13 +88,24 @@ Abas de config (criadas automaticamente, vazias, na 1ª execução):
     PDF/PAF por origem + `RFC` em cadeia (fan-in "ou válido") + PDS/PAS com
     `TPFIL=FIL5`. Não assume nenhuma topologia fixa de IED (P/D/virtual, bit OPMSK
     12...) — só o número de origens que você declarar.
-  - **Comando** (só `PontoDigital`): coluna `Comando=S` gera CGF/CGS com o **mesmo ID**
-    do PDS (regra fixa do SAGE: comando e status compartilham o ID). Se 2+ origens
-    tiverem `Comando=S`, gera um CGF por origem, todos referenciando o mesmo CGS.
+  - **Comando**: coluna `Comando=S` gera CGF/CGS com o **mesmo ID** do PDS/PAS (regra
+    fixa do SAGE: comando e status compartilham o ID). Se 2+ origens tiverem
+    `Comando=S`, gera um CGF por origem, todos referenciando o mesmo CGS.
+    Em `PontoAnalogico` o comando é um **setpoint**: colunas extras
+    `ID_Fisico_Comando`/`KCONV_Comando` (endereço físico do comando, mesma convenção
+    do `PontoDigital`) e `LMI1C/LMI2C/LMS1C/LMS2C` (limites inferior/superior do
+    comando, direto pro `CGS`). Achado real (`CGS.TIPO=PAS`) confirmado em 6 bases
+    independentes, com 2 variantes: comando de TAP (2 estados, tipo Aumentar/
+    Diminuir — limites ficam vazios) e setpoint numérico de verdade (limites
+    preenchidos, ex. `tucurui`/`jdm`). Modelado como um único design genérico pras
+    duas variantes — a distinção semântica exata entre `LMI1C` e `LMI2C` não foi
+    confirmada o bastante pra virar 2 campos diferentes (ver `PLANEJAMENTO.md`).
 - **`ComandoAvulso`** — comandos **sem** ponto de status próprio (ex.: um `COM_SAGE`
   genérico ligado a um TAC local, como algumas bases já usam). Cada linha tem seu
   próprio `ID` de CGS/CGF; várias linhas podem repetir o mesmo `TAC`/`PAC` (o ponto
-  genérico) — é justamente o caso de vários comandos ligados ao mesmo ponto.
+  genérico) — é justamente o caso de vários comandos ligados ao mesmo ponto. Também
+  aceita `LMI1C/LMI2C/LMS1C/LMS2C` (caso avulso analógico, ex. um setpoint dummy sem
+  status próprio — achado real `ur_mir`); ficam vazios/sem uso no caso avulso digital.
 - **`CanaisDistribuicao`** — um canal de saída por linha (`Nome, TDD, Metodo
   [Prefixo/Sufixo/Substituir/Explicito], Valor1, Valor2, Ativo`). Substitui os "4
   slots fixos" que macros de referência (GE) hard-codificam por quantos canais
@@ -120,8 +131,11 @@ existentes e povoa (upsert, mesma regra de não duplicar) as 5 abas de config:
   o ponto em si continua intocado na aba original. Uma versão anterior tentava
   preservá-los com um `ID_Fisico` fictício, mas isso gerava um PDF/PAF fantasma toda
   vez que `unificar_pontos` rodava de novo;
-- CGS com o mesmo ID de um PDS/PAS → marca `Comando=S` na origem correspondente;
-- CGS **sem** PDS/PAS correspondente → vai pra `ComandoAvulso`;
+- CGS com o mesmo ID de um PDS/PAS → marca `Comando=S` na origem correspondente
+  (em `PontoAnalogico`, também traz `ID_Fisico_Comando`/`KCONV_Comando` do CGF
+  ligado e os 4 limites `LMI1C/LMI2C/LMS1C/LMS2C` direto do CGS);
+- CGS **sem** PDS/PAS correspondente → vai pra `ComandoAvulso` (com os 4 limites
+  também, quando presentes no CGS);
 - PDD/PAD → um canal por `TDD` distinto em `CanaisDistribuicao` (com **Método
   inferido automaticamente** quando é Prefixo/Sufixo simples — compara o ID original
   com o transformado; quando não dá pra inferir com confiança, assume `Explicito`

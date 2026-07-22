@@ -97,30 +97,20 @@ Prefixo/Sufixo), fechando o ciclo pra bases reais existentes, não só pontos no
 protocolo (101/104/DNP3/61850) — hoje o usuário informa esses campos prontos; migrar
 para o **Assistente de Protocolo/IED** (item 3), que já nasce dependente disso.
 
-**Também pendente — comando para pontos analógicos (setpoints)**: `PontoAnalogico`
-hoje não tem nenhuma coluna de comando (diferente do `PontoDigital`, que já tem
-`Comando`/`ID_Fisico_Comando`/`KCONV_Comando`) — a docstring da função de fan-out
-até admite "mesma lógica do digital, sem comando". Achado real ao investigar
-(`CGS.TIPO=PAS`, comando ligado a um status analógico), em **6 bases reais
-independentes** do acervo: dois padrões distintos —
-1. **Comando de TAP** (subir/descer tape de transformador) — `conv_iccp104/GRD`,
-   `padrao_copel` (`NOME=COMANDAR TAP`), `siemens_ds_din`, `jdm` — parece 2 estados
-   (tipo `AUMD`=Aumentar/Diminuir do `TCTL`), não um setpoint numérico de verdade.
-2. **Setpoint numérico com limites** — `tucurui` (usina hidrelétrica, 1 pasta por
-   unidade geradora) tem `CGS.LMI1C/LMI2C/LMS1C/LMS2C` (limites inferior/superior do
-   comando), provavelmente ligado a CAG/despacho de geração; `jdm` tem
-   `PAC=JDM:REGU-STPS` ("regulador-setpoints").
-
-Também existe o caso **avulso** (comando analógico sem status próprio, mesmo espírito
-do `COM_SAGE` digital) — achado real: `PAC=MC_DUMMY_SAGE_ANA` em `ur_mir`.
-`ComandoAvulso` (`CGS`/`CGF`) hoje também não tem os campos de limite
-(`LMI1C`/`LMI2C`/`LMS1C`/`LMS2C`), então não cobre esse caso de graça.
-
-**Antes de implementar**: pesquisar mais a fundo (`tucurui`/`jdm` têm os exemplos mais
-ricos) pra confirmar a semântica exata de `LMI1C` vs `LMI2C` (normal vs emergência? ou
-outra coisa?) e se o padrão de TAP (2 estados) e o de setpoint numérico devem ser
-modelados como a mesma coisa ou features distintas — sem isso, corre o risco de
-generalizar errado (como quase aconteceu com o DNP3-distribuição).
+**Entregue — comando para pontos analógicos (setpoints)**: `PontoAnalogico` ganhou
+`Comando`/`ID_Fisico_Comando`/`KCONV_Comando` (mesma convenção do `PontoDigital`) mais
+`LMI1C/LMI2C/LMS1C/LMS2C` (limites inferior/superior do comando, direto no `CGS`).
+`ComandoAvulso` também ganhou os 4 campos de limite, cobrindo o caso avulso analógico
+(achado real `PAC=MC_DUMMY_SAGE_ANA` em `ur_mir`). Achado real que motivou
+(`CGS.TIPO=PAS`) confirmado em **6 bases reais independentes**, com dois padrões
+distintos — comando de TAP (2 estados, tipo `AUMD`=Aumentar/Diminuir do `TCTL`, em
+`conv_iccp104/GRD`, `padrao_copel`, `siemens_ds_din`, `jdm`) e setpoint numérico com
+limites (`tucurui`, provavelmente CAG/despacho de geração; `jdm`
+`PAC=JDM:REGU-STPS`). **Nuance não resolvida**: modelado como um único design
+genérico (mesmas 4 colunas de limite pras duas variantes) — a semântica exata de
+`LMI1C` vs `LMI2C` (normal vs emergência? ou outra coisa?) não foi confirmada a
+fundo antes de implementar; se aparecer um caso real que não encaixe no genérico,
+pode precisar de um passe de revisão.
 
 **Por que importa:** é exatamente o item de roadmap "unificar abas de entidades em
 grupos compactos". A GE é o **blueprint pronto** dele. Esforço médio‑alto.

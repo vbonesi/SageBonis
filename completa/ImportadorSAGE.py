@@ -1631,10 +1631,20 @@ ORIGEM_GERADO = "UnificacaoPontos"
 
 CABECALHOS_PONTO_DIGITAL = ["ID_Logico", "ID_Fisico", "NOME", "NV2", "KCONV", "TAC", "OCR",
                             "Comando", "ID_Fisico_Comando", "KCONV_Comando", "Gera"]
+# Comando/ID_Fisico_Comando/KCONV_Comando: mesma convenção do PontoDigital.
+# LMI1C/LMI2C/LMS1C/LMS2C (limites inferior/superior do comando, CGS): achado
+# real em 6 bases independentes (CGS.TIPO=PAS) -- confirmado com valores
+# numéricos de verdade em `tucurui` (usina hidrelétrica, provavelmente CAG/
+# despacho de geração) e um exemplo nomeado "REGU-STPS" em `jdm`. Cobre tanto
+# o setpoint numérico quanto o comando de TAP (2 estados, tipo Aumentar/
+# Diminuir) -- os limites ficam vazios/sem uso nesse 2º caso, a distinção
+# exata entre os dois padrões não foi confirmada o bastante pra modelar como
+# campos diferentes (ver PLANEJAMENTO.md).
 CABECALHOS_PONTO_ANALOGICO = ["ID_Logico", "ID_Fisico", "NOME", "NV2", "KCONV1", "KCONV2",
-                              "KCONV3", "TAC", "OCR", "Gera"]
+                              "KCONV3", "TAC", "OCR", "Comando", "ID_Fisico_Comando",
+                              "KCONV_Comando", "LMI1C", "LMI2C", "LMS1C", "LMS2C", "Gera"]
 CABECALHOS_COMANDO_AVULSO = ["ID", "ID_Fisico", "NOME", "NV2", "KCONV", "TAC", "PAC", "PINT",
-                             "TIPOE", "TPCTL", "Gera"]
+                             "TIPOE", "TPCTL", "LMI1C", "LMI2C", "LMS1C", "LMS2C", "Gera"]
 CABECALHOS_CANAIS_DISTRIBUICAO = ["Nome", "TDD", "Metodo", "Valor1", "Valor2", "Ativo"]
 # IDExplicito só é usado quando o canal tem Metodo=Explicito (achado real: nem toda
 # distribuição deriva o ID por prefixo/sufixo -- algumas bases usam um esquema de ID
@@ -1839,8 +1849,9 @@ def _gerar_fan_out_digital(linhas, headers, canais, distribuicoes):
 
 
 def _gerar_fan_out_analogico(linhas, headers, canais, distribuicoes):
-    """Mesma lógica de _gerar_fan_out_digital, para PAF/PAS/PAD (sem comando)."""
-    saida = {"paf": [], "pas": [], "pad": [], "rfc": []}
+    """Mesma lógica de _gerar_fan_out_digital, para PAF/PAS/PAD -- agora TAMBÉM
+    com comando (setpoint), ver comentário em CABECALHOS_PONTO_ANALOGICO."""
+    saida = {"paf": [], "pas": [], "pad": [], "rfc": [], "cgf": [], "cgs": []}
     for id_logico, origens in _agrupar_por_id_logico(linhas, headers).items():
         # Ver nota equivalente em _gerar_fan_out_digital sobre origens sem ID_Fisico.
         origens_com_fisico = [o for o in origens if _valor(o, headers, "ID_Fisico")]
@@ -1867,6 +1878,20 @@ def _gerar_fan_out_analogico(linhas, headers, canais, distribuicoes):
             "TAC": _valor(primeira, headers, "TAC"), "OCR": _valor(primeira, headers, "OCR"),
             "TPFIL": tpfil,
         })
+        comandos = [o for o in origens if _valor(o, headers, "Comando").lower() in _VALORES_ATIVO]
+        if comandos:
+            saida["cgs"].append({
+                "ID": id_logico, "NOME": _valor(primeira, headers, "NOME"),
+                "TAC": _valor(primeira, headers, "TAC"), "PAC": id_logico,
+                "LMI1C": _valor(primeira, headers, "LMI1C"), "LMI2C": _valor(primeira, headers, "LMI2C"),
+                "LMS1C": _valor(primeira, headers, "LMS1C"), "LMS2C": _valor(primeira, headers, "LMS2C"),
+            })
+            for origem_cmd in comandos:
+                saida["cgf"].append({
+                    "ID": _valor(origem_cmd, headers, "ID_Fisico_Comando"),
+                    "NV2": _valor(origem_cmd, headers, "NV2"), "CGS": id_logico,
+                    "KCONV": _valor(origem_cmd, headers, "KCONV_Comando"),
+                })
         saida["pad"].extend(_gerar_distribuicao(id_logico, "PAS", canais, distribuicoes))
     return saida
 
@@ -1888,6 +1913,11 @@ def _gerar_comandos_avulsos(linhas, headers):
             "TAC": _valor(row, headers, "TAC"), "PAC": _valor(row, headers, "PAC"),
             "PINT": _valor(row, headers, "PINT"), "TIPOE": _valor(row, headers, "TIPOE"),
             "TPCTL": _valor(row, headers, "TPCTL"),
+            # LMI1C/LMI2C/LMS1C/LMS2C -- pro caso avulso ANALÓGICO (setpoint sem
+            # status próprio, achado real: PAC=MC_DUMMY_SAGE_ANA em ur_mir); ficam
+            # vazios/sem uso pra comando avulso digital, que não precisa deles.
+            "LMI1C": _valor(row, headers, "LMI1C"), "LMI2C": _valor(row, headers, "LMI2C"),
+            "LMS1C": _valor(row, headers, "LMS1C"), "LMS2C": _valor(row, headers, "LMS2C"),
         })
         saida["cgf"].append({
             "ID": _valor(row, headers, "ID_Fisico"), "NV2": _valor(row, headers, "NV2"),
@@ -2107,15 +2137,22 @@ def _extrair_ponto_digital(entidades):
 
 
 def _extrair_ponto_analogico(entidades):
-    """Mesma lógica de _extrair_ponto_digital, para PAS/PAF (sem comando)."""
+    """Mesma lógica de _extrair_ponto_digital, para PAS/PAF -- agora TAMBÉM com
+    comando (setpoint), ver comentário em CABECALHOS_PONTO_ANALOGICO."""
     headers_pas, linhas_pas = entidades.get("pas", (None, None))
     if not headers_pas:
         return []
     pas_dicts = _linhas_ativas_como_dicts(headers_pas, linhas_pas)
     paf_dicts = _linhas_ativas_como_dicts(*entidades.get("paf", (None, None)))
+    cgs_dicts = _linhas_ativas_como_dicts(*entidades.get("cgs", (None, None)))
+    cgf_dicts = _linhas_ativas_como_dicts(*entidades.get("cgf", (None, None)))
     paf_por_pnt = {}
     for paf in paf_dicts:
         paf_por_pnt.setdefault(paf.get("PNT", ""), []).append(paf)
+    cgs_por_id = {cgs["ID"]: cgs for cgs in cgs_dicts if cgs.get("ID")}
+    cgf_por_cgs = {}
+    for cgf in cgf_dicts:
+        cgf_por_cgs.setdefault(cgf.get("CGS", ""), []).append(cgf)
 
     saida = []
     for pas in pas_dicts:
@@ -2125,8 +2162,10 @@ def _extrair_ponto_analogico(entidades):
         origens = paf_por_pnt.get(id_logico)
         if not origens:
             continue  # sem PAF correspondente -- ver nota equivalente em _extrair_ponto_digital
-        for paf in origens:
-            saida.append({
+        cgs = cgs_por_id.get(id_logico)
+        cgfs = cgf_por_cgs.get(id_logico, []) if cgs else []
+        for i, paf in enumerate(origens):
+            linha = {
                 "ID_Logico": id_logico,
                 "ID_Fisico": paf.get("ID", ""),
                 "NOME": paf.get("DESC1") or pas.get("NOME", ""),
@@ -2134,7 +2173,18 @@ def _extrair_ponto_analogico(entidades):
                 "KCONV1": paf.get("KCONV1", ""), "KCONV2": paf.get("KCONV2", ""),
                 "KCONV3": paf.get("KCONV3", ""),
                 "TAC": pas.get("TAC", ""), "OCR": pas.get("OCR", ""),
-            })
+                "Comando": "S" if cgs else "N",
+            }
+            if cgs:
+                # Mesma regra do digital: casa a i-ésima origem com o i-ésimo CGF,
+                # reaproveitando o primeiro se sobrar menos CGF que origens.
+                cgf = cgfs[i] if i < len(cgfs) else (cgfs[0] if cgfs else None)
+                if cgf:
+                    linha["ID_Fisico_Comando"] = cgf.get("ID", "")
+                    linha["KCONV_Comando"] = cgf.get("KCONV", "")
+                linha["LMI1C"] = cgs.get("LMI1C", ""); linha["LMI2C"] = cgs.get("LMI2C", "")
+                linha["LMS1C"] = cgs.get("LMS1C", ""); linha["LMS2C"] = cgs.get("LMS2C", "")
+            saida.append(linha)
     return saida
 
 
@@ -2160,6 +2210,8 @@ def _extrair_comandos_avulsos(entidades, ids_logicos_com_ponto):
             "KCONV": cgf.get("KCONV", ""), "TAC": cgs.get("TAC", ""),
             "PAC": cgs.get("PAC", ""), "PINT": cgs.get("PINT", ""),
             "TIPOE": cgs.get("TIPOE", ""), "TPCTL": cgs.get("TPCTL", ""),
+            "LMI1C": cgs.get("LMI1C", ""), "LMI2C": cgs.get("LMI2C", ""),
+            "LMS1C": cgs.get("LMS1C", ""), "LMS2C": cgs.get("LMS2C", ""),
         })
     return saida
 

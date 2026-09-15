@@ -28,6 +28,19 @@ import zipfile
 CAMINHO_INTERNO = "Scripts/python/ImportadorSAGE.py"
 
 
+def _verificar_lock(ods_path):
+    """Recusa operar se o LibreOffice tem o .ods aberto (arquivo de lock
+    '.~lock.<nome>#' ao lado dele) -- sem isso, o LibreOffice sobrescreve nossa
+    injeção silenciosamente ao salvar (achado de auditoria)."""
+    pasta, nome = os.path.split(ods_path)
+    lock_path = os.path.join(pasta, f".~lock.{nome}#")
+    if os.path.exists(lock_path):
+        sys.exit(
+            f"ERRO: {ods_path} parece estar aberto no LibreOffice ({lock_path} existe). "
+            "Feche o documento antes de continuar -- salvar por cima perderia esta alteração."
+        )
+
+
 def _ler_embutido(ods_path):
     with zipfile.ZipFile(ods_path, "r") as z:
         nomes = z.namelist()
@@ -71,6 +84,7 @@ def cmd_extract(ods_path, py_path):
 
 
 def cmd_inject(ods_path, py_path, fazer_backup=True):
+    _verificar_lock(ods_path)
     novo = _ler_disco(py_path).encode("utf-8")
 
     if fazer_backup:
@@ -94,7 +108,7 @@ def cmd_inject(ods_path, py_path, fazer_backup=True):
                     substituido = True
                 # mimetype precisa ficar STORED (sem compressao); o resto mantem o original.
                 compress = zipfile.ZIP_STORED if info.filename == "mimetype" else (
-                    info.compress_type or zipfile.ZIP_DEFLATED
+                    info.compress_type if info.compress_type is not None else zipfile.ZIP_DEFLATED
                 )
                 novo_info = zipfile.ZipInfo(info.filename, date_time=info.date_time)
                 novo_info.compress_type = compress

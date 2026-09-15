@@ -30,6 +30,20 @@ import zipfile
 CAMINHO_MENUBAR = "Configurations2/menubar/menubar.xml"
 CAMINHO_TOOLBAR = "Configurations2/toolbar/sagebonis.xml"
 
+
+def _verificar_lock(ods_path):
+    """Recusa operar se o LibreOffice tem o .ods aberto (arquivo de lock
+    '.~lock.<nome>#' ao lado dele) -- sem isso, o LibreOffice sobrescreve nossa
+    alteração silenciosamente ao salvar (achado de auditoria, mesmo problema do
+    sync_macro.py)."""
+    pasta, nome = os.path.split(ods_path)
+    lock_path = os.path.join(pasta, f".~lock.{nome}#")
+    if os.path.exists(lock_path):
+        sys.exit(
+            f"ERRO: {ods_path} parece estar aberto no LibreOffice ({lock_path} existe). "
+            "Feche o documento antes de continuar -- salvar por cima perderia esta alteração."
+        )
+
 # (funcao, rotulo) -- ordem de exibicao do grupo "Completa". O grupo "Simples" ja
 # existe nos dois arquivos originais e nao e tocado.
 ITENS_COMPLETA = [
@@ -112,6 +126,7 @@ def cmd_status(ods_path):
 
 
 def cmd_sync(ods_path, fazer_backup=True):
+    _verificar_lock(ods_path)
     menubar = _ler(ods_path, CAMINHO_MENUBAR)
     toolbar = _ler(ods_path, CAMINHO_TOOLBAR)
     novo_menubar, faltantes_menu = _atualizar_menubar(menubar)
@@ -142,7 +157,7 @@ def cmd_sync(ods_path, fazer_backup=True):
                 if dados is None:
                     dados = zin.read(info.filename)
                 compress = zipfile.ZIP_STORED if info.filename == "mimetype" else (
-                    info.compress_type or zipfile.ZIP_DEFLATED
+                    info.compress_type if info.compress_type is not None else zipfile.ZIP_DEFLATED
                 )
                 novo_info = zipfile.ZipInfo(info.filename, date_time=info.date_time)
                 novo_info.compress_type = compress

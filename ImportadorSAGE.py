@@ -81,7 +81,9 @@ LIMITE_CARACTERES_VALIDACAO = 250 # Manteremos para a próxima etapa
 
 # --- Codificação dos Arquivos DAT do SAGE ---
 ENCODING_EXPORTACAO_SAGE = 'latin-1'  # ISO-8859-1 (padrão esperado pelo SAGE)
-ENCODINGS_IMPORTACAO_SAGE = ('latin-1', 'utf-8')  # Aceita os dois formatos na importação
+ENCODINGS_IMPORTACAO_SAGE = ('utf-8', 'latin-1')  # utf-8 primeiro: latin-1 decodifica
+# qualquer sequência de bytes sem erro, então na ordem antiga um .dat em utf-8 nunca
+# caía no fallback e importava como mojibake (achado de auditoria).
 
 # Mapeamento de caracteres Unicode comuns que não existem no ISO-8859-1
 _UNICODE_PARA_LATIN1 = str.maketrans({
@@ -104,7 +106,7 @@ def _sanitizar_para_latin1(texto):
 # --- Expressões Regulares ---
 REGEX_INCLUDE = re.compile(r'^\s*#\s*include\s+(.*)', re.IGNORECASE)
 REGEX_INCLUDE_COMENTADO = re.compile(r'^\s*;\s*#\s*include\s+(.*)', re.IGNORECASE)
-REGEX_INICIO_BLOCO_COMENTADO = re.compile(r'^\s*;\s*([A-Z_]+)\s*$', re.IGNORECASE)
+REGEX_INICIO_BLOCO_COMENTADO = re.compile(r'^\s*;\s*([A-Z0-9_]+)\s*$', re.IGNORECASE)
 
 # --- Debug/Diagnóstico de Importação ---
 DEBUG_IMPORTACAO = False

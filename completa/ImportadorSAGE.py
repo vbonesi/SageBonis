@@ -770,6 +770,29 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
 # ================= FUNÇÕES DE EXPORTAÇÃO =======================
 # ===============================================================
 
+def _abas_nao_exportaveis():
+    """Conjunto (lower) de abas que a própria Trilha Completa cria e que nunca têm o
+    formato Origem/Gera/Dados exportável para .dat: as de config (FOLHAS_IGNORADAS),
+    as de relatório (Análise/VerificacaoRefs/Estatística/IEDs/RelatorioTrocaId/
+    RelatorioIncludes) e as de config de geração de pontos (PontoDigital/
+    PontoAnalogico/ComandoAvulso/CanaisDistribuicao/DistribuicaoPontos). Sem isso,
+    exportar_dats/exportar_parcial tentam exportar essas abas, não encontram as 3
+    colunas padrão e a exportação total inteira termina em erro por causa delas
+    (achado de auditoria; a lista de abas de relatório foi conferida rodando a
+    exportação de verdade contra completa/SageBonis.ods, que pegou duas abas além
+    das citadas no relatório original)."""
+    nomes = set(ign.lower() for ign in FOLHAS_IGNORADAS)
+    nomes.update({
+        NOME_ABA_ANALISE.lower(), NOME_ABA_VERIFICACAO_REFS.lower(),
+        NOME_ABA_ESTATISTICA.lower(), NOME_ABA_IEDS.lower(),
+        NOME_ABA_RELATORIO_TROCA_ID.lower(), NOME_ABA_RELATORIO_INCLUDES.lower(),
+        NOME_ABA_PONTO_DIGITAL.lower(), NOME_ABA_PONTO_ANALOGICO.lower(),
+        NOME_ABA_COMANDO_AVULSO.lower(), NOME_ABA_CANAIS_DISTRIBUICAO.lower(),
+        NOME_ABA_DISTRIBUICAO_PONTOS.lower(),
+    })
+    return nomes
+
+
 def exportar_dats(*args):
     doc = XSCRIPTCONTEXT.getDocument() # type: ignore
     # Mesma proteção das rotinas de importação: evita erro secundário no except
@@ -790,7 +813,7 @@ def exportar_dats(*args):
         return
 
     geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString("Processando exportação total...")
-    abas_a_exportar = [s for s in doc.getSheets() if s.getName().lower() not in [ign.lower() for ign in FOLHAS_IGNORADAS]]
+    abas_a_exportar = [s for s in doc.getSheets() if s.getName().lower() not in _abas_nao_exportaveis()]
     erros = [_exportar_folha(sheet, export_folder) for sheet in abas_a_exportar]
     erros = [e for e in erros if e]
     
@@ -838,7 +861,7 @@ def exportar_parcial(*args):
                 pass
     else:
         # Garante que a aba ativa não seja uma aba ignorada
-        if active_sheet_name.lower() not in [ign.lower() for ign in FOLHAS_IGNORADAS]:
+        if active_sheet_name.lower() not in _abas_nao_exportaveis():
             abas_a_exportar.append(active_sheet)
 
     geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString(f"Processando exportação de: {', '.join(s.getName() for s in abas_a_exportar)}...")
@@ -877,6 +900,11 @@ def _exportar_folha(sheet, export_folder):
     for row_data in data_array[1:]:
         if len(row_data) <= max(origem_col_idx, gera_col_idx, dados_col_idx): continue
         origem_path = str(row_data[origem_col_idx])
+        if origem_path == ORIGEM_GERADO:
+            # Linha criada por unificar_pontos: "Origem" é o marcador ORIGEM_GERADO,
+            # não um caminho real -- mapeia pro .dat da própria entidade (achado de
+            # auditoria: exportava sem tratamento p/ um arquivo chamado "UnificacaoPontos").
+            origem_path = f"{sheet_name.lower()}.dat"
         control_code = str(row_data[gera_col_idx]).lower()
         if not origem_path or not control_code or control_code == CODIGO_IGNORAR_LINHA: continue
         dados_agrupados_por_arquivo.setdefault(origem_path, [])

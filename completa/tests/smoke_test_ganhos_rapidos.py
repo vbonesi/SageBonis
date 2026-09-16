@@ -92,20 +92,50 @@ entidades_inc = mod._preparar_entidades_mutaveis({
         ["", "x", "comentario do ponto ativo com old_dir dentro", "P1", "Ponto ativo", ""],
         ["", "i", "old_dir/sub1.dat", "", "", ""],
         ["", "u", "old_dir/sub2.dat", "", "", ""],
+        ["", " I ", "old_dir/sub3.dat", "", "", ""],
         ["", "n", "comentario simples", "", "", ""],
     ]),
+    # Entidades sem as colunas padrao devem ser ignoradas com seguranca.
+    "config": (["Chave", "Valor"], [["old_dir", "nao alterar"]]),
 })
 listagem = mod._listar_includes(entidades_inc)
-check("includes: lista so as 2 linhas de include (i/u)", len(listagem) == 2)
-check("includes: paths corretos", {p for _, _, p in listagem} == {"old_dir/sub1.dat", "old_dir/sub2.dat"})
+check("includes: lista so as 3 linhas de include (i/u, sem diferenciar caixa/espacos)", len(listagem) == 3)
+check("includes: paths corretos", {p for _, _, p in listagem} == {
+    "old_dir/sub1.dat", "old_dir/sub2.dat", "old_dir/sub3.dat"})
+check("includes: informa as linhas reais da planilha (cabecalho = linha 1)",
+      [linha for _, linha, _ in listagem] == [3, 4, 5])
 
 tocadas_inc, n_inc = mod._substituir_em_includes(entidades_inc, "old_dir", "new_dir")
-check("includes: 2 substituicoes feitas", n_inc == 2)
+check("includes: 3 substituicoes feitas", n_inc == 3)
+check("includes: reporta somente a entidade realmente tocada", tocadas_inc == {"pds"})
 listagem2 = mod._listar_includes(entidades_inc)
-check("includes: paths atualizados", {p for _, _, p in listagem2} == {"new_dir/sub1.dat", "new_dir/sub2.dat"})
+check("includes: paths atualizados", {p for _, _, p in listagem2} == {
+    "new_dir/sub1.dat", "new_dir/sub2.dat", "new_dir/sub3.dat"})
 col_dados = mod._idx_coluna(PDS_H, "Comentario/Include")
 check("includes: NAO mexeu no comentario da linha ativa (Gera=x)",
       "old_dir" in entidades_inc["pds"][1][0][col_dados])
+tocadas_repeticao, n_repeticao = mod._substituir_em_includes(entidades_inc, "old_dir", "new_dir")
+check("includes: repetir a mesma regra e idempotente", not tocadas_repeticao and n_repeticao == 0)
+antes_vazio = list(_listar for _listar in mod._listar_includes(entidades_inc))
+tocadas_vazio, n_vazio = mod._substituir_em_includes(entidades_inc, "", "nao_deve_entrar")
+check("includes: busca vazia nao altera nada", not tocadas_vazio and n_vazio == 0)
+check("includes: busca vazia preserva todos os paths", mod._listar_includes(entidades_inc) == antes_vazio)
+
+# ------------------------------------------------------------------
+# 7. Sanitizacao da exportacao Latin-1
+# ------------------------------------------------------------------
+texto_latin1, substituicoes_latin1 = mod._sanitizar_para_latin1("Ação, café e posição")
+check("latin-1: acentos suportados sao preservados", texto_latin1 == "Ação, café e posição")
+check("latin-1: acentos suportados nao contam como substituicao", substituicoes_latin1 == 0)
+
+texto_unicode, substituicoes_unicode = mod._sanitizar_para_latin1(
+    "Traço – aspas “teste” reticências… bullet • espaço\u00a0não-quebrável emoji 😀")
+check("latin-1: pontuacao Unicode conhecida e normalizada",
+      texto_unicode == 'Traço - aspas "teste" reticências... bullet - espaço não-quebrável emoji ?')
+check("latin-1: somente caractere sem mapeamento conta como substituicao",
+      substituicoes_unicode == 1)
+check("latin-1: resultado sanitizado sempre pode ser codificado",
+      texto_unicode.encode("latin-1").decode("latin-1") == texto_unicode)
 
 print()
 if falhas:

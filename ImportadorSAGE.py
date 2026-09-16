@@ -94,7 +94,7 @@ _UNICODE_PARA_LATIN1 = str.maketrans({
     '“': '"',    # aspas duplas esquerda
     '”': '"',    # aspas duplas direita
     '…': '...',  # reticências
-    ' ': ' ',    # espaço não-quebrável
+    '\u00a0': ' ',  # espaço não-quebrável
     '•': '-',    # bullet
 })
 

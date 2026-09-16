@@ -432,7 +432,10 @@ python completa/tests/run_all.py --sem-uno   # só os smoke tests (sem soffice)
   (autocontida, sem depender de nenhum caminho externo), importa numa cópia do `SageBonis.ods`
   em branco da raiz rodando o `ImportadorSAGE.py` da Simples, e noutra cópia do MESMO arquivo em
   branco rodando o `ImportadorSAGE.py` da Completa — depois exporta as duas de volta e faz diff
-  byte-a-byte. Falha se qualquer `.dat` divergir entre as trilhas.
+  byte-a-byte. Além da paridade, valida explicitamente includes ativos/comentados, bloco
+  comentado, comentário simples, `Gera=q`/vazio, Latin-1, sanitização Unicode e o `.bak` da
+  reexportação. Falha se qualquer `.dat` divergir entre as trilhas ou se um desses contratos
+  de exportação for quebrado.
 - Ao adicionar um protocolo/recurso novo, estenda o smoke test correspondente e, se a mudança
   envolver criação de aba/entidade nova, adicione um caso em `teste_uno_protocolos.py`. Se
   mexer no núcleo de import/export compartilhado com a Simples, rode

@@ -374,7 +374,9 @@ Completa cumprir, no mínimo:
       onde a Completa anexa seus recursos próprios; (2) `teste_paridade_import_export.py`
       confirma empiricamente: importa uma base `.dat` sintética nas duas trilhas,
       exporta de volta, e os `.dat` resultantes são idênticos byte-a-byte (incluindo um
-      caractere acentuado, pra testar o round-trip Latin-1). Esse teste funciona como
+      caractere acentuado, pra testar o round-trip Latin-1). A fixture também cobre
+      includes ativos/comentados, bloco comentado, comentário simples, linhas `Gera=q`
+      e vazias, sanitização Unicode e criação de backup na reexportação. Esse teste funciona como
       guarda-corpo pra manter esse critério cumprido no futuro (se alguém editar um
       arquivo sem sincronizar o outro, o teste denuncia).
 

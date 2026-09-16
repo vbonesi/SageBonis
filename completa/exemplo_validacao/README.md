@@ -1,5 +1,10 @@
 # Exemplo de validação — extração reversa de IEDs + comando analógico
 
+> **Codificação:** os arquivos `.dat` desta pasta estão em ISO-8859-1 (`latin-1`),
+> como esperado pelo SAGE. Visualizadores que presumem UTF-8 podem mostrar acentos
+> como `�`, embora os bytes estejam íntegros. Para inspecioná-los em terminal UTF-8,
+> use `iconv -f latin1 -t utf8 arquivo.dat`.
+
 `SageBonis_exemplo_validacao.ods` é uma planilha pequena, já processada
 (`importar_dats` + `extrair_pontos` já rodados), pra você conferir visualmente
 as duas funcionalidades mais recentes:

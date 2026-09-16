@@ -392,8 +392,9 @@ canal do mesmo protocolo, pelas mesmas razões da extração de pontos: é uma
 reconstrução de melhor esforço, não um inverso perfeito.
 
 > 📎 **Exemplo pra conferir visualmente**: [`exemplo_validacao/`](exemplo_validacao/)
-> tem uma planilha pequena, já processada, com um fragmento real (DNP3+61850+
-> MODBUS+SNMP, mais um setpoint analógico de verdade) — ver o README lá dentro.
+> tem uma planilha pequena, já processada, com um fragmento real anonimizado
+> (DNP3+61850+MODBUS+SNMP, mais um setpoint analógico com limites reais) —
+> ver o README lá dentro.
 
 ## Instalação e uso
 Igual à Simples: abra `SageBonis.ods` e habilite as macros do documento (a macro vem

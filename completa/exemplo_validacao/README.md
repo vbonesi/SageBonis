@@ -13,35 +13,38 @@ as duas funcionalidades mais recentes:
 ## Onde olhar
 
 - **Aba `IEDs`** — 27 linhas, cobrindo **4 protocolos** reconhecidos numa base
-  real: DNP3 (aquisição `EX1` + distribuição `EX1_LSC`/`COR_LSC`), 61850 (7
-  IEDs), MODBUS (`EX14S8`) e SNMP (16 dispositivos). Confira `Protocolo`,
+  real (anonimizada): DNP3 (aquisição `EX1` + distribuição `EX1_LSC`/`COR_LSC`),
+  61850 (7 IEDs), MODBUS (`EX14S8`) e SNMP (16 dispositivos). Confira `Protocolo`,
   `Direcao`, e os campos de `CNF.CONFIG` reconstruídos (ex.: `PlPr/LiPr/PlRe/LiRe`
   pro DNP3, `ApTitle/OPMSK` pro 61850, `VERSAO/HOST/COMMUNITY` pro SNMP).
 - **Aba `PontoAnalogico`** — procure a linha `ID_Logico = EX1:REGU-STPS`
   ("Valor Scan de Regulacao da Barra 69KV-EX1"): `Comando = S`,
-  `ID_Fisico_Comando = EX1_CDNP_2_CSTP_0`, `LMI1C = 680`, `LMS1C = 715` — um
-  setpoint de tensão real, com limites numéricos de verdade (não um valor
-  fabricado).
+  `ID_Fisico_Comando = EX1_CDNP_2_CSTP_0`, `LMI1C = 680`, `LMS1C = 715` — os
+  limites numéricos (`LMI1C`/`LMS1C`) vieram de um setpoint real, só o
+  identificador da subestação/IED foi trocado (não é um valor fabricado do
+  zero).
 - **Aba `ComandoAvulso`** — os demais `CGS` que não são o setpoint acima (17
   linhas), incluindo comandos ligados a um ponto genérico compartilhado.
 
 ## De onde veio
 
-Fragmento **real** (não sintético) extraído da base `ex1` (CHESF) do acervo
-`~/Drive/Projetos/SkillSAGE/10_extraidas/ex1` — mantém tudo que já está no
-nível raiz da base original (`bd/dados/*.dat`, sem seguir os ~57 `#include` de
-instalação) mais só **3 subpastas** escolhidas por conterem cada protocolo:
-`SNMP/`, `RDP/` (61850) e `coringa4S8/` (MODBUS). O conteúdo em si é cópia
-literal — a única mudança deliberada foi reativar o `#include` de
+Fragmento de uma base real de cliente. Este repositório é público, então o
+código da subestação, um sufixo de projeto e os 16 IPs internos reais foram
+trocados por tokens/faixa genéricos (`192.0.2.0/24`, reservada pra
+documentação pela RFC 5737). Fora esses tokens, mantém a estrutura da base
+original: tudo que já estava no nível raiz (`bd/dados/*.dat`, sem seguir os
+~57 `#include` de instalação) mais só **3 subpastas** escolhidas por
+conterem cada protocolo: `SNMP/`, `RDP/` (61850) e `coringa4S8/` (MODBUS). A
+única mudança de conteúdo além da anonimização foi reativar o `#include` de
 `coringa4S8` (estava comentado/desativado na base de origem — é o único
-exemplo do acervo com `TTP=TMBUS`, o valor que bate com o protocolo MODBUS tal
-como modelado aqui; os outros 2 exemplos reais disponíveis usam `TTP=SMBUS`,
-uma variante ainda não coberta).
+exemplo do acervo com `TTP=TMBUS`, o valor que bate com o protocolo MODBUS
+tal como modelado aqui; os outros 2 exemplos reais disponíveis usam
+`TTP=SMBUS`, uma variante ainda não coberta).
 
-`dados/` tem o fragmento `.dat` puro (útil se quiser reimportar do zero ou
-conferir contra o original). Script de poda: pergunte ao Claude pelo histórico
-desta sessão, ou refaça manualmente comparando `dados/*.dat` com a base
-original.
+`dados/` tem o fragmento `.dat` puro, já anonimizado (útil se quiser
+reimportar do zero). Não reintroduzir dado real de cliente aqui — qualquer
+atualização futura desta pasta deve passar pela mesma anonimização antes do
+commit.
 
 ## O que NÃO validar aqui
 

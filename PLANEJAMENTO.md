@@ -365,7 +365,7 @@ Completa cumprir, no mínimo:
 - [x] Cobertura de teste mínima das funções puras (parser, geradores, verificador) —
       movida do scratchpad temporário pro repo em `completa/tests/` (antes só existia
       em `/tmp`, perdida entre sessões): 4 smoke tests em memória (~200+ checks) +
-      2 testes UNO reais (harness reutilizável em `uno_harness.py`), todos
+      3 testes UNO reais (harness reutilizável em `uno_harness.py`), todos
       rodáveis via `python completa/tests/run_all.py`;
 - [x] Paridade de import/export com a Trilha Simples (mesmo resultado de `.dat`) —
       verificado de 2 formas: (1) diff de código confirma que o núcleo compartilhado

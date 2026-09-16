@@ -427,6 +427,9 @@ python completa/tests/run_all.py --sem-uno   # só os smoke tests (sem soffice)
   `soffice` no `PATH`. O ciclo de vida (subir/derrubar processo, profile, cópia temporária) é
   todo administrado por `uno_harness.py` (`class TesteUno`, use como *context manager*, aceita
   `ods_origem`/`py_origem` pra apontar pra outra planilha/macro).
+- **Teste UNO de includes** (`teste_uno_includes.py`) — executa `gerir_includes` na planilha
+  real descartável e valida criação das abas administrativas, regras ativas/inativas,
+  includes ativos/comentados, proteção de linhas normais, relatório e idempotência.
 - **Teste de paridade import/export** (`teste_paridade_import_export.py`) — critério de
   maturidade da convergência (`PLANEJAMENTO.md`): gera uma base `.dat` sintética pequena
   (autocontida, sem depender de nenhum caminho externo), importa numa cópia do `SageBonis.ods`

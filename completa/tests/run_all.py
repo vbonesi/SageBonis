@@ -23,6 +23,7 @@ SMOKE_TESTS = [
 TESTES_UNO = [
     "teste_uno_protocolos.py",
     "teste_paridade_import_export.py",
+    "teste_uno_includes.py",
 ]
 
 

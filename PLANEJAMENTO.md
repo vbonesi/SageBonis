@@ -376,7 +376,8 @@ Completa cumprir, no mínimo:
       exporta de volta, e os `.dat` resultantes são idênticos byte-a-byte (incluindo um
       caractere acentuado, pra testar o round-trip Latin-1). A fixture também cobre
       includes ativos/comentados, bloco comentado, comentário simples, linhas `Gera=q`
-      e vazias, sanitização Unicode e criação de backup na reexportação. Esse teste funciona como
+      e vazias, sanitização Unicode, criação de backup na reexportação e exportação
+      parcial da aba ativa. Esse teste funciona como
       guarda-corpo pra manter esse critério cumprido no futuro (se alguém editar um
       arquivo sem sincronizar o outro, o teste denuncia).
 

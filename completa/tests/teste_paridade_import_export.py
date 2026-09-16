@@ -103,7 +103,7 @@ PDF
 """)
 
 
-def rodar_import_export(porta, py_origem, pasta_entrada, pasta_saida):
+def rodar_import_export(porta, py_origem, pasta_entrada, pasta_saida, pasta_parcial):
     with TesteUno(porta=porta, ods_origem=ODS_SIMPLES, py_origem=py_origem) as t:
         t.definir_celula("Geral", 0, 3, pasta_entrada)  # A4
         t.chamar_macro("importar_dats")
@@ -128,27 +128,36 @@ def rodar_import_export(porta, py_origem, pasta_entrada, pasta_saida):
         # Segunda exportacao do mesmo conteudo deve criar backups dos .dat.
         t.chamar_macro("exportar_dats")
         status_reexport = t.ler_celula("Geral", 1, 6)  # B7
-    return status_import, status_export, status_reexport
+
+        t.definir_celula("Geral", 0, 6, pasta_parcial)  # A7
+        t.ativar_aba("PDS")
+        t.chamar_macro("exportar_parcial")
+        status_parcial = t.ler_celula("Geral", 1, 6)  # B7
+    return status_import, status_export, status_reexport, status_parcial
 
 
 pasta_entrada = tempfile.mkdtemp(prefix="sagebonis_paridade_entrada_")
 pasta_saida_simples = tempfile.mkdtemp(prefix="sagebonis_paridade_simples_")
 pasta_saida_completa = tempfile.mkdtemp(prefix="sagebonis_paridade_completa_")
+pasta_parcial_simples = tempfile.mkdtemp(prefix="sagebonis_parcial_simples_")
+pasta_parcial_completa = tempfile.mkdtemp(prefix="sagebonis_parcial_completa_")
 
 try:
     gerar_fixture(pasta_entrada)
 
-    status_import_s, status_export_s, status_reexport_s = rodar_import_export(
-        2200, PY_SIMPLES, pasta_entrada, pasta_saida_simples)
+    status_import_s, status_export_s, status_reexport_s, status_parcial_s = rodar_import_export(
+        2200, PY_SIMPLES, pasta_entrada, pasta_saida_simples, pasta_parcial_simples)
     check("Simples: importação sem erro", "ERRO" not in status_import_s.upper())
     check("Simples: exportação sem erro", "ERRO" not in status_export_s.upper())
     check("Simples: reexportação sem erro", "ERRO" not in status_reexport_s.upper())
+    check("Simples: exportação parcial sem erro", "ERRO" not in status_parcial_s.upper())
 
-    status_import_c, status_export_c, status_reexport_c = rodar_import_export(
-        2201, PY_COMPLETA, pasta_entrada, pasta_saida_completa)
+    status_import_c, status_export_c, status_reexport_c, status_parcial_c = rodar_import_export(
+        2201, PY_COMPLETA, pasta_entrada, pasta_saida_completa, pasta_parcial_completa)
     check("Completa: importação sem erro", "ERRO" not in status_import_c.upper())
     check("Completa: exportação sem erro", "ERRO" not in status_export_c.upper())
     check("Completa: reexportação sem erro", "ERRO" not in status_reexport_c.upper())
+    check("Completa: exportação parcial sem erro", "ERRO" not in status_parcial_c.upper())
 
     arquivos_simples = sorted(n for n in os.listdir(pasta_saida_simples) if n.endswith(".dat"))
     arquivos_completa = sorted(n for n in os.listdir(pasta_saida_completa) if n.endswith(".dat"))
@@ -182,6 +191,16 @@ try:
     check("reexportação: backup .bak foi criado", os.path.isfile(caminho_backup))
     check("reexportação: backup preserva o conteúdo anterior",
           os.path.isfile(caminho_backup) and filecmp.cmp(caminho_pds, caminho_backup, shallow=False))
+
+    arquivos_parciais_s = sorted(os.listdir(pasta_parcial_simples))
+    arquivos_parciais_c = sorted(os.listdir(pasta_parcial_completa))
+    check("exportação parcial: aba PDS gera somente pds.dat",
+          arquivos_parciais_s == ["pds.dat"] and arquivos_parciais_c == ["pds.dat"])
+    check("exportação parcial: Simples e Completa geram o mesmo pds.dat",
+          filecmp.cmp(os.path.join(pasta_parcial_simples, "pds.dat"),
+                      os.path.join(pasta_parcial_completa, "pds.dat"), shallow=False))
+    check("exportação parcial: conteúdo equivale ao pds.dat da exportação total",
+          filecmp.cmp(caminho_pds, os.path.join(pasta_parcial_completa, "pds.dat"), shallow=False))
     if mismatches:
         for nome in mismatches:
             print(f"  DIFF em {nome}:")
@@ -194,6 +213,8 @@ finally:
     shutil.rmtree(pasta_entrada, ignore_errors=True)
     shutil.rmtree(pasta_saida_simples, ignore_errors=True)
     shutil.rmtree(pasta_saida_completa, ignore_errors=True)
+    shutil.rmtree(pasta_parcial_simples, ignore_errors=True)
+    shutil.rmtree(pasta_parcial_completa, ignore_errors=True)
 
 print()
 if falhas:

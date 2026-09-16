@@ -130,6 +130,11 @@ class TesteUno:
     def get_sheet(self, nome):
         return self.doc.Sheets.getByName(nome)
 
+    def ativar_aba(self, nome):
+        """Torna a aba indicada ativa, para testar macros cujo comportamento
+        depende da seleção atual (por exemplo, exportar_parcial)."""
+        self.doc.getCurrentController().setActiveSheet(self.get_sheet(nome))
+
     def ler_aba(self, nome_aba):
         """Lê uma aba inteira como lista de dicts (header->valor), ignorando
         linhas totalmente vazias."""

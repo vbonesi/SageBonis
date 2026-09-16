@@ -377,7 +377,8 @@ Completa cumprir, no mínimo:
       caractere acentuado, pra testar o round-trip Latin-1). A fixture também cobre
       includes ativos/comentados, bloco comentado, comentário simples, linhas `Gera=q`
       e vazias, sanitização Unicode, criação de backup na reexportação e exportação
-      parcial da aba ativa. Esse teste funciona como
+      parcial da aba ativa e pela lista `Geral!C14:C144` (inclusive lista vazia e
+      entidade inexistente). Esse teste funciona como
       guarda-corpo pra manter esse critério cumprido no futuro (se alguém editar um
       arquivo sem sincronizar o outro, o teste denuncia).
 

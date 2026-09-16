@@ -434,9 +434,9 @@ python completa/tests/run_all.py --sem-uno   # só os smoke tests (sem soffice)
   branco rodando o `ImportadorSAGE.py` da Completa — depois exporta as duas de volta e faz diff
   byte-a-byte. Além da paridade, valida explicitamente includes ativos/comentados, bloco
   comentado, comentário simples, `Gera=q`/vazio, Latin-1, sanitização Unicode e o `.bak` da
-  reexportação. Também confirma que a exportação parcial da aba ativa gera somente o `.dat`
-  correspondente e com o mesmo conteúdo da exportação total. Falha se qualquer `.dat` divergir
-  entre as trilhas ou se um desses contratos de exportação for quebrado.
+  reexportação. Também confirma a exportação parcial pela aba ativa e pela lista
+  `Geral!C14:C144`, incluindo lista vazia e entidade inexistente. Falha se qualquer `.dat`
+  divergir entre as trilhas ou se um desses contratos de exportação for quebrado.
 - Ao adicionar um protocolo/recurso novo, estenda o smoke test correspondente e, se a mudança
   envolver criação de aba/entidade nova, adicione um caso em `teste_uno_protocolos.py`. Se
   mexer no núcleo de import/export compartilhado com a Simples, rode

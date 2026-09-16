@@ -103,7 +103,8 @@ PDF
 """)
 
 
-def rodar_import_export(porta, py_origem, pasta_entrada, pasta_saida, pasta_parcial):
+def rodar_import_export(porta, py_origem, pasta_entrada, pasta_saida, pasta_parcial,
+                        pasta_parcial_lista, pasta_parcial_vazia):
     with TesteUno(porta=porta, ods_origem=ODS_SIMPLES, py_origem=py_origem) as t:
         t.definir_celula("Geral", 0, 3, pasta_entrada)  # A4
         t.chamar_macro("importar_dats")
@@ -133,7 +134,25 @@ def rodar_import_export(porta, py_origem, pasta_entrada, pasta_saida, pasta_parc
         t.ativar_aba("PDS")
         t.chamar_macro("exportar_parcial")
         status_parcial = t.ler_celula("Geral", 1, 6)  # B7
-    return status_import, status_export, status_reexport, status_parcial
+
+        # Pela aba Geral, C14:C144 define a lista; nomes inexistentes sao ignorados.
+        t.ativar_aba("Geral")
+        for linha_geral in range(13, 144):
+            t.definir_celula("Geral", 2, linha_geral, "")
+        t.definir_celula("Geral", 2, 13, "PDS")
+        t.definir_celula("Geral", 2, 14, "PDF")
+        t.definir_celula("Geral", 2, 15, "NAO_EXISTE")
+        t.definir_celula("Geral", 0, 6, pasta_parcial_lista)
+        t.chamar_macro("exportar_parcial")
+        status_parcial_lista = t.ler_celula("Geral", 1, 6)
+
+        for linha_geral in range(13, 144):
+            t.definir_celula("Geral", 2, linha_geral, "")
+        t.definir_celula("Geral", 0, 6, pasta_parcial_vazia)
+        t.chamar_macro("exportar_parcial")
+        status_parcial_vazia = t.ler_celula("Geral", 1, 6)
+    return (status_import, status_export, status_reexport, status_parcial,
+            status_parcial_lista, status_parcial_vazia)
 
 
 pasta_entrada = tempfile.mkdtemp(prefix="sagebonis_paridade_entrada_")
@@ -141,19 +160,27 @@ pasta_saida_simples = tempfile.mkdtemp(prefix="sagebonis_paridade_simples_")
 pasta_saida_completa = tempfile.mkdtemp(prefix="sagebonis_paridade_completa_")
 pasta_parcial_simples = tempfile.mkdtemp(prefix="sagebonis_parcial_simples_")
 pasta_parcial_completa = tempfile.mkdtemp(prefix="sagebonis_parcial_completa_")
+pasta_lista_simples = tempfile.mkdtemp(prefix="sagebonis_lista_simples_")
+pasta_lista_completa = tempfile.mkdtemp(prefix="sagebonis_lista_completa_")
+pasta_vazia_simples = tempfile.mkdtemp(prefix="sagebonis_vazia_simples_")
+pasta_vazia_completa = tempfile.mkdtemp(prefix="sagebonis_vazia_completa_")
 
 try:
     gerar_fixture(pasta_entrada)
 
-    status_import_s, status_export_s, status_reexport_s, status_parcial_s = rodar_import_export(
-        2200, PY_SIMPLES, pasta_entrada, pasta_saida_simples, pasta_parcial_simples)
+    (status_import_s, status_export_s, status_reexport_s, status_parcial_s,
+     status_lista_s, status_vazia_s) = rodar_import_export(
+        2200, PY_SIMPLES, pasta_entrada, pasta_saida_simples, pasta_parcial_simples,
+        pasta_lista_simples, pasta_vazia_simples)
     check("Simples: importação sem erro", "ERRO" not in status_import_s.upper())
     check("Simples: exportação sem erro", "ERRO" not in status_export_s.upper())
     check("Simples: reexportação sem erro", "ERRO" not in status_reexport_s.upper())
     check("Simples: exportação parcial sem erro", "ERRO" not in status_parcial_s.upper())
 
-    status_import_c, status_export_c, status_reexport_c, status_parcial_c = rodar_import_export(
-        2201, PY_COMPLETA, pasta_entrada, pasta_saida_completa, pasta_parcial_completa)
+    (status_import_c, status_export_c, status_reexport_c, status_parcial_c,
+     status_lista_c, status_vazia_c) = rodar_import_export(
+        2201, PY_COMPLETA, pasta_entrada, pasta_saida_completa, pasta_parcial_completa,
+        pasta_lista_completa, pasta_vazia_completa)
     check("Completa: importação sem erro", "ERRO" not in status_import_c.upper())
     check("Completa: exportação sem erro", "ERRO" not in status_export_c.upper())
     check("Completa: reexportação sem erro", "ERRO" not in status_reexport_c.upper())
@@ -201,6 +228,17 @@ try:
                       os.path.join(pasta_parcial_completa, "pds.dat"), shallow=False))
     check("exportação parcial: conteúdo equivale ao pds.dat da exportação total",
           filecmp.cmp(caminho_pds, os.path.join(pasta_parcial_completa, "pds.dat"), shallow=False))
+    check("exportação parcial por lista: concluída sem erro nas duas variantes",
+          "ERRO" not in status_lista_s.upper() and "ERRO" not in status_lista_c.upper())
+    check("exportação parcial por lista: gera somente PDS e PDF",
+          sorted(os.listdir(pasta_lista_simples)) == ["pdf.dat", "pds.dat"] and
+          sorted(os.listdir(pasta_lista_completa)) == ["pdf.dat", "pds.dat"])
+    check("exportação parcial por lista: nome inexistente e ignorado",
+          "nao_existe.dat" not in os.listdir(pasta_lista_completa))
+    check("exportação parcial por lista vazia: emite aviso",
+          "AVISO" in status_vazia_s.upper() and "AVISO" in status_vazia_c.upper())
+    check("exportação parcial por lista vazia: não cria arquivos",
+          not os.listdir(pasta_vazia_simples) and not os.listdir(pasta_vazia_completa))
     if mismatches:
         for nome in mismatches:
             print(f"  DIFF em {nome}:")
@@ -215,6 +253,10 @@ finally:
     shutil.rmtree(pasta_saida_completa, ignore_errors=True)
     shutil.rmtree(pasta_parcial_simples, ignore_errors=True)
     shutil.rmtree(pasta_parcial_completa, ignore_errors=True)
+    shutil.rmtree(pasta_lista_simples, ignore_errors=True)
+    shutil.rmtree(pasta_lista_completa, ignore_errors=True)
+    shutil.rmtree(pasta_vazia_simples, ignore_errors=True)
+    shutil.rmtree(pasta_vazia_completa, ignore_errors=True)
 
 print()
 if falhas:

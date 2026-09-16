@@ -46,6 +46,24 @@ try:
         status_aba = t.ler_celula("Geral", 1, 6)
         check("exportação total reporta aba sem colunas obrigatórias",
               "ERRO" in status_aba.upper() and nome_invalida in status_aba)
+
+        # Cria um arquivo no lugar em que a macro precisaria criar uma pasta.
+        # Isso força FileExistsError/OSError sem depender de permissões Unix.
+        bloqueio = os.path.join(pasta_valida, "bloqueio")
+        with open(bloqueio, "w", encoding="ascii") as f:
+            f.write("impede a criacao da subpasta")
+        linha = t.proxima_linha_livre("PDS")
+        t.escrever_linha("PDS", linha, {
+            "Origem": "bloqueio/pds.dat", "Gera": "n",
+            "Comentario/Include": "forçar falha de escrita",
+        })
+        t.ativar_aba("PDS")
+        t.chamar_macro("exportar_parcial")
+        status_escrita = t.ler_celula("Geral", 1, 6)
+        check("falha física de escrita é capturada e identifica o arquivo",
+              "ERRO" in status_escrita.upper() and
+              "bloqueio/pds.dat" in status_escrita and
+              "Falha ao escrever" in status_escrita)
 finally:
     shutil.rmtree(pasta_valida, ignore_errors=True)
 

@@ -432,7 +432,8 @@ python completa/tests/run_all.py --sem-uno   # só os smoke tests (sem soffice)
   includes ativos/comentados, proteção de linhas normais, relatório e idempotência.
 - **Teste UNO de erros de exportação** (`teste_uno_erros_exportacao.py`) — confirma que
   exportação total/parcial rejeitam pasta inexistente e que uma aba tabular sem os
-  cabeçalhos obrigatórios gera diagnóstico claro, sem encerrar o LibreOffice.
+  cabeçalhos obrigatórios ou uma falha física de escrita geram diagnóstico claro,
+  sem encerrar o LibreOffice.
 - **Teste de paridade import/export** (`teste_paridade_import_export.py`) — critério de
   maturidade da convergência (`PLANEJAMENTO.md`): gera uma base `.dat` sintética pequena
   (autocontida, sem depender de nenhum caminho externo), importa numa cópia do `SageBonis.ods`

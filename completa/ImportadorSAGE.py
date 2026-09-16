@@ -117,8 +117,13 @@ _UNICODE_PARA_LATIN1 = str.maketrans({
 })
 
 def _sanitizar_para_latin1(texto):
+    """Retorna (texto_sanitizado, n_substituicoes). n_substituicoes conta caracteres
+    sem equivalente em latin-1 (fora do mapeamento acima) que o encode(errors=
+    'replace') vira '?' silenciosamente -- todo char com ord()>255 não cabe em
+    latin-1, que mapeia só 0-255 direto pra byte."""
     texto = texto.translate(_UNICODE_PARA_LATIN1)
-    return texto.encode('latin-1', errors='replace').decode('latin-1')
+    n_substituicoes = sum(1 for c in texto if ord(c) > 255)
+    return texto.encode('latin-1', errors='replace').decode('latin-1'), n_substituicoes
 
 
 # --- Expressões Regulares ---
@@ -816,13 +821,15 @@ def exportar_dats(*args):
 
     geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString("Processando exportação total...")
     abas_a_exportar = [s for s in doc.getSheets() if s.getName().lower() not in _abas_nao_exportaveis()]
-    erros = [_exportar_folha(sheet, export_folder) for sheet in abas_a_exportar]
-    erros = [e for e in erros if e]
-    
+    resultados = [_exportar_folha(sheet, export_folder) for sheet in abas_a_exportar]
+    erros = [e for e, _ in resultados if e]
+    total_substituicoes = sum(n for _, n in resultados)
+
     if erros:
         geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString(f"ERRO: {'; '.join(erros)}")
     else:
-        geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString("Exportação total concluída com sucesso!")
+        aviso = f" ({total_substituicoes} caractere(s) sem equivalente em Latin-1 substituído(s) por '?')" if total_substituicoes else ""
+        geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString(f"Exportação total concluída com sucesso!{aviso}")
 
 
 def exportar_parcial(*args):
@@ -867,19 +874,23 @@ def exportar_parcial(*args):
             abas_a_exportar.append(active_sheet)
 
     geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString(f"Processando exportação de: {', '.join(s.getName() for s in abas_a_exportar)}...")
-    erros = [_exportar_folha(sheet, export_folder) for sheet in abas_a_exportar]
-    erros = [e for e in erros if e]
+    resultados = [_exportar_folha(sheet, export_folder) for sheet in abas_a_exportar]
+    erros = [e for e, _ in resultados if e]
+    total_substituicoes = sum(n for _, n in resultados)
 
     if erros:
         geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString(f"ERRO: {'; '.join(erros)}")
     else:
-        geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString("Exportação parcial concluída com sucesso!")
+        aviso = f" ({total_substituicoes} caractere(s) sem equivalente em Latin-1 substituído(s) por '?')" if total_substituicoes else ""
+        geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString(f"Exportação parcial concluída com sucesso!{aviso}")
 
 
 def _exportar_folha(sheet, export_folder):
     """
     Exporta uma única aba, criando um backup (.bak) do arquivo anterior
-    antes de salvar a nova versão.
+    antes de salvar a nova versão. Retorna (erro_ou_None, n_substituicoes) --
+    n_substituicoes é a soma de caracteres sem equivalente em latin-1 trocados
+    por '?' ao longo de todos os arquivos escritos por esta aba.
     """
     sheet_name = sheet.getName()
     cursor = sheet.createCursor()
@@ -887,7 +898,7 @@ def _exportar_folha(sheet, export_folder):
     data_range = cursor.getRangeAddress()
     data_array = sheet.getCellRangeByPosition(0, 0, data_range.EndColumn, data_range.EndRow).getDataArray()
 
-    if not data_array or len(data_array) < 2: return
+    if not data_array or len(data_array) < 2: return None, 0
 
     headers = data_array[0]
     try:
@@ -895,7 +906,7 @@ def _exportar_folha(sheet, export_folder):
         gera_col_idx = headers.index(CABEÇALHO_COLUNA_CONTROLE)
         dados_col_idx = headers.index(CABEÇALHO_COLUNA_DADOS)
     except ValueError:
-        return f"Aba '{sheet_name}' não possui as colunas 'Origem', 'Gera' ou 'Dados'."
+        return f"Aba '{sheet_name}' não possui as colunas 'Origem', 'Gera' ou 'Dados'.", 0
 
     dados_agrupados_por_arquivo = {}
 
@@ -942,10 +953,11 @@ def _exportar_folha(sheet, export_folder):
             dados_agrupados_por_arquivo[origem_path].append(bloco_final)
             
     # Itera sobre os dados agrupados e escreve cada arquivo.
+    total_substituicoes = 0
     for relative_path, file_content_list in dados_agrupados_por_arquivo.items():
         try:
             full_output_path = os.path.join(export_folder, relative_path)
-            
+
             # --- INÍCIO DA LÓGICA DE BACKUP ---
             if os.path.exists(full_output_path):
                 backup_path = full_output_path + ".bak"
@@ -956,13 +968,14 @@ def _exportar_folha(sheet, export_folder):
             # --- FIM DA LÓGICA DE BACKUP ---
 
             os.makedirs(os.path.dirname(full_output_path), exist_ok=True)
-            conteudo = _sanitizar_para_latin1("\n\n".join(file_content_list) + "\n")
+            conteudo, n_subst = _sanitizar_para_latin1("\n\n".join(file_content_list) + "\n")
+            total_substituicoes += n_subst
             with open(full_output_path, 'w', encoding=ENCODING_EXPORTACAO_SAGE) as f:
                 f.write(conteudo)
         except IOError as e:
-            return f"Falha ao escrever {relative_path}: {e}"
-            
-    return None
+            return f"Falha ao escrever {relative_path}: {e}", total_substituicoes
+
+    return None, total_substituicoes
 
 # ===============================================================
 # ================= FUNÇÃO DE CORES DO TEMA =====================

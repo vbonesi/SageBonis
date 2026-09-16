@@ -1,0 +1,56 @@
+# -*- coding: utf-8 -*-
+"""Testa diagnósticos de erro da exportação em LibreOffice/UNO real."""
+import os
+import shutil
+import sys
+import tempfile
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from uno_harness import TesteUno  # noqa: E402
+
+falhas = []
+
+
+def check(nome, cond):
+    print("[%s] %s" % ("OK" if cond else "FALHOU", nome))
+    if not cond:
+        falhas.append(nome)
+
+
+pasta_inexistente = tempfile.mkdtemp(prefix="sagebonis_inexistente_")
+shutil.rmtree(pasta_inexistente)
+pasta_valida = tempfile.mkdtemp(prefix="sagebonis_erros_exportacao_")
+
+try:
+    with TesteUno(porta=2400) as t:
+        t.definir_celula("Geral", 0, 6, pasta_inexistente)
+        t.chamar_macro("exportar_dats")
+        status_total = t.ler_celula("Geral", 1, 6)
+        check("exportação total rejeita pasta inexistente",
+              "ERRO" in status_total.upper() and "PASTA VÁLIDA" in status_total.upper())
+
+        t.ativar_aba("PDS")
+        t.chamar_macro("exportar_parcial")
+        status_parcial = t.ler_celula("Geral", 1, 6)
+        check("exportação parcial rejeita pasta inexistente",
+              "ERRO" in status_parcial.upper() and "PASTA VÁLIDA" in status_parcial.upper())
+
+        # Uma aba tabular desconhecida e sem os cabeçalhos mínimos deve produzir
+        # diagnóstico, sem derrubar o LibreOffice nem escrever saída parcial nela.
+        nome_invalida = "AbaInvalidaTeste"
+        t.doc.Sheets.insertNewByName(nome_invalida, t.doc.Sheets.getCount())
+        t.definir_celula(nome_invalida, 0, 0, "CabecalhoIncorreto")
+        t.definir_celula(nome_invalida, 0, 1, "dado")
+        t.definir_celula("Geral", 0, 6, pasta_valida)
+        t.chamar_macro("exportar_dats")
+        status_aba = t.ler_celula("Geral", 1, 6)
+        check("exportação total reporta aba sem colunas obrigatórias",
+              "ERRO" in status_aba.upper() and nome_invalida in status_aba)
+finally:
+    shutil.rmtree(pasta_valida, ignore_errors=True)
+
+print()
+if falhas:
+    print("%d checagem(ns) FALHOU/FALHARAM: %s" % (len(falhas), falhas))
+    raise SystemExit(1)
+print("Todas as checagens UNO de erros de exportação passaram.")

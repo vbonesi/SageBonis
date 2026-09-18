@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Roda todos os testes da Trilha Completa em sequência: os 4 smoke tests em
+"""Roda todos os testes da Trilha Completa em sequência: os 5 smoke tests em
 memória (rápidos, sem dependências) e depois o teste UNO real (mais lento,
 precisa de 'soffice' no PATH). Para rodar só os rápidos (ex.: sem LibreOffice
 disponível), use --sem-uno.
@@ -15,6 +15,7 @@ import os
 RAIZ = os.path.dirname(os.path.abspath(__file__))
 
 SMOKE_TESTS = [
+    "smoke_test_parser.py",
     "smoke_test_unificacao.py",
     "smoke_test_extracao.py",
     "smoke_test_ganhos_rapidos.py",

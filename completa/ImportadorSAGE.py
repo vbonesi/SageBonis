@@ -1439,11 +1439,62 @@ def _check_dominios(sheet_name, headers, linhas, dominios, analise):
                             "Valor fora do dominio conhecido (%s)" % "/".join(sorted(dominios[chave])))
 
 
-def _carregar_regras_refs(doc):
-    """Lê regras ATIVAS da aba VerificacaoRefs; cria a aba com exemplos se faltar."""
+def _regras_refs_faltantes(linhas_existentes):
+    """Linhas de REGRAS_REFS_PADRAO que ainda não estão na aba VerificacaoRefs, prontas
+    para serem acrescentadas (sempre com Ativa='N'). Lógica PURA.
+
+    A comparação é por (origem, atributo, conjunto de destinos, atributo destino),
+    case-insensitive, para não duplicar uma regra que o usuário já editou ou ativou.
+    Uma regra que o usuário apagou de propósito volta INATIVA na próxima execução --
+    é o preço de não ter tombstone na aba, e inativa ela não muda nenhum resultado."""
+    def chave(ent_o, attr_o, ent_d, attr_d):
+        destinos = ent_d if isinstance(ent_d, (tuple, list)) else _parse_entidades_destino(ent_d)
+        return (str(ent_o).strip().upper(), str(attr_o).strip().upper(),
+                tuple(sorted(d.strip().upper() for d in destinos)),
+                str(attr_d).strip().upper())
+
+    existentes = set()
+    for row in (linhas_existentes or []):
+        if len(row) < 4:
+            continue
+        existentes.add(chave(row[0], row[1], row[2], row[3]))
+    return [[ent_o, attr_o, ent_d, attr_d, "N"]
+            for ent_o, attr_o, ent_d, attr_d in REGRAS_REFS_PADRAO
+            if chave(ent_o, attr_o, ent_d, attr_d) not in existentes]
+
+
+def _reconciliar_aba_refs(doc):
+    """Acrescenta à aba VerificacaoRefs as regras padrão que ainda não estão lá, todas
+    INATIVAS, sem tocar nas linhas existentes. Devolve quantas foram acrescentadas.
+
+    Mesma ideia do _garantir_aba_config para colunas novas: sem isso, uma aba criada
+    por uma versão anterior do código nunca enxerga as regras acrescentadas depois --
+    a aba (que o verificador lê) e o REGRAS_REFS_PADRAO (que trocar_id_global usa)
+    divergem em silêncio, e as duas fontes de verdade passam a mentir uma pra outra
+    (auditoria #6)."""
+    sheet = _get_sheet(doc, NOME_ABA_VERIFICACAO_REFS)
+    headers, linhas = _ler_entidade(sheet)
+    faltantes = _regras_refs_faltantes(linhas)
+    if not faltantes:
+        return 0
+    matriz = [list(headers) if headers else list(CABECALHOS_REFS)]
+    matriz.extend([str(c) for c in row] for row in (linhas or []))
+    matriz.extend(faltantes)
+    _escrever_matriz(sheet, matriz, negrito_cabecalho=True)
+    return len(faltantes)
+
+
+def _carregar_regras_refs(doc, somente_ativas=True):
+    """Lê regras da aba VerificacaoRefs; cria a aba com exemplos se faltar e reconcilia
+    com REGRAS_REFS_PADRAO se já existir.
+
+    somente_ativas=False devolve o grafo inteiro da aba (ativas ou não) -- é o que
+    trocar_id_global precisa: propagar um ID renomeado não pode depender de a checagem
+    de integridade estar ligada."""
     if not _aba_existe_ci(doc, NOME_ABA_VERIFICACAO_REFS):
         _criar_aba_refs_exemplo(doc)
         return []  # exemplos nascem inativos -> nenhuma regra ativa na 1a execução
+    _reconciliar_aba_refs(doc)
     sheet = _get_sheet(doc, NOME_ABA_VERIFICACAO_REFS)
     headers, linhas = _ler_entidade(sheet)
     if not linhas:
@@ -1456,8 +1507,11 @@ def _carregar_regras_refs(doc):
         ent_d = _parse_entidades_destino(row[2])
         attr_d = str(row[3]).strip()
         ativa = str(row[4]).strip().lower()
-        if ent_o and attr_o and ent_d and attr_d and ativa in _VALORES_ATIVO:
-            regras.append((ent_o, attr_o, ent_d, attr_d))
+        if not (ent_o and attr_o and ent_d and attr_d):
+            continue
+        if somente_ativas and ativa not in _VALORES_ATIVO:
+            continue
+        regras.append((ent_o, attr_o, ent_d, attr_d))
     return regras
 
 
@@ -2396,16 +2450,32 @@ NOME_ABA_RELATORIO_TROCA_ID = "RelatorioTrocaId"
 CABECALHOS_TROCA_ID = ["IDAntigo", "IDNovo", "Ativa"]
 
 
-def _construir_mapa_referencias_por_destino():
+def _construir_mapa_referencias_por_destino(regras_extra=None):
     """{ENTIDADE_DESTINO: [(entidade_origem, atributo_origem), ...]} a partir de
     REGRAS_REFS_PADRAO -- quem referencia essa entidade e por qual atributo. É o
     inverso do grafo de FK usado pelo verificador; aqui serve pra saber onde propagar
     uma troca de ID (ex.: renomear um PDS precisa achar todo PDD.PDS/RCA.PARC/... que
-    aponta pra ele)."""
+    aponta pra ele).
+
+    'regras_extra' são as regras lidas da aba VerificacaoRefs (mesmo formato, destino
+    já em tupla). Sem elas, uma regra que o usuário acrescentou na aba valia para o
+    verificador mas não para a troca de ID -- duas fontes de verdade para o mesmo grafo
+    (auditoria #6). Pares repetidos entram uma vez só."""
     mapa = {}
+
+    def _adicionar(ent_o, attr_o, ent_d_txt):
+        destinos = (ent_d_txt if isinstance(ent_d_txt, (tuple, list))
+                    else _parse_entidades_destino(ent_d_txt))
+        for ent_d in destinos:
+            alvo = mapa.setdefault(str(ent_d).strip().upper(), [])
+            par = (ent_o, attr_o)
+            if par not in alvo:
+                alvo.append(par)
+
     for ent_o, attr_o, ent_d_txt, _attr_d in REGRAS_REFS_PADRAO:
-        for ent_d in _parse_entidades_destino(ent_d_txt):
-            mapa.setdefault(ent_d.upper(), []).append((ent_o, attr_o))
+        _adicionar(ent_o, attr_o, ent_d_txt)
+    for ent_o, attr_o, ent_d_txt, _attr_d in (regras_extra or []):
+        _adicionar(ent_o, attr_o, ent_d_txt)
     return mapa
 
 
@@ -2509,7 +2579,10 @@ def trocar_id_global(*args):
     _garantir_aba_config(doc, NOME_ABA_TROCA_ID, CABECALHOS_TROCA_ID)
 
     entidades = _preparar_entidades_mutaveis(_coletar_entidades(doc))
-    mapa_referencias = _construir_mapa_referencias_por_destino()
+    # Inclui as regras da aba (ativas ou não): propagar um ID renomeado não depende de
+    # a checagem de integridade estar ligada (auditoria #6).
+    mapa_referencias = _construir_mapa_referencias_por_destino(
+        _carregar_regras_refs(doc, somente_ativas=False))
 
     headers_troca, linhas_troca = _ler_entidade(_get_sheet(doc, NOME_ABA_TROCA_ID))
     relatorio_geral = []

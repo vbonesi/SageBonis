@@ -474,6 +474,14 @@ prefixo antes de recriar, e os 3 botões originais da Simples (*Importar*, *Expo
 python completa/tests/run_all.py            # roda tudo
 python completa/tests/run_all.py --sem-uno   # só os smoke tests (sem soffice)
 ```
+
+Tudo isso roda sozinho no GitHub Actions a cada push/PR
+([`.github/workflows/testes.yml`](../.github/workflows/testes.yml)): um job rápido
+(smoke tests + `py_compile` + sincronia macro↔`.ods` e menu) e um job com LibreOffice
+de verdade para a suíte completa. O job rápido também reprova quem editar o
+`ImportadorSAGE.py` e esquecer de rodar `sync_macro.py inject` — `status` agora sai com
+código 1 quando o `.py` e a macro embutida divergem, o que também serve para um hook de
+pre-commit.
 - **Smoke tests em memória** (`smoke_test_*.py`) — lógica pura, sem LibreOffice, rodam em
   segundos: `smoke_test_ied.py` (assistente de protocolo + extração reversa de IEDs, ~160
   checks, incluindo round-trip forward→reverso pelos 7 protocolos), `smoke_test_unificacao.py`,

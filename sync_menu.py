@@ -118,11 +118,12 @@ def cmd_status(ods_path):
     falta_barra = _itens_faltantes(toolbar, ITENS_COMPLETA)
     if not falta_menu and not falta_barra:
         print(f"OK: menu e toolbar de {ods_path} ja tem todos os itens da Completa.")
-        return
+        return True
     if falta_menu:
         print("Faltam no menu:", ", ".join(r for _, r in falta_menu))
     if falta_barra:
         print("Faltam na toolbar:", ", ".join(r for _, r in falta_barra))
+    return False
 
 
 def cmd_sync(ods_path, fazer_backup=True):
@@ -182,7 +183,8 @@ def main():
     a = p.parse_args()
 
     if a.acao == "status":
-        cmd_status(a.ods)
+        if not cmd_status(a.ods):
+            sys.exit(1)
     elif a.acao == "sync":
         cmd_sync(a.ods, fazer_backup=not a.no_backup)
 

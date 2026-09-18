@@ -1,0 +1,59 @@
+name: testes
+
+# A suíte existia e ninguém a disparava: regressão só aparecia se alguém rodasse
+# run_all.py na mão (apontado na auditoria). Aqui ela roda em todo push/PR.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  rapidos:
+    name: Smoke tests + sincronia (sem LibreOffice)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Compila as macros e as ferramentas
+        run: >
+          python -m py_compile
+          ImportadorSAGE.py completa/ImportadorSAGE.py
+          sync_macro.py sync_menu.py sync_botoes.py
+
+      # O .ods tem sua própria cópia da macro; editar o .py e esquecer de injetar
+      # deixava as duas versões divergentes até alguém rodar o status na mão.
+      - name: Macro embutida em sincronia com o .py (Simples)
+        run: python sync_macro.py status
+
+      - name: Macro embutida em sincronia com o .py (Completa)
+        run: python sync_macro.py status --ods completa/SageBonis.ods --py completa/ImportadorSAGE.py
+
+      - name: Menu/barra da Completa com todos os itens
+        run: python sync_menu.py status --ods completa/SageBonis.ods
+
+      - name: Smoke tests (lógica pura)
+        run: python completa/tests/run_all.py --sem-uno
+
+  uno:
+    name: Suíte completa (LibreOffice real)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      # Os testes UNO usam o Python do sistema: o módulo 'uno' vem com o pacote
+      # python3-uno do LibreOffice, não do pip.
+      - name: Instala LibreOffice + bridge Python-UNO
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libreoffice-calc python3-uno
+
+      - name: Suíte completa (smoke + UNO)
+        run: /usr/bin/python3 completa/tests/run_all.py
+
+      - name: Botões da planilha em dia
+        run: /usr/bin/python3 sync_botoes.py status --ods completa/SageBonis.ods

@@ -57,11 +57,15 @@ def _ler_disco(py_path):
 
 
 def cmd_status(ods_path, py_path):
+    """Devolve True se estao em sincronia. O main() converte isso em codigo de saida:
+    divergencia = saida 1, pra CI (ou um hook de pre-commit) reprovar o commit que
+    edita o .py e esquece de injetar no .ods -- ate agora isso so aparecia se alguem
+    rodasse este comando na mao."""
     embutido = _ler_embutido(ods_path)
     disco = _ler_disco(py_path)
     if embutido == disco:
         print(f"OK: {py_path} esta identico a macro embutida em {ods_path}.")
-        return
+        return True
     print(f"DIFERENTE: {py_path} e a macro embutida em {ods_path} divergem.\n")
     diff = difflib.unified_diff(
         disco.splitlines(), embutido.splitlines(),
@@ -74,6 +78,7 @@ def cmd_status(ods_path, py_path):
         if n > 200:
             print("... (diff truncado em 200 linhas)")
             break
+    return False
 
 
 def cmd_extract(ods_path, py_path):
@@ -135,7 +140,8 @@ def main():
     a = p.parse_args()
 
     if a.acao == "status":
-        cmd_status(a.ods, a.py)
+        if not cmd_status(a.ods, a.py):
+            sys.exit(1)
     elif a.acao == "extract":
         cmd_extract(a.ods, a.py)
     elif a.acao == "inject":

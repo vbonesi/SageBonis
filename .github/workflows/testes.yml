@@ -46,11 +46,15 @@ jobs:
       - uses: actions/checkout@v4
 
       # Os testes UNO usam o Python do sistema: o módulo 'uno' vem com o pacote
-      # python3-uno do LibreOffice, não do pip.
-      - name: Instala LibreOffice + bridge Python-UNO
+      # python3-uno do LibreOffice, não do pip. E rodar a macro EMBUTIDA no .ods
+      # (location=document) exige ainda o provider de script Python -- sem ele o
+      # getScriptProvider() devolve interface vazia e todo teste que chama macro
+      # quebra, mesmo com o 'uno' funcionando.
+      - name: Instala LibreOffice + bridge Python-UNO + provider de script Python
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libreoffice-calc python3-uno
+          sudo apt-get install -y --no-install-recommends \
+            libreoffice-calc python3-uno libreoffice-script-provider-python
 
       - name: Suíte completa (smoke + UNO)
         run: /usr/bin/python3 completa/tests/run_all.py

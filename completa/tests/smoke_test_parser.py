@@ -160,6 +160,30 @@ def rodar(trilha, caminho_modulo):
         # ----------------------------------------------------------
         check(p("origem: caminho relativo gravado em cada ponto"),
               cnf and all(linha["origem"] == "cnf.dat" for linha in cnf))
+
+        # ----------------------------------------------------------
+        # 7. Comentários soltos fora de bloco (auditoria #4, 2ª parte)
+        # ----------------------------------------------------------
+        arq = escrever(pasta, "tdd.dat",
+                       ";Cabecalho do arquivo\n"
+                       ";gerado em 01/01\n"
+                       "#include sub/a.dat\n"
+                       ";rodape solto\n")
+        dados = parsear(mod, arq, "tdd.dat", {"TDD"})
+        linhas = dados.get("tdd", [])
+        tipos = [linha["type"] for linha in linhas]
+        check(p("#4 2ª parte: comentário antes de include vira linha 'n' (não some)"),
+              tipos == [mod.CODIGO_COMENTARIO_SIMPLES, mod.CODIGO_COMENTARIO_SIMPLES,
+                        mod.CODIGO_INCLUDE, mod.CODIGO_COMENTARIO_SIMPLES])
+        check(p("#4 2ª parte: texto do comentário preservado sem o ';'"),
+              linhas and linhas[0]["data"] == "Cabecalho do arquivo")
+        check(p("#4 2ª parte: comentário no fim do arquivo também é gravado"),
+              linhas and linhas[-1]["data"] == "rodape solto")
+
+        arq = escrever(pasta, "tcl.dat", ";so comentario\n;nada mais\n")
+        dados = parsear(mod, arq, "tcl.dat", {"TCL"})
+        check(p("#4 2ª parte: arquivo só de comentários não importa vazio"),
+              len(dados.get("tcl", [])) == 2)
     finally:
         shutil.rmtree(pasta, ignore_errors=True)
 

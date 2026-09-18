@@ -327,6 +327,25 @@ def _finalizar_bloco(current_block, all_data, relative_path, stats, line_no):
         all_data.setdefault(chave, []).append(ponto)
         stats['entities_imported'] += 1
 
+
+def _descarregar_comentarios_pendentes(pending_comments, all_data, chave_entidade, relative_path):
+    """Grava comentários soltos (fora de bloco) como linhas 'n' na entidade corrente,
+    na ordem em que apareceram, e devolve a lista já vazia.
+
+    Antes eles eram descartados: comentário antes de um #include (cabeçalho de arquivo,
+    comum nas bases reais) ou no fim do arquivo sumia na importação e não voltava na
+    exportação -- round-trip destrutivo silencioso (auditoria #4). O tipo 'n' já era
+    suportado de ponta a ponta (write_to_sheet e exportação), só não era produzido pela
+    importação. Um ponto por linha, porque a exportação de 'n' prefixa um único ';'.
+    """
+    for texto in pending_comments:
+        all_data.setdefault(chave_entidade, []).append({
+            'type': CODIGO_COMENTARIO_SIMPLES,
+            'data': texto,
+            'origem': relative_path
+        })
+    return []
+
 # ===============================================================
 # =================== CLASSE DE CONFIGURAÇÃO ====================
 # ===============================================================
@@ -680,30 +699,18 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
             continue
 
         if line_info['type'] == 'include_commented':
+            pending_comments = _descarregar_comentarios_pendentes(
+                pending_comments, all_data, current_entidade_chave, relative_path)
             ponto = {'type': CODIGO_INCLUDE_COMENTADO, 'data': line_info['value'], 'origem': relative_path}
             all_data.setdefault(current_entidade_chave, []).append(ponto)
-            if pending_comments:
-                stats['warnings'] += 1
-                _log_importacao(
-                    'WARN',
-                    f"{relative_path}:{line_no} comentários pendentes descartados antes de include comentado.",
-                    force=True
-                )
-                pending_comments = []
             i += 1
             continue
 
         if line_info['type'] == 'include':
+            pending_comments = _descarregar_comentarios_pendentes(
+                pending_comments, all_data, current_entidade_chave, relative_path)
             ponto = {'type': CODIGO_INCLUDE, 'data': line_info['value'], 'origem': relative_path}
             all_data.setdefault(current_entidade_chave, []).append(ponto)
-            if pending_comments:
-                stats['warnings'] += 1
-                _log_importacao(
-                    'WARN',
-                    f"{relative_path}:{line_no} comentários pendentes descartados antes de include.",
-                    force=True
-                )
-                pending_comments = []
             i += 1
             continue
 
@@ -761,6 +768,11 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
 
     if current_block:
         _finalizar_bloco(current_block, all_data, relative_path, stats, len(lines))
+
+    # Comentários soltos no fim do arquivo (sem bloco aberto depois deles) também
+    # precisam ser gravados, senão somem no round-trip (auditoria #4).
+    pending_comments = _descarregar_comentarios_pendentes(
+        pending_comments, all_data, current_entidade_chave, relative_path)
 
     elapsed = time.perf_counter() - start_time
     _log_importacao(

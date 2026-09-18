@@ -2716,27 +2716,47 @@ CABECALHOS_SUBSTITUIR_INCLUDES = ["Buscar", "Substituir", "Ativa"]
 _TIPOS_INCLUDE = (CODIGO_INCLUDE, CODIGO_INCLUDE_COMENTADO)
 
 
+def _regex_token_include(buscar):
+    """Regex que casa 'buscar' como token do path, não como substring solta.
+
+    Sem isso, uma regra "jdm" -> "itb" também reescrevia "ajdm.dat" e "jdmx.dat"
+    (auditoria #11). A fronteira é alfanumérica: "jdm" casa em "jdm/pds.dat",
+    "sub/jdm.dat" e "pds_jdm.dat" (o '_' já separa), mas não em "ajdm.dat". Quando o
+    próprio 'buscar' começa ou termina com separador (ex.: "/jdm/"), a fronteira
+    daquele lado é dispensada -- o separador já é a fronteira."""
+    prefixo = r'(?<![A-Za-z0-9])' if buscar[:1].isalnum() else ''
+    sufixo = r'(?![A-Za-z0-9])' if buscar[-1:].isalnum() else ''
+    return re.compile(prefixo + re.escape(buscar) + sufixo)
+
+
 def _substituir_em_includes(entidades, buscar, substituir):
-    """Substitui a substring 'buscar' por 'substituir' no path (coluna
-    Comentario/Include) de toda linha de include (Gera=i ou u), em qualquer entidade.
-    Muta 'entidades' IN-PLACE. Devolve (entidades_tocadas, quantidade_substituida)."""
+    """Substitui o token 'buscar' por 'substituir' no path (coluna Comentario/Include)
+    de toda linha de include (Gera=i ou u), em qualquer entidade. Muta 'entidades'
+    IN-PLACE. Devolve (entidades_tocadas, quantidade_substituida, mudancas), com
+    mudancas = [(entidade, linha_planilha, antes, depois)] para o relatório."""
     tocadas = set()
     n = 0
+    mudancas = []
+    if not buscar:
+        return tocadas, n, mudancas
+    padrao = _regex_token_include(buscar)
     for nome, (headers, linhas) in entidades.items():
         col_gera = _idx_coluna(headers, CABEÇALHO_COLUNA_CONTROLE)
         col_dados = _idx_coluna(headers, CABEÇALHO_COLUNA_DADOS)
         if col_gera < 0 or col_dados < 0:
             continue
-        for row in linhas:
+        for i, row in enumerate(linhas):
             codigo = str(row[col_gera]).strip().lower() if len(row) > col_gera else ""
             if codigo not in _TIPOS_INCLUDE:
                 continue
             atual = str(row[col_dados]) if len(row) > col_dados else ""
-            if buscar and buscar in atual:
-                row[col_dados] = atual.replace(buscar, substituir)
+            novo = padrao.sub(lambda _m: substituir, atual)
+            if novo != atual:
+                row[col_dados] = novo
                 tocadas.add(nome)
                 n += 1
-    return tocadas, n
+                mudancas.append((nome, i + 2, atual, novo))
+    return tocadas, n, mudancas
 
 
 def _listar_includes(entidades):
@@ -2766,6 +2786,7 @@ def gerir_includes(*args):
     entidades = _preparar_entidades_mutaveis(_coletar_entidades(doc))
     headers_sub, linhas_sub = _ler_entidade(_get_sheet(doc, NOME_ABA_SUBSTITUIR_INCLUDES))
     entidades_tocadas = set()
+    mudancas_geral = []
     if headers_sub:
         col_ativa = _idx_coluna(headers_sub, "Ativa")
         for row in (linhas_sub or []):
@@ -2776,16 +2797,22 @@ def gerir_includes(*args):
             substituir = _valor_bruto(row, headers_sub, "Substituir")
             if not buscar:
                 continue
-            tocadas, _n = _substituir_em_includes(entidades, buscar, substituir)
+            tocadas, _n, mudancas = _substituir_em_includes(entidades, buscar, substituir)
             entidades_tocadas.update(tocadas)
+            mudancas_geral.extend(mudancas)
 
     for nome in entidades_tocadas:
         headers, linhas = entidades[nome]
         matriz = [headers] + [[str(c) for c in r] for r in linhas]
         _escrever_matriz(_get_sheet(doc, nome.upper()), matriz, negrito_cabecalho=True)
 
-    linhas_relatorio = ["%s (linha %d): %s" % (ent, linha, path)
-                        for ent, linha, path in _listar_includes(entidades)]
+    # O relatório mostra primeiro o que mudou (antes -> depois), depois o estado atual
+    # de todos os includes: sem o diff não dava pra conferir o efeito de uma regra
+    # antes de salvar (auditoria #11).
+    linhas_relatorio = ["ALTERADO %s (linha %d): %s -> %s" % (ent, linha, antes, depois)
+                        for ent, linha, antes, depois in mudancas_geral]
+    linhas_relatorio.extend("%s (linha %d): %s" % (ent, linha, path)
+                            for ent, linha, path in _listar_includes(entidades))
     _escrever_relatorio_simples(doc, NOME_ABA_RELATORIO_INCLUDES, ["Include"], linhas_relatorio)
 
 

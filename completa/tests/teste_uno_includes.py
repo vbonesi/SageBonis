@@ -56,15 +56,26 @@ with TesteUno(porta=2300) as t:
     check("não altera linha normal Gera=x", ponto is not None and
           ponto.get("Comentario/Include") == ANTIGO + "/nao_alterar")
 
+    # O relatório tem duas seções: o diff do que mudou agora (linhas "ALTERADO
+    # entidade (linha N): antes -> depois") e, depois, o estado atual de todos os
+    # includes.
     relatorio = [r.get("Include", "") for r in t.ler_aba("RelatorioIncludes")]
+    alterados = [texto for texto in relatorio if texto.startswith("ALTERADO")]
+    listagem = [texto for texto in relatorio if not texto.startswith("ALTERADO")]
     check("relatório lista os dois paths atualizados",
-          sum(NOVO in texto for texto in relatorio) == 2)
+          sum(NOVO in texto for texto in listagem) == 2)
+    check("relatório mostra o antes -> depois das duas linhas alteradas",
+          len([texto for texto in alterados
+               if ANTIGO in texto and NOVO in texto and " -> " in texto]) == 2)
 
     # Rodar novamente não deve duplicar nem transformar de novo os dados do teste.
     t.chamar_macro("gerir_includes")
     relatorio_2 = [r.get("Include", "") for r in t.ler_aba("RelatorioIncludes")]
-    check("segunda execução é idempotente", sum(NOVO in texto for texto in relatorio_2) == 2 and
+    listagem_2 = [texto for texto in relatorio_2 if not texto.startswith("ALTERADO")]
+    check("segunda execução é idempotente", sum(NOVO in texto for texto in listagem_2) == 2 and
           not any("__REGRA_INATIVA__" in texto for texto in relatorio_2))
+    check("segunda execução não reporta alteração nenhuma",
+          not [texto for texto in relatorio_2 if texto.startswith("ALTERADO")])
 
 print()
 if falhas:

@@ -105,7 +105,7 @@ check("includes: paths corretos", {p for _, _, p in listagem} == {
 check("includes: informa as linhas reais da planilha (cabecalho = linha 1)",
       [linha for _, linha, _ in listagem] == [3, 4, 5])
 
-tocadas_inc, n_inc = mod._substituir_em_includes(entidades_inc, "old_dir", "new_dir")
+tocadas_inc, n_inc, mudancas_inc = mod._substituir_em_includes(entidades_inc, "old_dir", "new_dir")
 check("includes: 3 substituicoes feitas", n_inc == 3)
 check("includes: reporta somente a entidade realmente tocada", tocadas_inc == {"pds"})
 listagem2 = mod._listar_includes(entidades_inc)
@@ -114,12 +114,39 @@ check("includes: paths atualizados", {p for _, _, p in listagem2} == {
 col_dados = mod._idx_coluna(PDS_H, "Comentario/Include")
 check("includes: NAO mexeu no comentario da linha ativa (Gera=x)",
       "old_dir" in entidades_inc["pds"][1][0][col_dados])
-tocadas_repeticao, n_repeticao = mod._substituir_em_includes(entidades_inc, "old_dir", "new_dir")
+tocadas_repeticao, n_repeticao, _mud = mod._substituir_em_includes(entidades_inc, "old_dir", "new_dir")
 check("includes: repetir a mesma regra e idempotente", not tocadas_repeticao and n_repeticao == 0)
 antes_vazio = list(_listar for _listar in mod._listar_includes(entidades_inc))
-tocadas_vazio, n_vazio = mod._substituir_em_includes(entidades_inc, "", "nao_deve_entrar")
+tocadas_vazio, n_vazio, _mud_vazio = mod._substituir_em_includes(entidades_inc, "", "nao_deve_entrar")
 check("includes: busca vazia nao altera nada", not tocadas_vazio and n_vazio == 0)
 check("includes: busca vazia preserva todos os paths", mod._listar_includes(entidades_inc) == antes_vazio)
+check("includes: relatorio traz antes -> depois de cada linha alterada",
+      sorted(mudancas_inc) == [("pds", 3, "old_dir/sub1.dat", "new_dir/sub1.dat"),
+                               ("pds", 4, "old_dir/sub2.dat", "new_dir/sub2.dat"),
+                               ("pds", 5, "old_dir/sub3.dat", "new_dir/sub3.dat")])
+
+# Fronteira de token: "jdm" nao pode casar dentro de "ajdm"/"jdmx" (auditoria #11).
+entidades_token = mod._preparar_entidades_mutaveis({
+    "pds": (PDS_H, [
+        ["", "i", "jdm/pds.dat", "", "", ""],        # token isolado -> troca
+        ["", "i", "base/ajdm.dat", "", "", ""],      # sufixo de outra palavra -> nao
+        ["", "i", "base/jdmx.dat", "", "", ""],      # prefixo de outra palavra -> nao
+        ["", "i", "base/pds_jdm.dat", "", "", ""],   # separado por '_' -> troca
+        ["", "u", "sub/jdm.dat", "", "", ""],        # include comentado -> troca
+    ]),
+})
+tocadas_token, n_token, mudancas_token = mod._substituir_em_includes(entidades_token, "jdm", "itb")
+check("includes: substitui so o token de path, nao a substring", n_token == 3)
+check("includes: paths vizinhos ficam intactos",
+      {p for _, _, p in mod._listar_includes(entidades_token)} == {
+          "itb/pds.dat", "base/ajdm.dat", "base/jdmx.dat", "base/pds_itb.dat", "sub/itb.dat"})
+check("includes: mudancas listam so as linhas realmente alteradas",
+      [linha for _, linha, _, _ in sorted(mudancas_token)] == [2, 5, 6])
+
+_toc_sep, n_sep, _mud_sep = mod._substituir_em_includes(
+    mod._preparar_entidades_mutaveis({"pds": (PDS_H, [["", "i", "a/jdm/b.dat", "", "", ""]])}),
+    "/jdm/", "/itb/")
+check("includes: busca ja delimitada por separador continua casando", n_sep == 1)
 
 # ------------------------------------------------------------------
 # 7. Sanitizacao da exportacao Latin-1

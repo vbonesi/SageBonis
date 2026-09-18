@@ -27,9 +27,20 @@ def by_id(linhas, id_valor):
 # 1. Digital simples (1 origem, sem comando, sem distribuicao)
 # ------------------------------------------------------------------
 headers = mod.CABECALHOS_PONTO_DIGITAL
+
+
+def linha_pd(**kw):
+    """Linha de PontoDigital por nome de coluna -- imune a coluna nova no meio do
+    cabeçalho (fixture posicional já quebrou quando NV2_Comando entrou)."""
+    d = {h: "" for h in headers}
+    d.update(kw)
+    return [d[h] for h in headers]
+
+
 linhas = [
-    ["DEM:230:LIN01:DJ:POS", "IED1.CTRL-XCBR$ST$Pos", "Disjuntor Posicao", "IED1.CTRL_ADAQ",
-     "DPS0", "TAC1", "OCR1", "N", "", "", "x"],
+    linha_pd(ID_Logico="DEM:230:LIN01:DJ:POS", ID_Fisico="IED1.CTRL-XCBR$ST$Pos",
+             NOME="Disjuntor Posicao", NV2="IED1.CTRL_ADAQ", KCONV="DPS0", TAC="TAC1",
+             OCR="OCR1", Comando="N", Gera="x"),
 ]
 saida = mod._gerar_fan_out_digital(linhas, headers, {}, {})
 check("1 origem: 1 PDF", len(saida["pdf"]) == 1)
@@ -44,8 +55,10 @@ check("1 origem: sem PDD (sem distribuicao)", len(saida["pdd"]) == 0)
 # 2. Digital com comando associado
 # ------------------------------------------------------------------
 linhas_cmd = [
-    ["DEM:230:LIN01:DJ:POS", "IED1.CTRL-XCBR$ST$Pos", "Disjuntor Posicao", "IED1.CTRL_ADAQ",
-     "DPS0", "TAC1", "OCR1", "S", "IED1.CTRL-CSWI$CO$Pos", "SBOw TERM", "x"],
+    linha_pd(ID_Logico="DEM:230:LIN01:DJ:POS", ID_Fisico="IED1.CTRL-XCBR$ST$Pos",
+             NOME="Disjuntor Posicao", NV2="IED1.CTRL_ADAQ", KCONV="DPS0", TAC="TAC1",
+             OCR="OCR1", Comando="S", ID_Fisico_Comando="IED1.CTRL-CSWI$CO$Pos",
+             KCONV_Comando="SBOw TERM", Gera="x"),
 ]
 saida2 = mod._gerar_fan_out_digital(linhas_cmd, headers, {}, {})
 check("comando: 1 CGS", len(saida2["cgs"]) == 1)
@@ -53,15 +66,57 @@ check("comando: 1 CGF", len(saida2["cgf"]) == 1)
 check("comando: CGS.ID == PDS.ID (mesmo ID)", saida2["cgs"][0]["ID"] == saida2["pds"][0]["ID"])
 check("comando: CGF.CGS == ID logico", saida2["cgf"][0]["CGS"] == "DEM:230:LIN01:DJ:POS")
 check("comando: CGS.PAC == self", saida2["cgs"][0]["PAC"] == saida2["cgs"][0]["ID"])
+check("comando: sem NV2_Comando nem NV2 conhecido, cai no NV2 de leitura (comportamento antigo)",
+      saida2["cgf"][0]["NV2"] == "IED1.CTRL_ADAQ")
+
+# O NV2 do comando é outro grupo (NV1 de comando), não o de leitura: numa base DNP3 real
+# o ponto lê em EX1_ADNP_1_ASIM e comanda em EX1_CDNP_2_CDUP. Copiar o de leitura pro CGF
+# jogava todo comando no grupo errado -- e o round-trip extrair->unificar fazia isso calado.
+linhas_cmd_dnp = [
+    linha_pd(ID_Logico="EX1:UTR-069:90:RGAT", ID_Fisico="EX1_ADNP_1_ASIM_510",
+             NOME="Regulador automatico", NV2="EX1_ADNP_1_ASIM", KCONV="SQI", TAC="EX1",
+             Comando="S", ID_Fisico_Comando="EX1_CDNP_2_CDUP_5102", KCONV_Comando="SQD",
+             Gera="x"),
+]
+saida_cmd_inferido = mod._gerar_fan_out_digital(
+    linhas_cmd_dnp, headers, {}, {}, {"EX1_ADNP_1_ASIM", "EX1_CDNP_2_CDUP"})
+check("comando: NV2 inferido do proprio ID fisico do comando",
+      saida_cmd_inferido["cgf"][0]["NV2"] == "EX1_CDNP_2_CDUP")
+check("comando: PDF continua no NV2 de leitura",
+      saida_cmd_inferido["pdf"][0]["NV2"] == "EX1_ADNP_1_ASIM")
+
+saida_cmd_desconhecido = mod._gerar_fan_out_digital(
+    linhas_cmd_dnp, headers, {}, {}, {"EX1_ADNP_1_ASIM"})
+check("comando: NV2 inferido so vale se existir na base (senao mantem o de leitura)",
+      saida_cmd_desconhecido["cgf"][0]["NV2"] == "EX1_ADNP_1_ASIM")
+
+linhas_cmd_explicito = [
+    linha_pd(ID_Logico="EX1:UTR-069:90:PAUT", ID_Fisico="EX1_ADNP_1_ASIM_514",
+             NOME="Paralelismo automatico", NV2="EX1_ADNP_1_ASIM", TAC="EX1", Comando="S",
+             ID_Fisico_Comando="EX1_CDNP_2_CDUP_5103", NV2_Comando="MEU_NV2_PROPRIO",
+             Gera="x"),
+]
+saida_cmd_explicito = mod._gerar_fan_out_digital(
+    linhas_cmd_explicito, headers, {}, {}, {"EX1_CDNP_2_CDUP"})
+check("comando: coluna NV2_Comando ganha da inferencia",
+      saida_cmd_explicito["cgf"][0]["NV2"] == "MEU_NV2_PROPRIO")
+
+# 61850 e OIDs de SNMP nao seguem "NV2 + _ + endereco" -- a inferencia tem que se calar.
+saida_cmd_61850 = mod._gerar_fan_out_digital(
+    linhas_cmd, headers, {}, {}, {"IED1.CTRL_ADAQ", "IED1.CTRL_CDAQ"})
+check("comando: ID fisico sem sufixo numerico (61850) nao gera palpite",
+      saida_cmd_61850["cgf"][0]["NV2"] == "IED1.CTRL_ADAQ")
 
 # ------------------------------------------------------------------
 # 3. Digital redundante (2 origens fisicas, mesmo ID_Logico)
 # ------------------------------------------------------------------
 linhas_red = [
-    ["DEM:230:LIN01:DJ:POS", "IED_P.CTRL-XCBR$ST$Pos", "Disjuntor Posicao P", "IED_P.CTRL_ADAQ",
-     "DPS0", "TAC1", "OCR1", "N", "", "", "x"],
-    ["DEM:230:LIN01:DJ:POS", "IED_D.CTRL-XCBR$ST$Pos", "Disjuntor Posicao D", "IED_D.CTRL_ADAQ",
-     "DPS0", "TAC1", "OCR1", "N", "", "", "x"],
+    linha_pd(ID_Logico="DEM:230:LIN01:DJ:POS", ID_Fisico="IED_P.CTRL-XCBR$ST$Pos",
+             NOME="Disjuntor Posicao P", NV2="IED_P.CTRL_ADAQ", KCONV="DPS0", TAC="TAC1",
+             OCR="OCR1", Comando="N", Gera="x"),
+    linha_pd(ID_Logico="DEM:230:LIN01:DJ:POS", ID_Fisico="IED_D.CTRL-XCBR$ST$Pos",
+             NOME="Disjuntor Posicao D", NV2="IED_D.CTRL_ADAQ", KCONV="DPS0", TAC="TAC1",
+             OCR="OCR1", Comando="N", Gera="x"),
 ]
 saida3 = mod._gerar_fan_out_digital(linhas_red, headers, {}, {})
 check("redundante: 2 PDF", len(saida3["pdf"]) == 2)
@@ -78,7 +133,8 @@ check("redundante: RFC.TIPOP=EDC (digital)", all(r["TIPOP"] == "EDC" for r in sa
 # SO o PDS, sem PDF/RFC algum pra essa origem.
 # ------------------------------------------------------------------
 linhas_sem_fisico = [
-    ["DEM:CALC:PONTO", "", "Ponto calculado", "", "", "TAC_CALC", "OCR1", "N", "", "", "x"],
+    linha_pd(ID_Logico="DEM:CALC:PONTO", NOME="Ponto calculado", TAC="TAC_CALC",
+             OCR="OCR1", Comando="N", Gera="x"),
 ]
 saida3b = mod._gerar_fan_out_digital(linhas_sem_fisico, headers, {}, {})
 check("sem ID_Fisico: nenhum PDF gerado", len(saida3b["pdf"]) == 0)
@@ -88,8 +144,10 @@ check("sem ID_Fisico: PDS ainda e gerado (TPFIL=NLFL)",
 
 # mistura: 1 origem com fisico + 1 sem -- deve contar como NAO redundante (so 1 fisica)
 linhas_mistas = [
-    ["DEM:MISTO", "IED1.CTRL-XCBR$ST$Pos", "Com fisico", "NV2A", "DPS0", "TAC1", "OCR1", "N", "", "", "x"],
-    ["DEM:MISTO", "", "Sem fisico (linha manual incompleta)", "", "", "TAC1", "OCR1", "N", "", "", "x"],
+    linha_pd(ID_Logico="DEM:MISTO", ID_Fisico="IED1.CTRL-XCBR$ST$Pos", NOME="Com fisico",
+             NV2="NV2A", KCONV="DPS0", TAC="TAC1", OCR="OCR1", Comando="N", Gera="x"),
+    linha_pd(ID_Logico="DEM:MISTO", NOME="Sem fisico (linha manual incompleta)",
+             TAC="TAC1", OCR="OCR1", Comando="N", Gera="x"),
 ]
 saida3c = mod._gerar_fan_out_digital(linhas_mistas, headers, {}, {})
 check("origens mistas: so 1 PDF (a com ID_Fisico)", len(saida3c["pdf"]) == 1)

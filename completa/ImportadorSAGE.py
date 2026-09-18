@@ -1912,7 +1912,7 @@ NOME_ABA_DISTRIBUICAO_PONTOS = "DistribuicaoPontos"
 ORIGEM_GERADO = "UnificacaoPontos"
 
 CABECALHOS_PONTO_DIGITAL = ["ID_Logico", "ID_Fisico", "NOME", "NV2", "KCONV", "TAC", "OCR",
-                            "Comando", "ID_Fisico_Comando", "KCONV_Comando", "Gera"]
+                            "Comando", "ID_Fisico_Comando", "NV2_Comando", "KCONV_Comando", "Gera"]
 # Comando/ID_Fisico_Comando/KCONV_Comando: mesma convenção do PontoDigital.
 # LMI1C/LMI2C/LMS1C/LMS2C (limites inferior/superior do comando, CGS): achado
 # real em 6 bases independentes (CGS.TIPO=PAS) -- confirmado com valores
@@ -1924,7 +1924,8 @@ CABECALHOS_PONTO_DIGITAL = ["ID_Logico", "ID_Fisico", "NOME", "NV2", "KCONV", "T
 # campos diferentes (ver PLANEJAMENTO.md).
 CABECALHOS_PONTO_ANALOGICO = ["ID_Logico", "ID_Fisico", "NOME", "NV2", "KCONV1", "KCONV2",
                               "KCONV3", "TAC", "OCR", "Comando", "ID_Fisico_Comando",
-                              "KCONV_Comando", "LMI1C", "LMI2C", "LMS1C", "LMS2C", "Gera"]
+                              "NV2_Comando", "KCONV_Comando", "LMI1C", "LMI2C", "LMS1C",
+                              "LMS2C", "Gera"]
 CABECALHOS_COMANDO_AVULSO = ["ID", "ID_Fisico", "NOME", "NV2", "KCONV", "TAC", "PAC", "PINT",
                              "TIPOE", "TPCTL", "LMI1C", "LMI2C", "LMS1C", "LMS2C", "Gera"]
 CABECALHOS_CANAIS_DISTRIBUICAO = ["Nome", "TDD", "Metodo", "Valor1", "Valor2", "Ativo"]
@@ -2093,9 +2094,51 @@ def _gerar_distribuicao(id_logico, entidade_pnt, canais, distribuicoes):
     return linhas
 
 
-def _gerar_fan_out_digital(linhas, headers, canais, distribuicoes):
+def _ids_existentes(doc, nome_entidade):
+    """Conjunto de IDs já presentes numa aba de entidade (vazio se a aba não existir)."""
+    if not _aba_existe_ci(doc, nome_entidade):
+        return set()
+    headers, linhas = _ler_entidade(_get_sheet(doc, nome_entidade))
+    if not headers:
+        return set()
+    col_id = _idx_coluna(headers, "ID")
+    if col_id < 0:
+        return set()
+    return {str(row[col_id]).strip() for row in (linhas or [])
+            if len(row) > col_id and str(row[col_id]).strip()}
+
+
+def _nv2_do_comando(linha, headers, nv2_leitura, nv2_conhecidos):
+    """NV2 do CGF -- que NÃO é o mesmo do PDF/PAF. Numa base real de DNP3 o ponto lê em
+    "EX1_ADNP_1_ASIM" (grupo de leitura, TN1 A<proto>, ordem 1) e comanda em
+    "EX1_CDNP_2_CDUP" (grupo de comando, TN1 C<proto>, ordem 2/3) -- são NV1 diferentes.
+    Até aqui a geração copiava o NV2 de leitura pro comando, então um round-trip
+    extrair_pontos -> unificar_pontos movia todo comando pro grupo errado, calado.
+
+    Ordem de decisão:
+      1. coluna "NV2_Comando", se o usuário preencheu (é a fonte explícita);
+      2. o prefixo do próprio ID_Fisico_Comando (ID = NV2 + "_" + endereço, padrão
+         confirmado em 50/50 dos CGF da base de exemplo), aceito SÓ se esse NV2 existir
+         de fato na base -- assim protocolos cujo ID físico não segue esse formato
+         (61850 "RDP51.CTRL-LLN0$ST$Health", OID de SNMP) não geram palpite errado;
+      3. o NV2 de leitura, comportamento antigo, como último recurso."""
+    explicito = _valor(linha, headers, "NV2_Comando")
+    if explicito:
+        return explicito
+    id_comando = _valor(linha, headers, "ID_Fisico_Comando")
+    if id_comando and "_" in id_comando:
+        candidato = id_comando.rsplit("_", 1)[0]
+        if candidato in (nv2_conhecidos or ()):
+            return candidato
+    return nv2_leitura
+
+
+def _gerar_fan_out_digital(linhas, headers, canais, distribuicoes, nv2_conhecidos=None):
     """Lógica PURA: {entidade: [linha_dict, ...]} a upsertar, a partir da aba PontoDigital
-    já lida em memória. Testável fora do LibreOffice (mesmo espírito do verificador)."""
+    já lida em memória. Testável fora do LibreOffice (mesmo espírito do verificador).
+
+    'nv2_conhecidos' são os IDs de NV2 que já existem na base -- usados só para validar o
+    NV2 inferido do comando (ver _nv2_do_comando); sem eles, só o explícito vale."""
     saida = {"pdf": [], "pds": [], "pdd": [], "rfc": [], "cgf": [], "cgs": []}
     for id_logico, origens in _agrupar_por_id_logico(linhas, headers).items():
         # Só linhas com ID_Fisico preenchido viram PDF/RFC -- uma origem sem ID_Fisico
@@ -2132,14 +2175,16 @@ def _gerar_fan_out_digital(linhas, headers, canais, distribuicoes):
             for origem_cmd in comandos:
                 saida["cgf"].append({
                     "ID": _valor(origem_cmd, headers, "ID_Fisico_Comando"),
-                    "NV2": _valor(origem_cmd, headers, "NV2"), "CGS": id_logico,
+                    "NV2": _nv2_do_comando(origem_cmd, headers,
+                                           _valor(origem_cmd, headers, "NV2"), nv2_conhecidos),
+                    "CGS": id_logico,
                     "KCONV": _valor(origem_cmd, headers, "KCONV_Comando"),
                 })
         saida["pdd"].extend(_gerar_distribuicao(id_logico, "PDS", canais, distribuicoes))
     return saida
 
 
-def _gerar_fan_out_analogico(linhas, headers, canais, distribuicoes):
+def _gerar_fan_out_analogico(linhas, headers, canais, distribuicoes, nv2_conhecidos=None):
     """Mesma lógica de _gerar_fan_out_digital, para PAF/PAS/PAD -- agora TAMBÉM
     com comando (setpoint), ver comentário em CABECALHOS_PONTO_ANALOGICO."""
     saida = {"paf": [], "pas": [], "pad": [], "rfc": [], "cgf": [], "cgs": []}
@@ -2180,7 +2225,9 @@ def _gerar_fan_out_analogico(linhas, headers, canais, distribuicoes):
             for origem_cmd in comandos:
                 saida["cgf"].append({
                     "ID": _valor(origem_cmd, headers, "ID_Fisico_Comando"),
-                    "NV2": _valor(origem_cmd, headers, "NV2"), "CGS": id_logico,
+                    "NV2": _nv2_do_comando(origem_cmd, headers,
+                                           _valor(origem_cmd, headers, "NV2"), nv2_conhecidos),
+                    "CGS": id_logico,
                     "KCONV": _valor(origem_cmd, headers, "KCONV_Comando"),
                 })
         saida["pad"].extend(_gerar_distribuicao(id_logico, "PAS", canais, distribuicoes))
@@ -2334,11 +2381,12 @@ def unificar_pontos(*args):
     headers_ana, linhas_ana = _ler_entidade(_get_sheet(doc, NOME_ABA_PONTO_ANALOGICO))
     headers_cmd, linhas_cmd = _ler_entidade(_get_sheet(doc, NOME_ABA_COMANDO_AVULSO))
 
+    nv2_conhecidos = _ids_existentes(doc, "NV2")
     saida = _mesclar_saidas(
         _gerar_fan_out_digital(linhas_dig or [], headers_dig or CABECALHOS_PONTO_DIGITAL,
-                                canais, distribuicoes),
+                                canais, distribuicoes, nv2_conhecidos),
         _gerar_fan_out_analogico(linhas_ana or [], headers_ana or CABECALHOS_PONTO_ANALOGICO,
-                                  canais, distribuicoes),
+                                  canais, distribuicoes, nv2_conhecidos),
         _gerar_comandos_avulsos(linhas_cmd or [], headers_cmd or CABECALHOS_COMANDO_AVULSO),
     )
     for entidade, linhas in saida.items():
@@ -2450,6 +2498,9 @@ def _extrair_ponto_digital(entidades):
                 cgf = cgfs[i] if i < len(cgfs) else (cgfs[0] if cgfs else None)
                 if cgf:
                     linha["ID_Fisico_Comando"] = cgf.get("ID", "")
+                    # NV2 do comando vem do próprio CGF: é outro grupo, não o de leitura.
+                    # Sem guardar isto, o round-trip devolvia o comando pro grupo errado.
+                    linha["NV2_Comando"] = cgf.get("NV2", "")
                     linha["KCONV_Comando"] = cgf.get("KCONV", "")
             saida.append(linha)
     return saida
@@ -2505,6 +2556,9 @@ def _extrair_ponto_analogico(entidades):
                 cgf = cgfs[i] if i < len(cgfs) else (cgfs[0] if cgfs else None)
                 if cgf:
                     linha["ID_Fisico_Comando"] = cgf.get("ID", "")
+                    # NV2 do comando vem do próprio CGF: é outro grupo, não o de leitura.
+                    # Sem guardar isto, o round-trip devolvia o comando pro grupo errado.
+                    linha["NV2_Comando"] = cgf.get("NV2", "")
                     linha["KCONV_Comando"] = cgf.get("KCONV", "")
                 linha["LMI1C"] = cgs.get("LMI1C", ""); linha["LMI2C"] = cgs.get("LMI2C", "")
                 linha["LMS1C"] = cgs.get("LMS1C", ""); linha["LMS2C"] = cgs.get("LMS2C", "")

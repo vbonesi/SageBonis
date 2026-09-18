@@ -110,6 +110,17 @@ Abas de config (criadas automaticamente, vazias, na 1ª execução):
     preenchidos, ex. `tucurui`/`jdm`). Modelado como um único design genérico pras
     duas variantes — a distinção semântica exata entre `LMI1C` e `LMI2C` não foi
     confirmada o bastante pra virar 2 campos diferentes (ver `PLANEJAMENTO.md`).
+  - **Em que NV2 o comando entra**: não é o mesmo do ponto. Numa base DNP3 real o ponto
+    lê em `EX1_ADNP_1_ASIM` (grupo de leitura, TN1 `A<proto>`) e comanda em
+    `EX1_CDNP_2_CDUP` (grupo de comando, TN1 `C<proto>`) — são NV1 diferentes, criados
+    lado a lado pelo `gerar_ied`. A coluna **`NV2_Comando`** diz qual usar. Se estiver
+    vazia, o valor é **inferido do próprio `ID_Fisico_Comando`** (o ID físico é
+    `NV2 + "_" + endereço`, padrão de 50/50 dos CGF da base de exemplo) e só é aceito
+    se esse NV2 existir de fato na base — protocolos cujo ID físico não segue esse
+    formato (61850 `RDP51.CTRL-LLN0$ST$Health`, OID de SNMP) não geram palpite e ficam
+    com o NV2 do ponto, como antes. A extração reversa preenche `NV2_Comando` a partir
+    do CGF, então `extrair_pontos` → `unificar_pontos` devolve cada comando ao mesmo
+    grupo em que estava.
 - **`ComandoAvulso`** — comandos **sem** ponto de status próprio (ex.: um `COM_SAGE`
   genérico ligado a um TAC local, como algumas bases já usam). Cada linha tem seu
   próprio `ID` de CGS/CGF; várias linhas podem repetir o mesmo `TAC`/`PAC` (o ponto

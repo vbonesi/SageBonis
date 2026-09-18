@@ -141,6 +141,12 @@ with TesteUno(porta=2100) as t:
     # gerar_ied nesta rodada) -- prova que o parser de CNF.CONFIG e o
     # reconhecimento de TCV/TTP aguentam dado de produção de verdade, não só
     # os casos sintéticos do smoke test em memória.
+    # Round-trip do comando: o CGF vive num NV2 de COMANDO (EX1_CDNP_2_CDUP), não no de
+    # leitura do ponto (EX1_ADNP_1_ASIM). A geração copiava o NV2 de leitura, então
+    # extrair_pontos -> unificar_pontos movia todo comando da base pro grupo errado, sem
+    # avisar. Guarda o mapa ID->NV2 de antes pra comparar depois do round-trip completo.
+    cgf_antes = {l["ID"]: l.get("NV2", "") for l in t.ler_aba("CGF") if l.get("ID")}
+
     t.chamar_macro("extrair_pontos")
     ieds_apos = t.ler_aba("IEDs")
 
@@ -174,6 +180,17 @@ with TesteUno(porta=2100) as t:
           sum(1 for l in ieds_apos if l.get("Protocolo") == "61850") == n_61850_base + 1)
     check(f"extração reversa (UNO real): manteve os {n_snmp_base} LSC de SNMP da base (+1 do teste)",
           sum(1 for l in ieds_apos if l.get("Protocolo") == "SNMP") == n_snmp_base + 1)
+
+    # Fecha o round-trip: com as abas de config reconstruídas pela extração, gerar de
+    # novo não pode mexer no NV2 de nenhum comando que já existia na base.
+    t.chamar_macro("unificar_pontos")
+    cgf_depois = {l["ID"]: l.get("NV2", "") for l in t.ler_aba("CGF") if l.get("ID")}
+    mudaram = sorted(id_cgf for id_cgf, nv2 in cgf_antes.items()
+                     if id_cgf in cgf_depois and cgf_depois[id_cgf] != nv2)
+    check("round-trip extrair->unificar preserva o NV2 de comando dos %d CGF da base (%s)"
+          % (len(cgf_antes), mudaram[:3] or "nenhum mudou"), not mudaram)
+    check("round-trip: nenhum CGF da base sumiu",
+          all(id_cgf in cgf_depois for id_cgf in cgf_antes))
 
 print()
 if falhas:

@@ -47,6 +47,20 @@ try:
         check("exportação total reporta aba sem colunas obrigatórias",
               "ERRO" in status_aba.upper() and nome_invalida in status_aba)
 
+        # Linha sem "Origem": não tem destino, então não exporta -- mas precisa
+        # aparecer no status em vez de sumir calada (auditoria #8).
+        linha_sem_origem = t.proxima_linha_livre("PDS")
+        t.escrever_linha("PDS", linha_sem_origem, {
+            "Gera": "n", "Comentario/Include": "linha sem origem",
+        })
+        t.definir_celula("Geral", 0, 6, pasta_valida)
+        t.ativar_aba("PDS")
+        t.chamar_macro("exportar_parcial")
+        status_sem_origem = t.ler_celula("Geral", 1, 6)
+        check("linha sem Origem é contada no status da exportação",
+              "sucesso" in status_sem_origem.lower() and
+              "sem Origem ignorada" in status_sem_origem)
+
         # Cria um arquivo no lugar em que a macro precisaria criar uma pasta.
         # Isso força FileExistsError/OSError sem depender de permissões Unix.
         bloqueio = os.path.join(pasta_valida, "bloqueio")

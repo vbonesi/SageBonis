@@ -155,6 +155,16 @@ if fora_da_lista:
 check("abas: aba de entidade de verdade nao entra na lista",
       "pds" not in nao_entidade and "nv2" not in nao_entidade)
 
+# ------------------------------------------------------------------
+# 9. Avisos do status da exportacao (auditoria #8)
+# ------------------------------------------------------------------
+check("avisos: sem nada a avisar, sufixo vazio", mod._avisos_exportacao(0, 0) == "")
+check("avisos: so linhas sem Origem",
+      mod._avisos_exportacao(0, 3) == " (3 linha(s) sem Origem ignorada(s))")
+aviso_completo = mod._avisos_exportacao(2, 3)
+check("avisos: os dois avisos aparecem juntos",
+      "3 linha(s) sem Origem" in aviso_completo and "2 caractere(s)" in aviso_completo)
+
 print()
 if falhas:
     print(f"{len(falhas)} checagem(ns) FALHOU/FALHARAM: {falhas}")

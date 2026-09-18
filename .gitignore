@@ -49,3 +49,6 @@ SageBonis.ods.tmp  # arquivo temporário do sync_macro.py inject
 ###############################################################################
 __pycache__/
 *.pyc
+
+# Auditoria técnica (2026-09-15) — só na nuvem, nunca no git
+auditoria/

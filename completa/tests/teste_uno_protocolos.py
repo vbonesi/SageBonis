@@ -36,6 +36,25 @@ with TesteUno(porta=2100) as t:
     mul_antes = t.contar_linhas("MUL")
     enm_antes = t.contar_linhas("ENM")
 
+    # Aba de config recém-criada: o upsert precisa respeitar o cabeçalho canônico que o
+    # _garantir_aba_config acabou de escrever. Antes ele adotava o cabeçalho mínimo
+    # (Origem/Gera/Comentario/Include), escrevia mais estreito por cima e deixava as
+    # colunas antigas sobrando -- a aba ficava com cabeçalho duplicado e as macros
+    # passavam a ler uma 2ª coluna "Gera" sempre vazia (nenhuma linha era processada).
+    if t.sheet_existe("IEDs"):
+        t.doc.Sheets.removeByName("IEDs")
+    t.chamar_macro("extrair_pontos")
+    headers_zerado = t.headers_de("IEDs")
+    repetidos = sorted({h for h in headers_zerado if headers_zerado.count(h) > 1})
+    check(f"aba IEDs criada do zero não tem cabeçalho duplicado ({repetidos or 'nenhum'})",
+          not repetidos)
+
+    # Linha de base da extração reversa: quantos IEDs a planilha distribuída já
+    # reconstrói sozinha, por protocolo. Os casos do teste entram depois, +1 cada.
+    ieds_base = t.ler_aba("IEDs")
+    n_61850_base = sum(1 for l in ieds_base if l.get("Protocolo") == "61850")
+    n_snmp_base = sum(1 for l in ieds_base if l.get("Protocolo") == "SNMP")
+
     t.chamar_macro("gerar_ied")
     headers_ieds = t.headers_de("IEDs")
     colunas_por_protocolo = {
@@ -147,12 +166,14 @@ with TesteUno(porta=2100) as t:
           ied_a2bt is not None and ied_a2bt.get("VERBD") == "TESTE_CONSOLIDADO" and ied_a2bt.get("OPMSK") == "0")
     check("extração reversa (UNO real): upsert casou por ID, não duplicou nenhuma das 8 linhas escritas",
           sum(1 for l in ieds_apos if l.get("ID") in {c[0] for c in casos}) == len(casos))
-    # Base real tem 106 LSC pré-existentes (90 de 61850 + 16 de SNMP, nenhum
-    # criado por gerar_ied nesta rodada) -- +1 de cada dos casos de teste acima.
-    check("extração reversa (UNO real): também extraiu os 90 LSC de 61850 já reais da planilha (+1 do teste)",
-          sum(1 for l in ieds_apos if l.get("Protocolo") == "61850") == 91)
-    check("extração reversa (UNO real): também extraiu os 16 LSC de SNMP já reais da planilha (+1 do teste)",
-          sum(1 for l in ieds_apos if l.get("Protocolo") == "SNMP") == 17)
+    # A extração reversa não olha só as linhas criadas aqui: reconstrói também os LSC
+    # que já vieram da base importada na planilha (contados no início) -- +1 de cada dos
+    # casos de teste acima. Comparar com a linha de base, e não com um número fixo,
+    # deixa o teste independente do tamanho da base que a planilha distribui.
+    check(f"extração reversa (UNO real): manteve os {n_61850_base} LSC de 61850 da base (+1 do teste)",
+          sum(1 for l in ieds_apos if l.get("Protocolo") == "61850") == n_61850_base + 1)
+    check(f"extração reversa (UNO real): manteve os {n_snmp_base} LSC de SNMP da base (+1 do teste)",
+          sum(1 for l in ieds_apos if l.get("Protocolo") == "SNMP") == n_snmp_base + 1)
 
 print()
 if falhas:

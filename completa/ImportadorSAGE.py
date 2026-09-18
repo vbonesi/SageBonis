@@ -1852,6 +1852,20 @@ def _valor(row, headers, nome_coluna, default=""):
     return v if v else default
 
 
+def _ler_cabecalho(sheet):
+    """Cabeçalho (linha 1) de uma aba, mesmo quando ela ainda não tem dados. Necessário
+    porque _ler_entidade devolve (None, None) para aba com menos de 2 linhas -- quem
+    tratasse esse None como "aba sem cabeçalho" acabava reescrevendo por cima do
+    cabeçalho canônico (ver _upsert_linhas_entidade)."""
+    cursor = sheet.createCursor()
+    cursor.gotoEndOfUsedArea(False)
+    addr = cursor.getRangeAddress()
+    if addr.EndColumn < 0:
+        return []
+    primeira_linha = [str(c) for c in sheet.getCellRangeByPosition(0, 0, addr.EndColumn, 0).getDataArray()[0]]
+    return primeira_linha if any(h.strip() for h in primeira_linha) else []
+
+
 def _garantir_aba_config(doc, nome_aba, cabecalhos):
     """Cria a aba de config só com o cabeçalho se ela ainda não existir. Se já
     existir, garante que todos os cabeçalhos canônicos estejam presentes --
@@ -1875,12 +1889,7 @@ def _garantir_aba_config(doc, nome_aba, cabecalhos):
     if headers_atuais is None:
         # aba existe mas só tem (no máximo) a linha de cabeçalho, sem dados --
         # _ler_entidade exige 2+ linhas pra não retornar None.
-        cursor = sheet.createCursor()
-        cursor.gotoEndOfUsedArea(False)
-        addr = cursor.getRangeAddress()
-        primeira_linha = [] if addr.EndColumn < 0 else [
-            str(c) for c in sheet.getCellRangeByPosition(0, 0, addr.EndColumn, 0).getDataArray()[0]]
-        headers_atuais = primeira_linha if any(h.strip() for h in primeira_linha) else []
+        headers_atuais = _ler_cabecalho(sheet)
         linhas_atuais = []
 
     faltantes = [c for c in cabecalhos if c not in headers_atuais]
@@ -2186,6 +2195,14 @@ def _upsert_linhas_entidade(doc, sheet_name, linhas_novas, colunas_chave=("ID",)
     if _aba_existe_ci(doc, sheet_name):
         sheet = _get_sheet(doc, sheet_name)
         headers, linhas_lidas = _ler_entidade(sheet)
+        if not headers:
+            # Aba existente mas ainda sem dados: _ler_entidade devolve None e, sem ler o
+            # cabeçalho de verdade aqui, o upsert adotava o cabeçalho mínimo abaixo e
+            # escrevia uma matriz mais estreita por cima do cabeçalho canônico que o
+            # _garantir_aba_config tinha acabado de criar -- as colunas antigas sobravam
+            # à direita e a aba ficava com cabeçalho duplicado (inclusive uma 2ª coluna
+            # "Gera", vazia, que era a que as macros passavam a ler).
+            headers = _ler_cabecalho(sheet)
         headers = headers or [CABEÇALHO_COLUNA_ORIGEM, CABEÇALHO_COLUNA_CONTROLE, CABEÇALHO_COLUNA_DADOS]
         linhas_atuais = linhas_lidas or []
     else:

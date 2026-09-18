@@ -64,11 +64,12 @@ de referência — você ativa o que faz sentido.)
 > que não foi importada. Não é bug: numa base completa esses casos somem. Ative os
 > relacionamentos preferencialmente ao verificar a base inteira.
 >
-> ⚠️ **Planilhas já existentes:** se a sua `VerificacaoRefs` já foi criada por uma versão
-> anterior desta ferramenta (3 regras de exemplo), ela **não é atualizada automaticamente** —
-> a aba só é (re)criada quando não existe, para nunca sobrescrever edições suas. Para herdar as
-> 81 regras curadas, apague a aba `VerificacaoRefs` e rode `verificar_base` de novo (isso inclui
-> o `SageBonis.ods` deste próprio repositório, que ainda tem as 3 regras antigas).
+> ℹ️ **Planilhas já existentes:** se a sua `VerificacaoRefs` foi criada por uma versão
+> anterior desta ferramenta, `verificar_base` agora **acrescenta** as regras padrão que
+> faltam nela, sempre com `Ativa = N` e sem tocar nas linhas que já estão lá — suas edições
+> e ativações ficam como estão. A comparação ignora caixa, espaços e a ordem dos
+> multi-destinos, então uma regra que você editou não volta duplicada; uma que você apagou
+> de propósito volta inativa (inativa ela não muda nenhum resultado).
 
 ### Unificação de pontos (fan-out) — `unificar_pontos`
 Gera as entidades relacionadas (PDF/PDS/PDD, PAF/PAS/PAD, CGF/CGS) a partir de uma
@@ -398,7 +399,11 @@ reconstrução de melhor esforço, não um inverso perfeito.
 
 ## Instalação e uso
 Igual à Simples: abra `SageBonis.ods` e habilite as macros do documento (a macro vem
-embutida). Atribua as funções `verificar_base`, `unificar_pontos`, `extrair_pontos`,
+embutida). A planilha distribuída já vem com uma base de demonstração carregada —
+a mesma de `completa/exemplo_validacao/dados` (fragmento real **anonimizado**, com
+DNP3/61850/MODBUS/SNMP) — e com as abas de trabalho já populadas, pra você ver a
+trilha funcionando antes de importar a sua. Importar a sua base por cima (`importar_dats`,
+modo total) substitui as abas de entidade. Atribua as funções `verificar_base`, `unificar_pontos`, `extrair_pontos`,
 `trocar_id_global`, `estatistica_base`, `gerir_includes` e `gerar_ied` a botões ou
 atalhos, como as demais.
 
@@ -421,9 +426,10 @@ python completa/tests/run_all.py --sem-uno   # só os smoke tests (sem soffice)
   `smoke_test_extracao.py`, `smoke_test_ganhos_rapidos.py`. Importam `ImportadorSAGE.py` direto
   (`importlib`) e chamam as funções `_gerar_*`/`_extrair_*`/etc. isoladas de qualquer UNO.
 - **Teste UNO real** (`teste_uno_protocolos.py`) — sobe um `soffice --headless`, copia o
-  `SageBonis.ods` real pra um arquivo descartável (`/tmp`), injeta a macro atual, roda os 7
-  protocolos via macro de verdade e confirma que o upsert não mexeu nos dados reais
-  pré-existentes (ex.: `mul`/`enm` de 61850). **Nunca escreve no `.ods` rastreado.** Requer
+  `completa/SageBonis.ods` distribuído pra um arquivo descartável (`/tmp`), injeta a macro
+  atual, roda os 7 protocolos via macro de verdade e confirma que o upsert não mexeu nos
+  dados pré-existentes da planilha (ex.: `mul`/`enm` de 61850). **Nunca escreve no `.ods`
+  rastreado.** Requer
   `soffice` no `PATH`. O ciclo de vida (subir/derrubar processo, profile, cópia temporária) é
   todo administrado por `uno_harness.py` (`class TesteUno`, use como *context manager*, aceita
   `ods_origem`/`py_origem` pra apontar pra outra planilha/macro).

@@ -414,6 +414,21 @@ para chamar cada macro.
 | **Botão contextual na aba de config** | `IEDs` → *Gerar IED*, `TrocaId` → *Trocar ID*, `PontoDigital`/`PontoAnalogico`/`ComandoAvulso`/`CanaisDistribuicao`/`DistribuicaoPontos` → *Unificar Pontos*, `SubstituirIncludes` → *Gerir Includes*, `VerificacaoRefs` → *Verificar Base* |
 | **Menu e barra `SageBonis`** | os mesmos itens, para quem prefere menu |
 
+Toda macro da Completa diz o que fez em **`Geral!H23`** ("Status da Trilha Completa",
+logo abaixo do painel) — no mesmo espírito do status de importação/exportação (`B4`/`B7`).
+Exemplos reais:
+
+```
+verificar_base: 0 ERRO, 115 AVISO em 53 entidade(s) (nenhuma regra de referência ativa
+  -- ligue as que quiser na aba VerificacaoRefs) -- ver aba 'Análise'.
+gerar_ied: 27 IED(s) gerado(s), 295 linha(s) -- NV2 55, ENU 40, UTR 39, NV1 31, CNF 27, LSC 27 (+5 entidades).
+trocar_id_global: nada alterado -- nenhuma linha ativa (Ativa=S) com IDAntigo/IDNovo preenchidos na aba TrocaId.
+```
+
+O caso que mais confundia era o último: a macro rodava, não tinha o que fazer e terminava
+em silêncio — indistinguível de ter feito algo. Agora "não fez nada" sempre vem com o
+motivo.
+
 O botão contextual fica **à direita da última coluna de cabeçalho** da aba, na linha 1:
 as macros leem o cabeçalho a partir de `A1`, então a linha 1 precisa continuar sendo
 cabeçalho — não dá pra pôr o botão acima dela. Em abas largas (`IEDs`, com 57 colunas)

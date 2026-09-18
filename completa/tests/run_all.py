@@ -28,6 +28,7 @@ TESTES_UNO = [
     "teste_uno_includes.py",
     "teste_uno_erros_exportacao.py",
     "teste_uno_botoes.py",
+    "teste_uno_status.py",
 ]
 
 

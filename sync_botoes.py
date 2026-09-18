@@ -51,6 +51,9 @@ LINHA_PRIMEIRO_BOTAO = 1   # H2, um botao a cada 2 linhas
 PASSO_LINHA = 2
 LARGURA_BOTAO = 5000       # 1/100 mm  (5 cm)
 ALTURA_BOTAO = 900         # 0,9 cm
+# Rótulo do status das macros da Completa, logo abaixo do painel. A célula do valor
+# (H23) é a CELULA_STATUS_COMPLETA do ImportadorSAGE.py -- se mudar lá, muda aqui.
+LINHA_ROTULO_STATUS = 21   # H22
 
 # (funcao, rotulo) -- mesma ordem e rotulos do menu SageBonis (sync_menu.py)
 ITENS_COMPLETA = [
@@ -272,6 +275,8 @@ def _aplicar_painel(doc):
     for funcao, rotulo in ITENS_PARCIAIS:
         criados.append(_inserir_botao(doc, sheet, funcao, rotulo, COLUNA_PAINEL, linha))
         linha += PASSO_LINHA
+    sheet.getCellByPosition(COLUNA_PAINEL, LINHA_ROTULO_STATUS).setString(
+        "Status da Trilha Completa")
     return criados
 
 

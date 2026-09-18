@@ -1153,6 +1153,38 @@ def atualizar_amostras_cores(*args):
 NOME_ABA_ANALISE = "Análise"
 NOME_ABA_VERIFICACAO_REFS = "VerificacaoRefs"
 
+# Célula da aba Geral onde as macros da Completa dizem o que fizeram -- logo abaixo do
+# painel de botões (coluna H). Até aqui só importar/exportar davam retorno (B4/B7): as
+# macras da Completa terminavam em silêncio, e "não fez nada" era indistinguível de
+# "fez e não achou nada".
+CELULA_ROTULO_STATUS_COMPLETA = (7, 21)  # H22
+CELULA_STATUS_COMPLETA = (7, 22)         # H23
+
+
+def _status_completa(doc, texto):
+    """Escreve o resultado da última macro da Completa na aba Geral.
+
+    Nunca derruba a macro que acabou de rodar: se a aba Geral não existir (planilha
+    montada à mão), só imprime no console."""
+    try:
+        sheet = _get_sheet(doc, NOME_ABA_GERAL)
+        sheet.getCellByPosition(*CELULA_ROTULO_STATUS_COMPLETA).setString("Status da Trilha Completa")
+        sheet.getCellByPosition(*CELULA_STATUS_COMPLETA).setString(texto)
+    except Exception:
+        print("STATUS (Completa): %s" % texto)
+
+
+def _resumo_contagem(pares, limite=6):
+    """'PDS 12, PDF 12, CGS 3 (+2 entidades)' a partir de [(nome, quantidade), ...],
+    ordenado da maior contagem pra menor. Serve pros status das macras que escrevem em
+    várias entidades de uma vez."""
+    itens = sorted(((str(n).upper(), q) for n, q in pares if q), key=lambda p: (-p[1], p[0]))
+    if not itens:
+        return "nada"
+    mostrados = ", ".join("%s %d" % (n, q) for n, q in itens[:limite])
+    resto = len(itens) - limite
+    return mostrados + (" (+%d entidade%s)" % (resto, "s" if resto > 1 else "") if resto > 0 else "")
+
 # Severidades dos achados
 SEV_ERRO = "ERRO"
 SEV_AVISO = "AVISO"
@@ -1780,6 +1812,12 @@ def verificar_base(*args):
     dominios = _carregar_dominios(doc)
     analise = _rodar_checagens(entidades, regras, dominios)
     _escrever_relatorio_analise(doc, analise)
+    if not regras:
+        extra = " (nenhuma regra de referência ativa -- ligue as que quiser na aba %s)" % NOME_ABA_VERIFICACAO_REFS
+    else:
+        extra = " (%d regra(s) de referência ativa(s))" % len(regras)
+    _status_completa(doc, "verificar_base: %d ERRO, %d AVISO em %d entidade(s)%s -- ver aba '%s'."
+                     % (analise.erros, analise.avisos, len(entidades), extra, NOME_ABA_ANALISE))
 
 
 # ===============================================================
@@ -2251,6 +2289,15 @@ def unificar_pontos(*args):
         chave = ("PARC", "PNT") if entidade == "rfc" else ("ID",)
         _upsert_linhas_entidade(doc, entidade.upper(), linhas, colunas_chave=chave)
 
+    total = sum(len(l) for l in saida.values())
+    if total:
+        _status_completa(doc, "unificar_pontos: %d linha(s) gravada(s) -- %s."
+                         % (total, _resumo_contagem((e, len(l)) for e, l in saida.items())))
+    else:
+        _status_completa(doc, "unificar_pontos: nada a gerar -- nenhuma linha ativa (Gera=x) "
+                              "em %s/%s/%s." % (NOME_ABA_PONTO_DIGITAL, NOME_ABA_PONTO_ANALOGICO,
+                                                NOME_ABA_COMANDO_AVULSO))
+
 
 # ---------------------------------------------------------------
 # ---- Extração reversa: entidades existentes -> abas de config ----
@@ -2518,6 +2565,16 @@ def extrair_pontos(*args):
                             colunas_chave=("ID_Logico", "Canal"))
     _upsert_linhas_entidade(doc, NOME_ABA_IEDS, linhas_ieds, colunas_chave=("ID",))
 
+    extraidos = [(NOME_ABA_PONTO_DIGITAL, len(linhas_pd)), (NOME_ABA_PONTO_ANALOGICO, len(linhas_pa)),
+                 (NOME_ABA_COMANDO_AVULSO, len(linhas_ca)), (NOME_ABA_CANAIS_DISTRIBUICAO, len(linhas_canais)),
+                 (NOME_ABA_DISTRIBUICAO_PONTOS, len(linhas_dist)), (NOME_ABA_IEDS, len(linhas_ieds))]
+    if any(q for _n, q in extraidos):
+        _status_completa(doc, "extrair_pontos: %s (a partir de %d entidade(s) importada(s))."
+                         % (_resumo_contagem(extraidos), len(entidades)))
+    else:
+        _status_completa(doc, "extrair_pontos: nada extraído -- nenhuma entidade de ponto "
+                              "(PDS/PDF/PAS/PAF/CGS/CGF) importada nesta planilha.")
+
 
 # ===============================================================
 # ============= TRILHA COMPLETA: GANHOS RÁPIDOS ==================
@@ -2699,6 +2756,14 @@ def trocar_id_global(*args):
         matriz = [headers] + [[str(c) for c in r] for r in linhas]
         _escrever_matriz(_get_sheet(doc, nome.upper()), matriz, negrito_cabecalho=True)
     _escrever_relatorio_simples(doc, NOME_ABA_RELATORIO_TROCA_ID, ["Alteração"], relatorio_geral)
+    if entidades_tocadas:
+        _status_completa(doc, "trocar_id_global: %d alteração(ões) em %d entidade(s) (%s) -- "
+                              "ver aba '%s'." % (len(relatorio_geral), len(entidades_tocadas),
+                                                 ", ".join(sorted(n.upper() for n in entidades_tocadas)),
+                                                 NOME_ABA_RELATORIO_TROCA_ID))
+    else:
+        _status_completa(doc, "trocar_id_global: nada alterado -- nenhuma linha ativa (Ativa=S) "
+                              "com IDAntigo/IDNovo preenchidos na aba %s." % NOME_ABA_TROCA_ID)
 
 
 # --- Estatística -----------------------------------------------------------
@@ -2738,6 +2803,9 @@ def estatistica_base(*args):
     matriz.append(["TOTAL", str(sum(t[1] for t in stats)), str(sum(t[2] for t in stats))])
     _escrever_matriz(sheet, matriz, negrito_cabecalho=True)
     sheet.TabColor = COR_ABA_RELATORIO
+    _status_completa(doc, "estatistica_base: %d entidade(s), %d linha(s) (%d ativas) -- ver aba '%s'."
+                     % (len(stats), sum(t[1] for t in stats), sum(t[2] for t in stats),
+                        NOME_ABA_ESTATISTICA))
 
 
 # --- Gestão de includes -----------------------------------------------------
@@ -2847,6 +2915,15 @@ def gerir_includes(*args):
     linhas_relatorio.extend("%s (linha %d): %s" % (ent, linha, path)
                             for ent, linha, path in _listar_includes(entidades))
     _escrever_relatorio_simples(doc, NOME_ABA_RELATORIO_INCLUDES, ["Include"], linhas_relatorio)
+    total_includes = len(linhas_relatorio) - len(mudancas_geral)
+    if mudancas_geral:
+        _status_completa(doc, "gerir_includes: %d include(s) alterado(s) de %d listado(s) -- "
+                              "ver o antes/depois na aba '%s'."
+                         % (len(mudancas_geral), total_includes, NOME_ABA_RELATORIO_INCLUDES))
+    else:
+        _status_completa(doc, "gerir_includes: %d include(s) listado(s), nenhum alterado -- "
+                              "nenhuma regra ativa casou na aba %s."
+                         % (total_includes, NOME_ABA_SUBSTITUIR_INCLUDES))
 
 
 # ===============================================================
@@ -3383,10 +3460,19 @@ def gerar_ied(*args):
     if not headers:
         return
     col_gera = _idx_coluna(headers, CABEÇALHO_COLUNA_CONTROLE)
-    saidas = [_gerar_infra_ied(row, headers) for row in linhas if _is_ponto_ativo(row, col_gera)]
+    ativas = [row for row in linhas if _is_ponto_ativo(row, col_gera)]
+    saidas = [_gerar_infra_ied(row, headers) for row in ativas]
     saida = _mesclar_saidas(*saidas) if saidas else {}
     for entidade, linhas_saida in saida.items():
         _upsert_linhas_entidade(doc, entidade.upper(), linhas_saida)
+
+    if not ativas:
+        _status_completa(doc, "gerar_ied: nenhuma linha ativa na aba %s -- marque Gera=x "
+                              "nos IEDs que quiser gerar." % NOME_ABA_IEDS)
+    else:
+        _status_completa(doc, "gerar_ied: %d IED(s) gerado(s), %d linha(s) -- %s."
+                         % (len(ativas), sum(len(l) for l in saida.values()),
+                            _resumo_contagem((e, len(l)) for e, l in saida.items())))
 
 
 # ---------------------------------------------------------------

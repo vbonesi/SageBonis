@@ -104,7 +104,7 @@ PDF
 
 
 def rodar_import_export(porta, py_origem, pasta_entrada, pasta_saida, pasta_parcial,
-                        pasta_parcial_lista, pasta_parcial_vazia):
+                        pasta_parcial_lista, pasta_parcial_vazia, pasta_parcial_longa):
     with TesteUno(porta=porta, ods_origem=ODS_SIMPLES, py_origem=py_origem) as t:
         t.definir_celula("Geral", 0, 3, pasta_entrada)  # A4
         t.chamar_macro("importar_dats")
@@ -135,7 +135,8 @@ def rodar_import_export(porta, py_origem, pasta_entrada, pasta_saida, pasta_parc
         t.chamar_macro("exportar_parcial")
         status_parcial = t.ler_celula("Geral", 1, 6)  # B7
 
-        # Pela aba Geral, C14:C144 define a lista; nomes inexistentes sao ignorados.
+        # Pela aba Geral, a coluna C a partir da linha 14 define a lista; nomes
+        # inexistentes sao ignorados.
         t.ativar_aba("Geral")
         for linha_geral in range(13, 144):
             t.definir_celula("Geral", 2, linha_geral, "")
@@ -151,8 +152,18 @@ def rodar_import_export(porta, py_origem, pasta_entrada, pasta_saida, pasta_parc
         t.definir_celula("Geral", 0, 6, pasta_parcial_vazia)
         t.chamar_macro("exportar_parcial")
         status_parcial_vazia = t.ler_celula("Geral", 1, 6)
+
+        # Lista longa: a entidade fica na linha 201, bem depois do antigo limite fixo
+        # de 130 linhas (C14:C144), que ignorava em silencio tudo dali pra baixo
+        # (auditoria #12). Fica por ultimo de proposito: celula escrita fora da area
+        # usada original do .ods nao volta a ficar vazia por setString("") neste
+        # LibreOffice, entao ela contaminaria os cenarios seguintes.
+        t.definir_celula("Geral", 2, 200, "PDF")
+        t.definir_celula("Geral", 0, 6, pasta_parcial_longa)
+        t.chamar_macro("exportar_parcial")
+        status_parcial_longa = t.ler_celula("Geral", 1, 6)
     return (status_import, status_export, status_reexport, status_parcial,
-            status_parcial_lista, status_parcial_vazia)
+            status_parcial_lista, status_parcial_vazia, status_parcial_longa)
 
 
 pasta_entrada = tempfile.mkdtemp(prefix="sagebonis_paridade_entrada_")
@@ -164,23 +175,25 @@ pasta_lista_simples = tempfile.mkdtemp(prefix="sagebonis_lista_simples_")
 pasta_lista_completa = tempfile.mkdtemp(prefix="sagebonis_lista_completa_")
 pasta_vazia_simples = tempfile.mkdtemp(prefix="sagebonis_vazia_simples_")
 pasta_vazia_completa = tempfile.mkdtemp(prefix="sagebonis_vazia_completa_")
+pasta_longa_simples = tempfile.mkdtemp(prefix="sagebonis_longa_simples_")
+pasta_longa_completa = tempfile.mkdtemp(prefix="sagebonis_longa_completa_")
 
 try:
     gerar_fixture(pasta_entrada)
 
     (status_import_s, status_export_s, status_reexport_s, status_parcial_s,
-     status_lista_s, status_vazia_s) = rodar_import_export(
+     status_lista_s, status_vazia_s, status_longa_s) = rodar_import_export(
         2200, PY_SIMPLES, pasta_entrada, pasta_saida_simples, pasta_parcial_simples,
-        pasta_lista_simples, pasta_vazia_simples)
+        pasta_lista_simples, pasta_vazia_simples, pasta_longa_simples)
     check("Simples: importação sem erro", "ERRO" not in status_import_s.upper())
     check("Simples: exportação sem erro", "ERRO" not in status_export_s.upper())
     check("Simples: reexportação sem erro", "ERRO" not in status_reexport_s.upper())
     check("Simples: exportação parcial sem erro", "ERRO" not in status_parcial_s.upper())
 
     (status_import_c, status_export_c, status_reexport_c, status_parcial_c,
-     status_lista_c, status_vazia_c) = rodar_import_export(
+     status_lista_c, status_vazia_c, status_longa_c) = rodar_import_export(
         2201, PY_COMPLETA, pasta_entrada, pasta_saida_completa, pasta_parcial_completa,
-        pasta_lista_completa, pasta_vazia_completa)
+        pasta_lista_completa, pasta_vazia_completa, pasta_longa_completa)
     check("Completa: importação sem erro", "ERRO" not in status_import_c.upper())
     check("Completa: exportação sem erro", "ERRO" not in status_export_c.upper())
     check("Completa: reexportação sem erro", "ERRO" not in status_reexport_c.upper())
@@ -233,6 +246,11 @@ try:
     check("exportação parcial por lista: gera somente PDS e PDF",
           sorted(os.listdir(pasta_lista_simples)) == ["pdf.dat", "pds.dat"] and
           sorted(os.listdir(pasta_lista_completa)) == ["pdf.dat", "pds.dat"])
+    check("exportação parcial: entidade listada além do antigo limite de 130 linhas entra",
+          sorted(os.listdir(pasta_longa_simples)) == ["pdf.dat"] and
+          sorted(os.listdir(pasta_longa_completa)) == ["pdf.dat"])
+    check("exportação parcial por lista longa: concluída sem erro nas duas variantes",
+          "ERRO" not in status_longa_s.upper() and "ERRO" not in status_longa_c.upper())
     check("exportação parcial por lista: nome inexistente e ignorado",
           "nao_existe.dat" not in os.listdir(pasta_lista_completa))
     check("exportação parcial por lista vazia: emite aviso",
@@ -257,6 +275,8 @@ finally:
     shutil.rmtree(pasta_lista_completa, ignore_errors=True)
     shutil.rmtree(pasta_vazia_simples, ignore_errors=True)
     shutil.rmtree(pasta_vazia_completa, ignore_errors=True)
+    shutil.rmtree(pasta_longa_simples, ignore_errors=True)
+    shutil.rmtree(pasta_longa_completa, ignore_errors=True)
 
 print()
 if falhas:

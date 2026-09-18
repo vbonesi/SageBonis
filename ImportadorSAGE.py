@@ -56,7 +56,12 @@ CELULA_CAMINHO_IMPORTACAO = (0, 3)  # A4
 CELULA_STATUS_IMPORTACAO = (1, 3)   # B4
 CELULA_CAMINHO_EXPORTACAO = (0, 6)  # A7
 CELULA_STATUS_EXPORTACAO = (1, 6)   # B7
-RANGE_ENTIDADES_PARCIAL = (2, 13, 2, 143) # C14:C144 (coordenadas UNO são base zero)
+# Lista de entidades da importação/exportação parcial na aba Geral: coluna C, a partir
+# da linha 14 (coordenadas UNO são base zero) e até o fim da área usada da aba. Antes
+# era um range fixo de 130 linhas (C14:C144): limite arbitrário e silencioso -- a
+# entidade listada depois dele simplesmente não era processada (auditoria #12).
+COLUNA_ENTIDADES_PARCIAL = 2
+PRIMEIRA_LINHA_ENTIDADES_PARCIAL = 13
 
 # --- Códigos de Controle (Coluna "Gera") ---
 CODIGO_BLOCO_ATIVO = 'x'
@@ -395,6 +400,21 @@ def _reportar_falha_inesperada(geral_sheet, celula_status, acao, excecao, conseq
         print(mensagem)
 
 
+def _ler_entidades_parciais(geral_sheet):
+    """Nomes (minúsculos) listados na coluna de entidades da aba Geral, da primeira
+    linha da lista até o fim da área usada da aba. Linhas em branco são puladas, então
+    um buraco no meio da lista não corta o resto."""
+    cursor = geral_sheet.createCursor()
+    cursor.gotoEndOfUsedArea(False)
+    ultima_linha = cursor.getRangeAddress().EndRow
+    if ultima_linha < PRIMEIRA_LINHA_ENTIDADES_PARCIAL:
+        return []
+    dados = geral_sheet.getCellRangeByPosition(
+        COLUNA_ENTIDADES_PARCIAL, PRIMEIRA_LINHA_ENTIDADES_PARCIAL,
+        COLUNA_ENTIDADES_PARCIAL, ultima_linha).getDataArray()
+    return [str(row[0]).strip().lower() for row in dados if row and str(row[0]).strip()]
+
+
 def importar_dats(*args):
     doc = XSCRIPTCONTEXT.getDocument() # type: ignore
     # Mantém a variável inicializada para que o bloco except não tente escrever
@@ -451,9 +471,7 @@ def importar_parcial(*args):
     entidades_a_importar = []
     modo = 'REPLACE' 
     if active_sheet_name.lower() == NOME_ABA_GERAL.lower():
-        range_entidades = geral_sheet.getCellRangeByPosition(*RANGE_ENTIDADES_PARCIAL)
-        dados_entidades = range_entidades.getDataArray()
-        entidades_a_importar = [row[0].lower() for row in dados_entidades if row and row[0]]
+        entidades_a_importar = _ler_entidades_parciais(geral_sheet)
         if not entidades_a_importar:
             geral_sheet.getCellByPosition(*CELULA_STATUS_IMPORTACAO).setString("AVISO: Nenhuma entidade listada para importação parcial.")
             return
@@ -862,9 +880,7 @@ def exportar_parcial(*args):
 
     abas_a_exportar = []
     if active_sheet_name.lower() == NOME_ABA_GERAL.lower():
-        range_entidades = geral_sheet.getCellRangeByPosition(*RANGE_ENTIDADES_PARCIAL)
-        dados_entidades = range_entidades.getDataArray()
-        nomes_entidades = [row[0].lower() for row in dados_entidades if row and row[0]]
+        nomes_entidades = _ler_entidades_parciais(geral_sheet)
         if not nomes_entidades:
             geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString("AVISO: Nenhuma entidade listada para exportação parcial.")
             return

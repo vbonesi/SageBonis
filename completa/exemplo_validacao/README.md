@@ -34,9 +34,9 @@ as duas funcionalidades mais recentes:
 ## De onde veio
 
 Fragmento de uma base real de cliente. Este repositório é público, então o
-código da subestação, um sufixo de projeto e os 16 IPs internos reais foram
-trocados por tokens/faixa genéricos (`192.0.2.0/24`, reservada pra
-documentação pela RFC 5737). Fora esses tokens, mantém a estrutura da base
+código da subestação, um sufixo de projeto, o nome de um IED e os 16 IPs
+internos reais foram trocados por tokens/faixa genéricos (`192.0.2.0/24`,
+reservada pra documentação pela RFC 5737). Fora esses tokens, mantém a estrutura da base
 original: tudo que já estava no nível raiz (`bd/dados/*.dat`, sem seguir os
 ~57 `#include` de instalação) mais só **3 subpastas** escolhidas por
 conterem cada protocolo: `SNMP/`, `RDP/` (61850) e `coringa4S8/` (MODBUS). A

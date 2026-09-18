@@ -789,29 +789,6 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
 # ================= FUNÇÕES DE EXPORTAÇÃO =======================
 # ===============================================================
 
-def _abas_nao_exportaveis():
-    """Conjunto (lower) de abas que a própria Trilha Completa cria e que nunca têm o
-    formato Origem/Gera/Dados exportável para .dat: as de config (FOLHAS_IGNORADAS),
-    as de relatório (Análise/VerificacaoRefs/Estatística/IEDs/RelatorioTrocaId/
-    RelatorioIncludes) e as de config de geração de pontos (PontoDigital/
-    PontoAnalogico/ComandoAvulso/CanaisDistribuicao/DistribuicaoPontos). Sem isso,
-    exportar_dats/exportar_parcial tentam exportar essas abas, não encontram as 3
-    colunas padrão e a exportação total inteira termina em erro por causa delas
-    (achado de auditoria; a lista de abas de relatório foi conferida rodando a
-    exportação de verdade contra completa/SageBonis.ods, que pegou duas abas além
-    das citadas no relatório original)."""
-    nomes = set(ign.lower() for ign in FOLHAS_IGNORADAS)
-    nomes.update({
-        NOME_ABA_ANALISE.lower(), NOME_ABA_VERIFICACAO_REFS.lower(),
-        NOME_ABA_ESTATISTICA.lower(), NOME_ABA_IEDS.lower(),
-        NOME_ABA_RELATORIO_TROCA_ID.lower(), NOME_ABA_RELATORIO_INCLUDES.lower(),
-        NOME_ABA_PONTO_DIGITAL.lower(), NOME_ABA_PONTO_ANALOGICO.lower(),
-        NOME_ABA_COMANDO_AVULSO.lower(), NOME_ABA_CANAIS_DISTRIBUICAO.lower(),
-        NOME_ABA_DISTRIBUICAO_PONTOS.lower(),
-    })
-    return nomes
-
-
 def exportar_dats(*args):
     doc = XSCRIPTCONTEXT.getDocument() # type: ignore
     # Mesma proteção das rotinas de importação: evita erro secundário no except
@@ -832,7 +809,7 @@ def exportar_dats(*args):
         return
 
     geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString("Processando exportação total...")
-    abas_a_exportar = [s for s in doc.getSheets() if s.getName().lower() not in _abas_nao_exportaveis()]
+    abas_a_exportar = [s for s in doc.getSheets() if s.getName().lower() not in _abas_nao_entidade()]
     resultados = [_exportar_folha(sheet, export_folder) for sheet in abas_a_exportar]
     erros = [e for e, _ in resultados if e]
     total_substituicoes = sum(n for _, n in resultados)
@@ -882,7 +859,7 @@ def exportar_parcial(*args):
                 pass
     else:
         # Garante que a aba ativa não seja uma aba ignorada
-        if active_sheet_name.lower() not in _abas_nao_exportaveis():
+        if active_sheet_name.lower() not in _abas_nao_entidade():
             abas_a_exportar.append(active_sheet)
 
     geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString(f"Processando exportação de: {', '.join(s.getName() for s in abas_a_exportar)}...")
@@ -1651,9 +1628,30 @@ def _escrever_relatorio_analise(doc, analise):
 
 
 def _abas_nao_entidade():
-    """Conjunto (lower) das abas que não são entidades: config + relatório."""
+    """Conjunto (lower) de TODA aba que não é entidade SAGE: as de config da trilha
+    Simples (FOLHAS_IGNORADAS), as de config da Completa (VerificacaoRefs, TrocaId,
+    SubstituirIncludes, IEDs, PontoDigital/PontoAnalogico/ComandoAvulso/
+    CanaisDistribuicao/DistribuicaoPontos) e as de relatório (Análise, Estatística,
+    RelatorioTrocaId, RelatorioIncludes).
+
+    Uma lista só, usada pelos dois consumidores: a exportação (essas abas não têm o
+    formato Origem/Gera/Dados, e tentar exportá-las fazia a exportação inteira terminar
+    em "ERRO" -- auditoria #1) e o _coletar_entidades (o verificador, a estatística, a
+    troca de ID e a gestão de includes não devem tratar aba de config como entidade).
+
+    Duas listas paralelas já tinham divergido: TrocaId e SubstituirIncludes, criadas
+    por trocar_id_global/gerir_includes, não estavam em nenhuma das duas -- bastava
+    rodar uma dessas macros para a exportação total voltar a falhar. A lista de abas
+    de relatório foi conferida rodando a exportação de verdade contra
+    completa/SageBonis.ods."""
     ignoradas = set(n.lower() for n in FOLHAS_IGNORADAS)
-    ignoradas.update({NOME_ABA_ANALISE.lower(), NOME_ABA_VERIFICACAO_REFS.lower()})
+    ignoradas.update(n.lower() for n in (
+        NOME_ABA_ANALISE, NOME_ABA_VERIFICACAO_REFS, NOME_ABA_ESTATISTICA,
+        NOME_ABA_IEDS, NOME_ABA_TROCA_ID, NOME_ABA_RELATORIO_TROCA_ID,
+        NOME_ABA_SUBSTITUIR_INCLUDES, NOME_ABA_RELATORIO_INCLUDES,
+        NOME_ABA_PONTO_DIGITAL, NOME_ABA_PONTO_ANALOGICO, NOME_ABA_COMANDO_AVULSO,
+        NOME_ABA_CANAIS_DISTRIBUICAO, NOME_ABA_DISTRIBUICAO_PONTOS,
+    ))
     return ignoradas
 
 

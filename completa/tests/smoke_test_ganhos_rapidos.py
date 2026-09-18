@@ -137,6 +137,24 @@ check("latin-1: somente caractere sem mapeamento conta como substituicao",
 check("latin-1: resultado sanitizado sempre pode ser codificado",
       texto_unicode.encode("latin-1").decode("latin-1") == texto_unicode)
 
+# ------------------------------------------------------------------
+# 8. Abas internas: uma lista so (auditoria #1)
+# ------------------------------------------------------------------
+# Guarda contra a divergencia que ja aconteceu duas vezes: aba de config/relatorio
+# nova criada pela Completa sem entrar na lista -> a exportacao total tenta exporta-la,
+# nao acha as 3 colunas padrao e termina inteira em "ERRO".
+nao_entidade = mod._abas_nao_entidade()
+constantes_aba = {nome: valor for nome, valor in vars(mod).items()
+                  if nome.startswith("NOME_ABA_") and isinstance(valor, str)}
+fora_da_lista = sorted(f"{nome}={valor}" for nome, valor in constantes_aba.items()
+                       if valor.lower() not in nao_entidade)
+check("abas: toda NOME_ABA_* da macro esta na lista de nao-entidade (%s constantes)"
+      % len(constantes_aba), not fora_da_lista)
+if fora_da_lista:
+    print("      faltando:", ", ".join(fora_da_lista))
+check("abas: aba de entidade de verdade nao entra na lista",
+      "pds" not in nao_entidade and "nv2" not in nao_entidade)
+
 print()
 if falhas:
     print(f"{len(falhas)} checagem(ns) FALHOU/FALHARAM: {falhas}")

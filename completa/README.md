@@ -35,7 +35,16 @@ Checagens atuais:
   (`Entidade | Atributo | Valor1 | Valor2 | ...`) para avisar quando um atributo tem um valor
   que não está entre os valores válidos catalogados (ex.: `cgs.TPCTL` só aceita
   `AFIC/CSAC/CSCD/DFIC`);
-- **Integridade referencial cruzada** — dirigida pela aba de config `VerificacaoRefs`.
+- **Integridade referencial cruzada** — dirigida pela aba de config `VerificacaoRefs`;
+- **ID de ponto sem a sigla da subestação** (aviso) — pega o ponto colado de outra
+  base/SE, que a checagem de FK não vê (o ID é único e as referências fecham; só o
+  ponto é de outra subestação). Preencha a sigla em **`Geral!B9`** ("Sigla da SE") para
+  ligar; vazio, a checagem não roda. É a única checagem que não é universal — depende
+  de saber qual é a sigla certa da base carregada, por isso mora em config.
+  Vale só para as entidades de ponto (`PDS/PDF/PDD/PAS/PAF/PAD/PTS/PTF/PTD/CGS/CGF`):
+  a infra de canal costuma ser nomeada pelo IED/ligação (ex.: um LSC `COR_LSC` de
+  distribuição), então ali a convenção não se aplica. O separador depois da sigla
+  (`EX1:...`, `EX1_...`) é exigido, para `EX10` não passar como `EX1`.
 
 #### Configurando a integridade referencial (`VerificacaoRefs`)
 Na primeira execução do verificador, a aba `VerificacaoRefs` é criada com **81 regras

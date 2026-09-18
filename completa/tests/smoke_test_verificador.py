@@ -107,6 +107,36 @@ check("fk: sem regras ativas não há achado de referência",
       not any("Referencia" in d for d in descrs(analise)))
 
 # ------------------------------------------------------------------
+# 3b. _check_prefixo_se: ponto de outra subestação na base
+# ------------------------------------------------------------------
+PDS_PREFIXO = ["Origem", "Gera", "Comentario/Include", "ID", "NOME"]
+entidades_sigla = {
+    "pds": (PDS_PREFIXO, [
+        ["pds.dat", "x", "", "EX1:02A1:86:ATRB", "Da SE certa"],
+        ["pds.dat", "x", "", "EX1_ADNP_1_ASIM_20", "Separador '_' também vale"],
+        ["pds.dat", "x", "", "OUTRA:04B1:27:ASTU", "Ponto de outra SE"],
+        ["pds.dat", "x", "", "EX10:04B1:27:ASTU", "Sigla parecida, sem separador"],
+        ["pds.dat", "c", "", "OUTRA:XX", "Inativo: não checa"],
+    ]),
+    # Infra de canal não segue a convenção (LSC de distribuição nomeado pela ligação).
+    "lsc": (PDS_PREFIXO, [["lsc.dat", "x", "", "COR_LSC", "Distribuição"]]),
+}
+analise = mod._rodar_checagens(entidades_sigla, [], sigla_se="EX1")
+prefixo = [a for a in analise.achados if "sigla da SE" in a["descr"]]
+check("sigla: acusa só os IDs fora do padrão (2 de 5 linhas)", len(prefixo) == 2)
+check("sigla: acusa o ponto de outra SE e o de sigla parecida sem separador",
+      sorted(a["valor"] for a in prefixo) == ["EX10:04B1:27:ASTU", "OUTRA:04B1:27:ASTU"])
+check("sigla: achado é AVISO, não ERRO", all(a["sev"] == mod.SEV_AVISO for a in prefixo))
+check("sigla: entidade fora da lista de ponto (lsc) não é checada",
+      all(a["entidade"] != "lsc" for a in prefixo))
+check("sigla: sem sigla configurada a checagem não roda",
+      not [a for a in mod._rodar_checagens(entidades_sigla, []).achados
+           if "sigla da SE" in a["descr"]])
+check("sigla: comparação ignora caixa",
+      len([a for a in mod._rodar_checagens(entidades_sigla, [], sigla_se="ex1").achados
+           if "sigla da SE" in a["descr"]]) == 2)
+
+# ------------------------------------------------------------------
 # 4. Reconciliação da aba VerificacaoRefs (auditoria #6)
 # ------------------------------------------------------------------
 faltantes_do_zero = mod._regras_refs_faltantes([])

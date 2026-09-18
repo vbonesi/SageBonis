@@ -61,6 +61,11 @@ CELULA_CAMINHO_IMPORTACAO = (0, 3)  # A4
 CELULA_STATUS_IMPORTACAO = (1, 3)   # B4
 CELULA_CAMINHO_EXPORTACAO = (0, 6)  # A7
 CELULA_STATUS_EXPORTACAO = (1, 6)   # B7
+# Sigla da subestação desta base (ex.: "EX1"). Vazia = a checagem de prefixo de ID fica
+# desligada -- é a única checagem do verificador que não é universal: depende de saber
+# qual é a sigla "certa" pra base carregada, então mora em config, não no código.
+CELULA_ROTULO_SIGLA_SE = (0, 8)  # A9
+CELULA_SIGLA_SE = (1, 8)         # B9
 # Lista de entidades da importação/exportação parcial na aba Geral: coluna C, a partir
 # da linha 14 (coordenadas UNO são base zero) e até o fim da área usada da aba. Antes
 # era um range fixo de 130 linhas (C14:C144): limite arbitrário e silencioso -- a
@@ -1174,6 +1179,21 @@ def _status_completa(doc, texto):
         print("STATUS (Completa): %s" % texto)
 
 
+def _ler_sigla_se(doc):
+    """Sigla da subestação configurada em Geral!B9 (string vazia se não houver).
+
+    Escreve o rótulo ao lado na 1ª execução, pra config nascer visível na planilha em
+    vez de ser um segredo do código."""
+    try:
+        sheet = _get_sheet(doc, NOME_ABA_GERAL)
+        rotulo = sheet.getCellByPosition(*CELULA_ROTULO_SIGLA_SE)
+        if not rotulo.getString().strip():
+            rotulo.setString("Sigla da SE (prefixo dos IDs de ponto)")
+        return sheet.getCellByPosition(*CELULA_SIGLA_SE).getString().strip()
+    except Exception:
+        return ""
+
+
 def _resumo_contagem(pares, limite=6):
     """'PDS 12, PDF 12, CGS 3 (+2 entidades)' a partir de [(nome, quantidade), ...],
     ordenado da maior contagem pra menor. Serve pros status das macras que escrevem em
@@ -1498,6 +1518,40 @@ _COLUNAS_CONTROLE = frozenset(
 )
 
 
+# Entidades onde a convenção "ID começa com a sigla da SE" é forte o bastante pra checar:
+# as de ponto. Fora daqui a convenção não vale (catálogos do CEPEL, e a infra de canal
+# costuma ser nomeada pelo IED/ligação -- ex.: um LSC "COR_LSC" de distribuição).
+ENTIDADES_PREFIXO_SE = frozenset(
+    ("pds", "pdf", "pdd", "pas", "paf", "pad", "pts", "ptf", "ptd", "cgs", "cgf"))
+# Separadores usados entre a sigla e o resto do ID nas bases reais ("EX1:02A1:86:ATRB",
+# "EX1_ADNP_1_ASIM_20"). Exigir o separador evita acusar "EX10" quando a sigla é "EX1".
+_SEPARADORES_PREFIXO_SE = (":", "_", "-", ".")
+
+
+def _check_prefixo_se(sheet_name, headers, linhas, sigla, analise):
+    """ID de ponto que não começa com a sigla da subestação (AVISO).
+
+    Pega o caso de ponto colado de outra base/SE, que a checagem de FK não vê: o ID é
+    único e as referências fecham, só o ponto é de outra subestação. Desligada quando
+    não há sigla configurada (ver CELULA_SIGLA_SE) -- sem ela não dá pra saber qual
+    prefixo é o certo."""
+    sigla = str(sigla).strip()
+    if not sigla or sheet_name.strip().lower() not in ENTIDADES_PREFIXO_SE:
+        return
+    col_gera = _idx_coluna(headers, CABEÇALHO_COLUNA_CONTROLE)
+    col_id = _idx_coluna(headers, "ID")
+    if col_id < 0:
+        return
+    esperados = tuple(sigla.upper() + sep for sep in _SEPARADORES_PREFIXO_SE)
+    for i, row in enumerate(linhas):
+        if not _is_ponto_ativo(row, col_gera):
+            continue
+        valor = str(row[col_id]).strip() if len(row) > col_id else ""
+        if valor and not valor.upper().startswith(esperados):
+            analise.add(SEV_AVISO, sheet_name, i + 2, "ID", valor,
+                        "ID não começa com a sigla da SE (%s)" % sigla)
+
+
 def _check_dominios(sheet_name, headers, linhas, dominios, analise):
     """Valor de atributo fora do domínio conhecido (aba EntidadeAtributoValor).
 
@@ -1788,16 +1842,18 @@ def _coletar_entidades(doc):
     return entidades
 
 
-def _rodar_checagens(entidades, regras, dominios=None):
+def _rodar_checagens(entidades, regras, dominios=None, sigla_se=""):
     """Executa todas as checagens (lógica PURA) e devolve a _Analise preenchida.
 
-    Compartilhado entre a macro (verificar_base) e o testador standalone."""
+    Compartilhado entre a macro (verificar_base) e o testador standalone. 'sigla_se'
+    vazia desliga a checagem de prefixo de ID (ver _check_prefixo_se)."""
     analise = _Analise()
     dominios = dominios or {}
     for nome, (headers, linhas) in entidades.items():
         _check_ids(nome, headers, linhas, analise)
         _check_tamanho_id(nome, headers, linhas, analise)
         _check_dominios(nome, headers, linhas, dominios, analise)
+        _check_prefixo_se(nome, headers, linhas, sigla_se, analise)
     _check_integridade_referencial(entidades, regras, analise)
     return analise
 
@@ -1810,12 +1866,15 @@ def verificar_base(*args):
     regras = _carregar_regras_refs(doc)
     # Domínios de valores válidos — lidos da aba já existente 'EntidadeAtributoValor'.
     dominios = _carregar_dominios(doc)
-    analise = _rodar_checagens(entidades, regras, dominios)
+    sigla_se = _ler_sigla_se(doc)
+    analise = _rodar_checagens(entidades, regras, dominios, sigla_se=sigla_se)
     _escrever_relatorio_analise(doc, analise)
     if not regras:
         extra = " (nenhuma regra de referência ativa -- ligue as que quiser na aba %s)" % NOME_ABA_VERIFICACAO_REFS
     else:
         extra = " (%d regra(s) de referência ativa(s))" % len(regras)
+    extra += (", sigla da SE: %s" % sigla_se) if sigla_se else (
+        ", sem sigla da SE em Geral!B9 (checagem de prefixo de ID desligada)")
     _status_completa(doc, "verificar_base: %d ERRO, %d AVISO em %d entidade(s)%s -- ver aba '%s'."
                      % (analise.erros, analise.avisos, len(entidades), extra, NOME_ABA_ANALISE))
 

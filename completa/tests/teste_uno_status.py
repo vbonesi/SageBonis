@@ -68,6 +68,22 @@ with TesteUno(porta=2700) as t:
     check("gerar_ied conta IEDs e linhas geradas",
           "IED(s) gerado(s)" in status_ied and "LSC" in status_ied.upper(), repr(status_ied))
 
+    # Sigla da SE: config vazia mantém a checagem de prefixo desligada, e preenchê-la
+    # liga (é a única checagem do verificador que depende da base carregada).
+    t.chamar_macro("verificar_base")
+    status_sem_sigla = t.ler_celula("Geral", *CELULA_STATUS)
+    check("verificar_base avisa quando não há sigla da SE configurada",
+          "sem sigla da SE" in status_sem_sigla, repr(status_sem_sigla))
+    rotulo_sigla = t.ler_celula("Geral", 0, 8)  # A9
+    check("rótulo da sigla da SE é criado na Geral", "Sigla da SE" in rotulo_sigla,
+          repr(rotulo_sigla))
+
+    t.definir_celula("Geral", 1, 8, "EX1")  # B9
+    t.chamar_macro("verificar_base")
+    status_com_sigla = t.ler_celula("Geral", *CELULA_STATUS)
+    check("verificar_base usa a sigla configurada", "sigla da SE: EX1" in status_com_sigla,
+          repr(status_com_sigla))
+
 print()
 if falhas:
     print("%d checagem(ns) FALHOU/FALHARAM: %s" % (len(falhas), falhas))

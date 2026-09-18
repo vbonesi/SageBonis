@@ -27,6 +27,7 @@ TESTES_UNO = [
     "teste_paridade_import_export.py",
     "teste_uno_includes.py",
     "teste_uno_erros_exportacao.py",
+    "teste_uno_botoes.py",
 ]
 
 

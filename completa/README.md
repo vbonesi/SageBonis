@@ -403,9 +403,21 @@ embutida). A planilha distribuída já vem com uma base de demonstração carreg
 a mesma de `completa/exemplo_validacao/dados` (fragmento real **anonimizado**, com
 DNP3/61850/MODBUS/SNMP) — e com as abas de trabalho já populadas, pra você ver a
 trilha funcionando antes de importar a sua. Importar a sua base por cima (`importar_dats`,
-modo total) substitui as abas de entidade. Atribua as funções `verificar_base`, `unificar_pontos`, `extrair_pontos`,
-`trocar_id_global`, `estatistica_base`, `gerir_includes` e `gerar_ied` a botões ou
-atalhos, como as demais.
+modo total) substitui as abas de entidade.
+
+Você não precisa atribuir nada a botão na mão: a planilha já vem com três caminhos
+para chamar cada macro.
+
+| Onde | O quê |
+|---|---|
+| **Painel na aba `Geral`** (coluna H) | um botão por macro da Completa, mais *Importar/Exportar Parcial* |
+| **Botão contextual na aba de config** | `IEDs` → *Gerar IED*, `TrocaId` → *Trocar ID*, `PontoDigital`/`PontoAnalogico`/`ComandoAvulso`/`CanaisDistribuicao`/`DistribuicaoPontos` → *Unificar Pontos*, `SubstituirIncludes` → *Gerir Includes*, `VerificacaoRefs` → *Verificar Base* |
+| **Menu e barra `SageBonis`** | os mesmos itens, para quem prefere menu |
+
+O botão contextual fica **à direita da última coluna de cabeçalho** da aba, na linha 1:
+as macros leem o cabeçalho a partir de `A1`, então a linha 1 precisa continuar sendo
+cabeçalho — não dá pra pôr o botão acima dela. Em abas largas (`IEDs`, com 57 colunas)
+ele fica longe à direita; ali o painel da `Geral` é o caminho mais prático.
 
 ## Sincronizar a macro com o .ods
 A partir da raiz do repositório:
@@ -414,6 +426,24 @@ A partir da raiz do repositório:
 python sync_macro.py inject  --ods completa/SageBonis.ods --py completa/ImportadorSAGE.py
 python sync_macro.py status  --ods completa/SageBonis.ods --py completa/ImportadorSAGE.py
 ```
+
+Menu/barra e botões têm ferramentas próprias, no mesmo espírito (idempotentes, é seguro
+rodar de novo):
+
+```bash
+python sync_menu.py   status --ods completa/SageBonis.ods   # itens do menu SageBonis
+python sync_botoes.py status --ods completa/SageBonis.ods   # botões dentro da planilha
+python sync_botoes.py sync   --ods completa/SageBonis.ods   # cria/atualiza os botões
+```
+
+`sync_botoes.py` é a única das três que **precisa do LibreOffice** (`soffice` no `PATH`):
+botão de formulário não mora num XML separado como o menu, e sim no meio da estrutura da
+aba dentro do `content.xml` — montar isso na mão seria frágil, então quem escreve é o
+próprio LibreOffice. Ela sobe um `soffice --headless` com profile isolado, edita e fecha.
+Cada botão criado leva o prefixo `btnSB_` no nome: o `sync` remove os antigos com esse
+prefixo antes de recriar, e os 3 botões originais da Simples (*Importar*, *Exportar*,
+*Verificar Cores*) nunca são tocados. Macro nova na trilha = acrescentar uma linha em
+`ITENS_COMPLETA`/`BOTOES_CONTEXTUAIS` e rodar o `sync`.
 
 ## Testes (`completa/tests/`)
 ```bash
@@ -440,6 +470,16 @@ python completa/tests/run_all.py --sem-uno   # só os smoke tests (sem soffice)
   exportação total/parcial rejeitam pasta inexistente e que uma aba tabular sem os
   cabeçalhos obrigatórios ou uma falha física de escrita geram diagnóstico claro,
   sem encerrar o LibreOffice.
+- **Teste UNO de botões** (`teste_uno_botoes.py`) — lê de volta o `ScriptEventDescriptor`
+  de cada botão (é o que o clique dispara, não basta o desenho existir) e exige: os 3 botões
+  originais da Simples intactos, um botão no painel da `Geral` por macro da Completa, o botão
+  contextual de cada aba de config à direita do cabeçalho (nunca cobrindo dado), e nenhuma
+  macro exposta só no menu. Macro nova sem botão quebra a suíte.
+- **Smoke tests do parser e do verificador** (`smoke_test_parser.py`, `smoke_test_verificador.py`)
+  — fixtures `.dat` (bloco comentado com dígito, utf-8/latin-1, CRLF, includes, comentários
+  soltos) rodadas contra **as duas trilhas**, e as checagens puras do verificador (ID vazio/
+  duplicado, limite de tamanho, FK simples e multi-destino) mais a reconciliação da aba
+  `VerificacaoRefs`.
 - **Teste de paridade import/export** (`teste_paridade_import_export.py`) — critério de
   maturidade da convergência (`PLANEJAMENTO.md`): gera uma base `.dat` sintética pequena
   (autocontida, sem depender de nenhum caminho externo), importa numa cópia do `SageBonis.ods`

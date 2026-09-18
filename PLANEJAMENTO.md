@@ -65,8 +65,13 @@ SkillSAGE, e suporte a FK "ambígua" — múltiplas entidades de destino por reg
 de ID acima do limite conhecido da entidade; valor fora do domínio conhecido (reaproveita a
 aba `EntidadeAtributoValor`, que já existia mas estava sem consumidor).
 
-**Ainda pendente** desta frente: prefixo do ID = sigla da SE (precisa de config indicando
-qual é a sigla "correta" para a base carregada — não é universal como as demais checagens).
+**Entregue depois**: prefixo do ID = sigla da SE — a config que faltava é a célula
+`Geral!B9`; vazia, a checagem fica desligada. Escopo estreito de propósito (só entidades
+de ponto) e severidade AVISO, pra não encher a aba `Análise` de falso positivo com a
+infra de canal, que é nomeada pelo IED/ligação.
+
+**Ainda pendente** desta frente: nada conhecido — as checagens novas que aparecerem
+entram como item próprio.
 
 **Por que primeiro:** maior ROI, menor risco (read‑only, não toca no formato de
 exportação), e o Python leva vantagem real sobre o VBA (índices `dict`/`set` com
@@ -109,6 +114,17 @@ digital quanto analógico (réplica literal do exemplo real).
 **Ainda pendente** desta frente: endereçamento automático do `ID_Fisico`/`NV2` por
 protocolo (101/104/DNP3/61850) — hoje o usuário informa esses campos prontos; migrar
 para o **Assistente de Protocolo/IED** (item 3), que já nasce dependente disso.
+
+> **Primeiro passo dado** (2026-09-18): investigando esse item, o padrão de nomes ficou
+> confirmado contra a base real — `NV2 = <IED>_<TN1>_<ordem>_<TN2>` e
+> `ID_Fisico = <NV2>_<endereço>` para a família clássica (101/104/DNP3/MODBUS); 61850 e
+> SNMP usam o endereço do próprio modelo de dados (`RDP51.CTRL-LLN0$ST$Health`, OID) e
+> ficam de fora de qualquer derivação. Esse padrão já foi usado para consertar um bug de
+> corrupção silenciosa: o CGF ia parar no NV2 de leitura em vez do de comando (ver
+> `NV2_Comando` em completa/README.md). O que falta para fechar o item é a derivação
+> completa a partir da aba `IEDs` — deriva bem o **grupo** (NV2); o **endereço** dentro
+> do grupo é dado do IED, não tem como inventar: viria de uma lista de pontos importada
+> ou de numeração sequencial explicitamente pedida pelo usuário.
 
 **Entregue — comando para pontos analógicos (setpoints)**: `PontoAnalogico` ganhou
 `Comando`/`ID_Fisico_Comando`/`KCONV_Comando` (mesma convenção do `PontoDigital`) mais

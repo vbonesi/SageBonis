@@ -3,6 +3,7 @@
 import os
 import re
 import time
+import traceback
 
 # ===============================================================
 # ================ MACRO SAGE - VERSÃO 0.9.3 ====================
@@ -380,6 +381,20 @@ class SageConfig:
 # ================= FUNÇÕES DE IMPORTAÇÃO =======================
 # ===============================================================
 
+def _reportar_falha_inesperada(geral_sheet, celula_status, acao, excecao, consequencia):
+    """Escreve no status o erro que escapou de toda validação e imprime o traceback.
+
+    Sem isso, uma exceção no meio da rotina deixava o status preso em "Processando..."
+    e a planilha (ou a pasta de saída) parcialmente reescrita, sem nada indicando que
+    o que está na tela não é confiável (auditoria #9)."""
+    print(traceback.format_exc())
+    mensagem = f"ERRO: falha inesperada durante a {acao} ({type(excecao).__name__}: {excecao}). {consequencia}"
+    try:
+        geral_sheet.getCellByPosition(*celula_status).setString(mensagem)
+    except Exception:
+        print(mensagem)
+
+
 def importar_dats(*args):
     doc = XSCRIPTCONTEXT.getDocument() # type: ignore
     # Mantém a variável inicializada para que o bloco except não tente escrever
@@ -400,7 +415,13 @@ def importar_dats(*args):
         return
 
     geral_sheet.getCellByPosition(*CELULA_STATUS_IMPORTACAO).setString("Processando importação total...")
-    _executar_importacao(doc, folder_path, lista_entidades=None, modo_importacao='REPLACE')
+    try:
+        _executar_importacao(doc, folder_path, lista_entidades=None, modo_importacao='REPLACE')
+    except Exception as e:
+        _reportar_falha_inesperada(
+            geral_sheet, CELULA_STATUS_IMPORTACAO, "importação total", e,
+            "A planilha pode ter ficado parcialmente atualizada -- feche sem salvar antes de tentar de novo.")
+        return
     geral_sheet.getCellByPosition(*CELULA_STATUS_IMPORTACAO).setString("Importação total concluída com sucesso!")
 
 
@@ -441,7 +462,13 @@ def importar_parcial(*args):
         modo = 'UPDATE'
 
     geral_sheet.getCellByPosition(*CELULA_STATUS_IMPORTACAO).setString(f"Processando importação de: {', '.join(entidades_a_importar)}...")
-    _executar_importacao(doc, folder_path, lista_entidades=entidades_a_importar, modo_importacao=modo)
+    try:
+        _executar_importacao(doc, folder_path, lista_entidades=entidades_a_importar, modo_importacao=modo)
+    except Exception as e:
+        _reportar_falha_inesperada(
+            geral_sheet, CELULA_STATUS_IMPORTACAO, "importação parcial", e,
+            "A planilha pode ter ficado parcialmente atualizada -- feche sem salvar antes de tentar de novo.")
+        return
     geral_sheet.getCellByPosition(*CELULA_STATUS_IMPORTACAO).setString("Importação parcial concluída com sucesso!")
 
 
@@ -792,7 +819,13 @@ def exportar_dats(*args):
 
     geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString("Processando exportação total...")
     abas_a_exportar = [s for s in doc.getSheets() if s.getName().lower() not in [ign.lower() for ign in FOLHAS_IGNORADAS]]
-    resultados = [_exportar_folha(sheet, export_folder) for sheet in abas_a_exportar]
+    try:
+        resultados = [_exportar_folha(sheet, export_folder) for sheet in abas_a_exportar]
+    except Exception as e:
+        _reportar_falha_inesperada(
+            geral_sheet, CELULA_STATUS_EXPORTACAO, "exportação", e,
+            "Parte dos .dat pode já ter sido gravada; a versão anterior de cada um está no .bak ao lado.")
+        return
     erros = [r[0] for r in resultados if r[0]]
     total_substituicoes = sum(r[1] for r in resultados)
     total_sem_origem = sum(r[2] for r in resultados)
@@ -846,7 +879,13 @@ def exportar_parcial(*args):
             abas_a_exportar.append(active_sheet)
 
     geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString(f"Processando exportação de: {', '.join(s.getName() for s in abas_a_exportar)}...")
-    resultados = [_exportar_folha(sheet, export_folder) for sheet in abas_a_exportar]
+    try:
+        resultados = [_exportar_folha(sheet, export_folder) for sheet in abas_a_exportar]
+    except Exception as e:
+        _reportar_falha_inesperada(
+            geral_sheet, CELULA_STATUS_EXPORTACAO, "exportação", e,
+            "Parte dos .dat pode já ter sido gravada; a versão anterior de cada um está no .bak ao lado.")
+        return
     erros = [r[0] for r in resultados if r[0]]
     total_substituicoes = sum(r[1] for r in resultados)
     total_sem_origem = sum(r[2] for r in resultados)

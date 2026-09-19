@@ -528,6 +528,34 @@ def _executar_importacao(doc, base_folder_path, lista_entidades, modo_importacao
             write_to_sheet(doc, entidade_nome, pontos, modo_importacao, config)
 
 
+def _mover_aba_para_o_fim(doc, nome):
+    """Põe a aba por último, em qualquer versão do LibreOffice.
+
+    O destino do moveByName não quer dizer a mesma coisa em todo lugar: no 26.8,
+    mover pro índice do último realmente põe no fim; no 24.2 (o do Ubuntu da CI) a
+    aba para UMA posição antes do fim. Por isso aqui a gente move, confere e, se
+    faltou, traz pra trás quem ficou depois dela -- movimento pra trás não tem essa
+    ambiguidade. A ordem é conveniência (é ela que faz a planilha sair na ordem da
+    MaisUsadas): se o LibreOffice não colaborar, desiste em silêncio.
+    """
+    abas = doc.getSheets()
+    try:
+        nomes = list(abas.ElementNames)
+        if nomes[-1] == nome:
+            return
+        abas.moveByName(nome, len(nomes) - 1)
+        nomes = list(abas.ElementNames)
+        while nomes[-1] != nome:
+            i = nomes.index(nome)
+            abas.moveByName(nomes[i + 1], i)
+            novos = list(abas.ElementNames)
+            if novos == nomes:  # não saiu do lugar: insistir seria laço infinito
+                return
+            nomes = novos
+    except Exception:
+        pass  # nunca vale perder a importação por causa da ordem das abas
+
+
 def write_to_sheet(doc, sheet_name, pontos_importados, modo, config):
     """
     Versão limpa e otimizada. Escreve os dados e aplica formatação visual básica,
@@ -548,10 +576,7 @@ def write_to_sheet(doc, sheet_name, pontos_importados, modo, config):
             # Recriar jogava a aba pro fim, e é assim que a ordem final acaba sendo a da
             # aba MaisUsadas (a importação escreve nessa ordem). Mover preserva esse
             # efeito sem destruir nada.
-            try:
-                doc.getSheets().moveByName(sheet.Name, doc.getSheets().getCount() - 1)
-            except Exception:
-                pass  # ordem é conveniência; nunca vale perder a importação por ela
+            _mover_aba_para_o_fim(doc, sheet.Name)
     else:
         new_sheet = doc.createInstance("com.sun.star.sheet.Spreadsheet")
         doc.getSheets().insertByName(sheet_name, new_sheet)

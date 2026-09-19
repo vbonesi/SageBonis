@@ -105,9 +105,14 @@ PDF
 def rodar_import_export(porta, py_origem, pasta_entrada, pasta_saida, pasta_parcial,
                         pasta_parcial_lista, pasta_parcial_vazia, pasta_parcial_longa):
     with TesteUno(porta=porta, ods_origem=ODS, py_origem=py_origem) as t:
+        # Importação REPLACE reaproveita a aba existente em vez de removê-la e criar
+        # outra: se algo falhar no meio, a planilha não fica sem ela.
+        abas_antes = {t.doc.Sheets.getByIndex(i).Name for i in range(t.doc.Sheets.getCount())}
         t.definir_celula("Geral", 0, 3, pasta_entrada)  # A4
         t.chamar_macro("importar_dats")
         status_import = t.ler_celula("Geral", 1, 3)  # B4
+        sumidas = sorted(abas_antes - {t.doc.Sheets.getByIndex(i).Name
+                                       for i in range(t.doc.Sheets.getCount())})
 
         # Exercita codigos que nao surgem naturalmente do parser de .dat.
         linha = t.proxima_linha_livre("PDS")
@@ -162,7 +167,7 @@ def rodar_import_export(porta, py_origem, pasta_entrada, pasta_saida, pasta_parc
         t.chamar_macro("exportar_parcial")
         status_parcial_longa = t.ler_celula("Geral", 1, 6)
     return (status_import, status_export, status_reexport, status_parcial,
-            status_parcial_lista, status_parcial_vazia, status_parcial_longa)
+            status_parcial_lista, status_parcial_vazia, status_parcial_longa, sumidas)
 
 
 pasta_entrada = tempfile.mkdtemp(prefix="sagebonis_entrada_")
@@ -176,10 +181,11 @@ try:
     gerar_fixture(pasta_entrada)
 
     (status_import, status_export, status_reexport, status_parcial,
-     status_lista, status_vazia, status_longa) = rodar_import_export(
+     status_lista, status_vazia, status_longa, sumidas) = rodar_import_export(
         2200, PY, pasta_entrada, pasta_saida, pasta_parcial,
         pasta_lista, pasta_vazia, pasta_longa)
     check("importação sem erro", "ERRO" not in status_import.upper())
+    check("importação não faz aba sumir (%s)" % (sumidas or "nenhuma"), not sumidas)
     check("exportação sem erro", "ERRO" not in status_export.upper())
     check("reexportação sem erro", "ERRO" not in status_reexport.upper())
     check("exportação parcial sem erro", "ERRO" not in status_parcial.upper())

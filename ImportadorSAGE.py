@@ -533,16 +533,26 @@ def write_to_sheet(doc, sheet_name, pontos_importados, modo, config):
     Versão limpa e otimizada. Escreve os dados e aplica formatação visual básica,
     incluindo o efeito zebrado nas linhas importadas + 20 linhas extras.
     """
-    # --- Bloco de Limpeza e Criação de Aba (sem alterações) ---
-    if modo == 'UPDATE' and doc.getSheets().hasByName(sheet_name):
+    # --- Preparação da aba ---
+    # Aba que já existe é LIMPA e reaproveitada, nunca removida. Antes o modo REPLACE
+    # fazia removeByName + insertByName: entre um e outro a aba não existia, e uma falha
+    # ali (ou em qualquer ponto seguinte da importação) deixava a planilha sem ela, sem
+    # rollback nenhum. Limpar dá o mesmo resultado sem essa janela.
+    if doc.getSheets().hasByName(sheet_name):
         sheet = _get_sheet(doc, sheet_name)
         cursor = sheet.createCursor()
         cursor.gotoEndOfUsedArea(False)
-        range_to_clear = sheet.getCellRangeByPosition(0, 0, cursor.getRangeAddress().EndColumn, cursor.getRangeAddress().EndRow)
-        range_to_clear.clearContents(FLAGS_LIMPAR_TUDO)
+        addr = cursor.getRangeAddress()
+        sheet.getCellRangeByPosition(0, 0, addr.EndColumn, addr.EndRow).clearContents(FLAGS_LIMPAR_TUDO)
+        if modo != 'UPDATE':
+            # Recriar jogava a aba pro fim, e é assim que a ordem final acaba sendo a da
+            # aba MaisUsadas (a importação escreve nessa ordem). Mover preserva esse
+            # efeito sem destruir nada.
+            try:
+                doc.getSheets().moveByName(sheet.Name, doc.getSheets().getCount() - 1)
+            except Exception:
+                pass  # ordem é conveniência; nunca vale perder a importação por ela
     else:
-        if doc.getSheets().hasByName(sheet_name):
-            doc.getSheets().removeByName(sheet_name)
         new_sheet = doc.createInstance("com.sun.star.sheet.Spreadsheet")
         doc.getSheets().insertByName(sheet_name, new_sheet)
         sheet = _get_sheet(doc, sheet_name)

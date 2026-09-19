@@ -10,8 +10,8 @@ Requer 'soffice' no PATH e o módulo 'uno' (python3-uno / vem com o LibreOffice)
 Uso típico:
     from uno_harness import TesteUno
     with TesteUno() as t:
-        t.chamar_macro("gerar_ied")
-        linhas = t.ler_aba("LSC")
+        t.chamar_macro("importar_dats")
+        linhas = t.ler_aba("PDS")
 
 Cada instância usa uma porta TCP e um profile/cópia próprios (isolados por
 tempfile), então é seguro rodar vários testes em sequência ou até em paralelo
@@ -24,17 +24,17 @@ import sys
 import tempfile
 import time
 
-_RAIZ_COMPLETA = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ODS_REAL = os.path.join(_RAIZ_COMPLETA, "SageBonis.ods")
-PY_ATUAL = os.path.join(_RAIZ_COMPLETA, "ImportadorSAGE.py")
-_SYNC_MACRO = os.path.join(os.path.dirname(_RAIZ_COMPLETA), "sync_macro.py")
+_RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ODS_REAL = os.path.join(_RAIZ, "SageBonis.ods")
+PY_ATUAL = os.path.join(_RAIZ, "ImportadorSAGE.py")
+_SYNC_MACRO = os.path.join(_RAIZ, "sync_macro.py")
 
 
 class TesteUno:
     def __init__(self, porta=2100, timeout_conexao=40, timeout_boot=20,
                  ods_origem=None, py_origem=None):
-        """ods_origem/py_origem: por padrão usa completa/SageBonis.ods +
-        completa/ImportadorSAGE.py (injetando o .py na cópia, garantindo que o
+        """ods_origem/py_origem: por padrão usa SageBonis.ods +
+        ImportadorSAGE.py (injetando o .py na cópia, garantindo que o
         teste sempre rode contra o código MAIS RECENTE). Passe outros caminhos
         pra testar outras combinações -- ex.: paridade de import/export contra
         o SageBonis.ods da raiz (Trilha Simples)."""
@@ -51,8 +51,8 @@ class TesteUno:
         self.ctx = None
 
     def __enter__(self):
-        self.profile_dir = tempfile.mkdtemp(prefix="sagebonis_lo_profile_")
-        fd, self.copia_ods = tempfile.mkstemp(suffix=".ods", prefix="sagebonis_teste_")
+        self.profile_dir = tempfile.mkdtemp(prefix="sageautoma_lo_profile_")
+        fd, self.copia_ods = tempfile.mkstemp(suffix=".ods", prefix="sageautoma_teste_")
         os.close(fd)
         shutil.copy2(self.ods_origem, self.copia_ods)
         subprocess.run(

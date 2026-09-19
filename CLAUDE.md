@@ -2,74 +2,62 @@
 
 ## O que é
 Ferramenta para editar em massa a base de dados do **SAGE** (Sistema Aberto de
-Gerenciamento de Energia) usando o **LibreOffice Calc**. A planilha
-`SageBonis.ods` importa vários arquivos `.dat`, organiza as entidades em abas,
-permite edição em massa e exporta de volta para arquivos `.dat`.
+Gerenciamento de Energia) usando o **LibreOffice Calc**. A planilha `SageBonis.ods`
+importa vários arquivos `.dat`, organiza as entidades em abas, permite edição em massa
+e exporta de volta para arquivos `.dat`.
 
-Autor: Victor Bonesi · Repo: https://github.com/vbonesi/SageBonis · Licença: GPL.
+Autor: Victor Bonesi · Repo: https://github.com/vbonesi/SageBonis · Licença: GPLv3.
 
-## Arquitetura (peças do projeto)
-- **`ImportadorSAGE.py`** — macro Python do LibreOffice. É o cérebro: parser de
-  `.dat`, importação/exportação, formatação (zebra, cores), validação. Toda a
-  lógica vive aqui.
-- **`SageBonis.ods`** — a planilha (um ZIP no formato ODF). Contém as abas de
-  trabalho **e** uma cópia embutida da macro em `Scripts/python/ImportadorSAGE.py`
-  (location=document), além de menu/barra `SageBonis` próprios.
-- **`README.md`** — guia de instalação e uso para o usuário final.
-- **`sync_macro.py`** — utilitário para sincronizar `ImportadorSAGE.py` ↔ macro
-  embutida no `.ods` sem abrir o LibreOffice (ver abaixo).
-- **`temp_ods/`, `temp_ods_content.xml`** — artefatos de extração do `.ods`. São
-  descartáveis (1,6 MB) e idealmente não deveriam estar versionados.
+## Escopo (importante)
+O projeto faz **uma coisa**: import/export de base `.dat` com edição em massa no meio.
+Recursos avançados — verificador de base, unificação de pontos, assistente de
+protocolo/IED — foram desenvolvidos como variante "Completa" e, **desde 19/09/2026**,
+seguem como ferramenta interna da Automa (`SAGEAutoma`, repositório privado). Aqui não
+se empilha funcionalidade avançada: o valor desta planilha é ser rápida e previsível.
+
+Os dois núcleos **divergem de propósito** — não há sincronização automática entre os
+repositórios. Melhoria de import/export feita lá pode ser trazida pra cá à mão, e
+vice-versa.
+
+## Arquitetura
+- **`ImportadorSAGE.py`** — a macro do LibreOffice. É o cérebro: parser de `.dat`,
+  importação/exportação, formatação (zebra, cores), diagnóstico. Toda a lógica vive aqui.
+- **`SageBonis.ods`** — a planilha (ZIP no formato ODF). Contém as abas de trabalho, uma
+  cópia embutida da macro em `Scripts/python/ImportadorSAGE.py` (location=document) e o
+  menu/barra `SageBonis`.
+- **`sync_macro.py`** — sincroniza `ImportadorSAGE.py` ↔ macro embutida no `.ods` sem
+  abrir o LibreOffice.
+- **`tests/`** — smoke test do parser (rápido, sem LibreOffice) e round-trip
+  import/export via UNO real. `python tests/run_all.py`.
+- **`.github/workflows/testes.yml`** — roda a suíte a cada push/PR e reprova macro fora
+  de sincronia com o `.ods`.
 
 ## Conceitos do domínio
 - Abas de dados: `PDS`, `PDF`, `PDD`, etc. (uma por entidade SAGE).
 - Abas de configuração (ignoradas na exportação): `Geral`, `MaisUsadas`,
-  `EntidadeAtributoValor`, `opmsk`, `Cores`.
-- **Coluna "Gera"** controla a exportação por linha: `x` ativo, `c` comentado,
-  `n` comentário simples, `i` include, `u` include comentado, `q` ignora.
+  `EntidadeAtributoValor`, `opmsk`, `Cores`. **São protegidas com senha** — o LibreOffice
+  ignora em silêncio escrita de cor/conteúdo nelas via macro.
+- **Coluna "Gera"** controla a exportação por linha: `x` ativo, `c` comentado, `n`
+  comentário simples, `i` include, `u` include comentado, `q` ignora.
 - Encoding dos `.dat`: exporta em `latin-1` (ISO-8859-1, padrão do SAGE), importa
-  aceitando `latin-1` e `utf-8`.
+  tentando `utf-8` antes de `latin-1`.
+- Lista de entidades da importação/exportação parcial: coluna C da aba `Geral`, da linha
+  14 até o fim da área usada.
 
-## A macro embutida (descoberta importante)
-A v0.9.2 (por Felipe Santos) provou que dá para **embutir a macro dentro do
-`.ods`** e chamá-la com `location=document`. Vantagens: distribuição de um único
-arquivo autossuficiente (sem instalação manual em `%APPDATA%`), e compatibilidade
-com LibreOffice Flatpak. A v0.9.2 também tornou a busca de abas tolerante a
-maiúsculas/minúsculas (`_get_sheet`) e corrigiu `Geral`.
-
-## Fluxo de atualização da macro (sync_macro.py)
-O `.ods` tem sua própria cópia da macro, que pode divergir do `ImportadorSAGE.py`
-do disco. Para mantê-los em sincronia:
+## Fluxo de atualização da macro
+O `.ods` tem sua própria cópia da macro, que pode divergir do `ImportadorSAGE.py`:
 
 ```bash
-python sync_macro.py status    # mostra o diff entre o .py e a macro embutida
+python sync_macro.py status    # mostra o diff (sai com código 1 se divergirem)
 python sync_macro.py extract   # macro do .ods  -> ImportadorSAGE.py  (puxar)
 python sync_macro.py inject    # ImportadorSAGE.py -> macro do .ods    (empurrar)
 ```
 
-`inject` cria um `.ods.bak` e preserva a regra do ODF (mimetype como primeira
-entrada e sem compressão). Decida qual lado é a fonte da verdade antes de gravar.
-
-## Versão atual: 0.9.3
-Resultado da reconciliação das três versões que existiam: a macro embutida 0.9.2
-(de Felipe Santos) virou a base, e a sanitização `_sanitizar_para_latin1` foi
-reincorporada na exportação. O `ImportadorSAGE.py` da raiz e a macro embutida no
-`.ods` estão **idênticos** (mantidos em sync via `sync_macro.py`).
+`inject` cria um `.ods.bak` e preserva a regra do ODF (mimetype como primeira entrada e
+sem compressão). Decida qual lado é a fonte da verdade antes de gravar.
 
 ## Convenções de manutenção
 - Fonte da verdade da lógica = `ImportadorSAGE.py` da raiz.
-- Após editar a macro, rodar `python sync_macro.py inject` e commitar `.py` + `.ods` juntos.
-- `temp_ods/` e `temp_ods_content.xml` são ignorados pelo git (artefatos de extração).
-
-## Estratégia: duas trilhas (ver PLANEJAMENTO.md)
-O projeto seguirá com **duas variantes no mesmo repo**:
-- **Simples (atual, raiz)** — import/export rápido, sem atrito. **Manter intocada e
-  estável**; não empilhar funcionalidade aqui.
-- **Completa (nova, forkada, em pasta própria)** — recursos avançados portados de
-  duas macros VBA de referência (GE e Eletronorte‑2): verificador de base, unificação
-  de pontos (Digital/Analógico/Comando → fan‑out), assistente de protocolo/IED.
-
-Princípio de design: recursos novos são **dirigidos por config** (abas), não
-hard‑coded, para não engessar o padrão de um cliente. Meta de longo prazo: convergir
-para uma planilha "modo duplo" — mas só quando a Completa amadurecer (critérios no
-[PLANEJAMENTO.md](PLANEJAMENTO.md)). Detalhes, prioridades e referências lá.
+- Após editar a macro, rodar `python sync_macro.py inject` e commitar `.py` + `.ods`
+  juntos — a CI reprova se ficarem diferentes.
+- `auditoria/` fica fora do Git (relatórios e execução ficam só na cópia em nuvem).

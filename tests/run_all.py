@@ -1,34 +1,23 @@
 # -*- coding: utf-8 -*-
-"""Roda todos os testes da Trilha Completa em sequência: os 6 smoke tests em
-memória (rápidos, sem dependências) e depois o teste UNO real (mais lento,
-precisa de 'soffice' no PATH). Para rodar só os rápidos (ex.: sem LibreOffice
-disponível), use --sem-uno.
+"""Roda os testes do SageBonis: o smoke test em memória (rápido, sem dependência) e
+depois o teste UNO real (mais lento, precisa de 'soffice' no PATH). Para rodar só o
+rápido (ex.: sem LibreOffice disponível), use --sem-uno.
 
 Uso:
-    python completa/tests/run_all.py
-    python completa/tests/run_all.py --sem-uno
+    python tests/run_all.py
+    python tests/run_all.py --sem-uno
 """
+import os
 import subprocess
 import sys
-import os
 
 RAIZ = os.path.dirname(os.path.abspath(__file__))
 
 SMOKE_TESTS = [
     "smoke_test_parser.py",
-    "smoke_test_verificador.py",
-    "smoke_test_unificacao.py",
-    "smoke_test_extracao.py",
-    "smoke_test_ganhos_rapidos.py",
-    "smoke_test_ied.py",
 ]
 TESTES_UNO = [
-    "teste_uno_protocolos.py",
-    "teste_paridade_import_export.py",
-    "teste_uno_includes.py",
-    "teste_uno_erros_exportacao.py",
-    "teste_uno_botoes.py",
-    "teste_uno_status.py",
+    "teste_uno_roundtrip.py",
 ]
 
 

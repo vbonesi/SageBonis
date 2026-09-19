@@ -136,18 +136,36 @@ Fluxo recomendado: edite `ImportadorSAGE.py`, rode `python sync_macro.py inject`
 dois arquivos juntos no mesmo commit. O `ImportadorSAGE.py` da raiz é a fonte da
 verdade.
 
-## Objetivos futuros (roadmap)
+## Roadmap
 
-> **Estratégia de duas trilhas:** esta planilha (a "Simples") será mantida enxuta e
-> estável — foco em importar/exportar rápido. Em paralelo, uma variante **Completa**
-> (forkada, no mesmo repo) receberá os recursos avançados abaixo. O plano detalhado,
-> com prioridades e critérios de convergência, está em [PLANEJAMENTO.md](PLANEJAMENTO.md).
+O SageBonis é focado em fazer bem uma coisa: **importar a base `.dat` para a planilha,
+editar em massa e exportar de volta**, sem atrito e sem surpresa no formato. As
+melhorias daqui vêm nessa direção — parser, encoding, desempenho, diagnóstico claro
+quando algo dá errado.
 
-- **Verificador de base** (linter): aba "Análise" com checagens de integridade referencial (IDs duplicados, sigla da SE, referências cruzadas entre entidades).
-- **Unificar abas de entidades** em grupos mais compactos (ex.: digital, analógico, comando, comunicações, sistemas, infos, cores, ocorrências, etc.) para reduzir o número de abas e acelerar a configuração de uma SE completa.
-- **Assistente de protocolo/IED:** gerar o esqueleto padrão de aquisição a partir de protocolo (DNP3/101/104/61850) e tipo.
-- **Importar uma base existente** para esse modelo unificado (converter DAT → planilhas do SageBonis) para reaproveitar bases já prontas.
-- **Criar uma aba “simul”** para geração de scripts de simulação, mesmo que o formato ainda esteja em definição.
+> **Sobre os recursos avançados:** verificador de base, unificação de pontos e
+> assistente de protocolo/IED foram desenvolvidos como uma variante deste projeto e,
+> desde 09/2026, seguem como ferramenta interna da [Automa](https://automa.com.br)
+> (`SAGEAutoma`), onde nasceram e são usados. O SageBonis continua aberto sob GPLv3 com
+> a parte de import/export, e recebe de volta as melhorias que aparecerem nessa parte.
+
+## Testes
+
+```bash
+python tests/run_all.py            # tudo
+python tests/run_all.py --sem-uno  # só o smoke test (sem LibreOffice)
+```
+
+- `tests/smoke_test_parser.py` — o parser de `.dat` contra fixtures: bloco ativo e
+  comentado, entidade com dígito no nome, `utf-8` e `latin-1`, CRLF, includes e
+  comentários soltos. Roda em segundos, sem LibreOffice.
+- `tests/teste_uno_roundtrip.py` — sobe um `soffice --headless`, importa uma base
+  sintética numa cópia descartável do `.ods` e exporta de volta, conferindo o que a
+  ferramenta promete: acento em Latin-1, includes, blocos comentados, linhas ignoradas,
+  backup `.bak` e exportação parcial. **Nunca escreve no `.ods` rastreado.**
+
+Tudo isso roda sozinho no GitHub Actions a cada push/PR — inclusive uma checagem que
+reprova quem editar o `ImportadorSAGE.py` e esquecer o `sync_macro.py inject`.
 
 ## Contato
 

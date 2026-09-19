@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """Smoke test do parser de .dat (lógica pura, sem UNO) -- o componente mais
-arriscado do projeto e o único que não tinha teste nenhum (auditoria #7).
+arriscado do projeto e o único que não tinha teste nenhum .
 
-Roda as MESMAS checagens contra as duas trilhas (raiz e completa/), porque
-parse_dat_file/_classificar_linha_dat/_finalizar_bloco são idênticos nas duas e
-precisam continuar assim.
+Roda direto sobre o ImportadorSAGE.py, sem LibreOffice: importa o módulo e chama
+parse_dat_file com fixtures escritas num diretório temporário.
 
 Cobre também as regressões dos achados já corrigidos:
   - #4: entidade com dígito em bloco comentado (';E2M') tem que virar bloco
@@ -12,17 +11,16 @@ Cobre também as regressões dos achados já corrigidos:
   - #5: .dat gravado em utf-8 tem que importar sem mojibake (utf-8 é tentado
         antes do latin-1).
 
-Roda com: python completa/tests/smoke_test_parser.py
+Roda com: python tests/smoke_test_parser.py
 """
 import importlib.util
 import os
 import shutil
 import tempfile
 
-RAIZ_PROJETO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+RAIZ_PROJETO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TRILHAS = [
-    ("simples", os.path.join(RAIZ_PROJETO, "ImportadorSAGE.py")),
-    ("completa", os.path.join(RAIZ_PROJETO, "completa", "ImportadorSAGE.py")),
+    ("SageBonis", os.path.join(RAIZ_PROJETO, "ImportadorSAGE.py")),
 ]
 
 falhas = []
@@ -63,7 +61,7 @@ def parsear(mod, caminho, nome_relativo, entidades_validas):
 
 def rodar(trilha, caminho_modulo):
     mod = carregar(caminho_modulo)
-    pasta = tempfile.mkdtemp(prefix="sagebonis_parser_")
+    pasta = tempfile.mkdtemp(prefix="sageautoma_parser_")
     p = lambda nome: f"{trilha}: {nome}"
     try:
         # ----------------------------------------------------------

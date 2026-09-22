@@ -51,8 +51,8 @@ class TesteUno:
         self.ctx = None
 
     def __enter__(self):
-        self.profile_dir = tempfile.mkdtemp(prefix="sageautoma_lo_profile_")
-        fd, self.copia_ods = tempfile.mkstemp(suffix=".ods", prefix="sageautoma_teste_")
+        self.profile_dir = tempfile.mkdtemp(prefix="sagebonis_lo_profile_")
+        fd, self.copia_ods = tempfile.mkstemp(suffix=".ods", prefix="sagebonis_teste_")
         os.close(fd)
         shutil.copy2(self.ods_origem, self.copia_ods)
         subprocess.run(

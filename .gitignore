@@ -23,7 +23,7 @@ desktop.ini        # idem
 ###############################################################################
 # 4. Saída gerada pelo próprio script
 ###############################################################################
-backup_*/          # diretórios de backup que o AutomaToolbox cria
+backup_*/          # diretórios de backup criados pelas ferramentas de base
 *.tar.gz           # pacotes compactados gerados
 *.log              # logs rotativos podem ficar gigantes
 

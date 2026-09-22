@@ -145,9 +145,9 @@ quando algo dá errado.
 
 > **Sobre os recursos avançados:** verificador de base, unificação de pontos e
 > assistente de protocolo/IED foram desenvolvidos como uma variante deste projeto e,
-> desde 09/2026, seguem como ferramenta interna da [Automa](https://automa.com.br)
-> (`SAGEAutoma`), onde nasceram e são usados. O SageBonis continua aberto sob GPLv3 com
-> a parte de import/export, e recebe de volta as melhorias que aparecerem nessa parte.
+> desde 09/2026, seguem como ferramenta interna e privada, fora deste repositório, onde
+> nasceram e são usados. O SageBonis continua aberto sob GPLv3 com a parte de
+> import/export, e recebe de volta as melhorias que aparecerem nessa parte.
 
 ## Testes
 

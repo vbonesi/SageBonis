@@ -12,7 +12,7 @@ Autor: Victor Bonesi · Repo: https://github.com/vbonesi/SageBonis · Licença: 
 O projeto faz **uma coisa**: import/export de base `.dat` com edição em massa no meio.
 Recursos avançados — verificador de base, unificação de pontos, assistente de
 protocolo/IED — foram desenvolvidos como variante "Completa" e, **desde 19/09/2026**,
-seguem como ferramenta interna da Automa (`SAGEAutoma`, repositório privado). Aqui não
+seguem como ferramenta interna e privada, fora deste repositório. Aqui não
 se empilha funcionalidade avançada: o valor desta planilha é ser rápida e previsível.
 
 Os dois núcleos **divergem de propósito** — não há sincronização automática entre os

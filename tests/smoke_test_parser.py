@@ -61,7 +61,7 @@ def parsear(mod, caminho, nome_relativo, entidades_validas):
 
 def rodar(trilha, caminho_modulo):
     mod = carregar(caminho_modulo)
-    pasta = tempfile.mkdtemp(prefix="sageautoma_parser_")
+    pasta = tempfile.mkdtemp(prefix="sagebonis_parser_")
     p = lambda nome: f"{trilha}: {nome}"
     try:
         # ----------------------------------------------------------

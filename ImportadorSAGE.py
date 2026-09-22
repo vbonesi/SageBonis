@@ -126,24 +126,36 @@ LOG_IMPORTACAO_AVISOS = True
 WATCHDOG_MAX_ITERACOES_SEM_PROGRESSO = 1000
 
 
-def _get_sheet(doc, sheet_name):
-    """
-    Obtém uma aba pelo nome, aceitando diferença de maiúsculas/minúsculas.
+def _indice_de_abas(doc):
+    """{nome_em_minusculas: nome_real} de todas as abas do documento."""
+    sheets = doc.getSheets()
+    return {sheets.getByIndex(i).getName().lower(): sheets.getByIndex(i).getName()
+            for i in range(sheets.getCount())}
 
-    Esta função foi adicionada para deixar a macro mais resistente a variações
-    nos nomes das abas. Sem ela, qualquer diferença como "Geral" vs "geral"
-    faz o LibreOffice lançar exceção em getByName().
+
+def _get_sheet(doc, sheet_name):
+    """Aba pelo nome, tolerante a maiúsculas/minúsculas.
+
+    O LibreOffice trata nome de aba como case-sensitive em getByName(), mas não deixa
+    duas abas diferirem só na caixa -- então uma busca por nome normalizado é sempre
+    não-ambígua. Sem isso, "Geral" x "geral" derruba a macro inteira.
+
+    Monta o índice normalizado de uma vez em vez de varrer o container a cada
+    tentativa (reescrita alinhada com o núcleo compartilhado import/export).
     """
     sheets = doc.getSheets()
     if sheets.hasByName(sheet_name):
         return sheets.getByName(sheet_name)
+    real = _indice_de_abas(doc).get(sheet_name.strip().lower())
+    if real is None:
+        raise KeyError("Aba '%s' não encontrada." % sheet_name)
+    return sheets.getByName(real)
 
-    wanted = sheet_name.lower()
-    for sheet in sheets:
-        if sheet.getName().lower() == wanted:
-            return sheet
 
-    raise KeyError(f"Aba '{sheet_name}' não encontrada.")
+def _aba_existe_ci(doc, nome):
+    """True se existe uma aba com esse nome (ignorando maiúsc/minúsc)."""
+    return (doc.getSheets().hasByName(nome)
+            or nome.strip().lower() in _indice_de_abas(doc))
 
 
 def _log_importacao(level, message, force=False):
@@ -378,7 +390,11 @@ class SageConfig:
                 if atributos:
                     self.ordem_atributos[entidade_nome] = atributos
         except Exception as e:
-            print(f"AVISO: Não foi possível carregar as configurações da aba '{NOME_ABA_MAIS_USADAS}'. {e}")
+            # Config é acessório: sem ela a importação ainda roda, só perde a ordem
+            # das entidades, as cores por aba e a prioridade de colunas. Por isso
+            # avisa e segue, em vez de derrubar a macro inteira.
+            print("AVISO: a aba '%s' não pôde ser lida (%s: %s). A importação segue sem "
+                  "ordem/cores configuradas." % (NOME_ABA_MAIS_USADAS, type(e).__name__, e))
 
     # A FUNÇÃO _carregar_validacao FOI COMPLETAMENTE REMOVIDA DESTA CLASSE
 
@@ -566,7 +582,7 @@ def write_to_sheet(doc, sheet_name, pontos_importados, modo, config):
     # fazia removeByName + insertByName: entre um e outro a aba não existia, e uma falha
     # ali (ou em qualquer ponto seguinte da importação) deixava a planilha sem ela, sem
     # rollback nenhum. Limpar dá o mesmo resultado sem essa janela.
-    if doc.getSheets().hasByName(sheet_name):
+    if _aba_existe_ci(doc, sheet_name):
         sheet = _get_sheet(doc, sheet_name)
         cursor = sheet.createCursor()
         cursor.gotoEndOfUsedArea(False)
@@ -851,6 +867,14 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
 # ================= FUNÇÕES DE EXPORTAÇÃO =======================
 # ===============================================================
 
+def _abas_nao_entidade():
+    """Conjunto (lower) de toda aba que não é entidade SAGE -- aqui, as de
+    configuração (FOLHAS_IGNORADAS). Montado uma vez por chamada, em vez de
+    refazer a lista a cada aba testada; nome e uso alinhados com o núcleo
+    compartilhado de import/export."""
+    return {ign.lower() for ign in FOLHAS_IGNORADAS}
+
+
 def exportar_dats(*args):
     doc = XSCRIPTCONTEXT.getDocument() # type: ignore
     # Mesma proteção das rotinas de importação: evita erro secundário no except
@@ -871,7 +895,7 @@ def exportar_dats(*args):
         return
 
     geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString("Processando exportação total...")
-    abas_a_exportar = [s for s in doc.getSheets() if s.getName().lower() not in [ign.lower() for ign in FOLHAS_IGNORADAS]]
+    abas_a_exportar = [s for s in doc.getSheets() if s.getName().lower() not in _abas_nao_entidade()]
     try:
         resultados = [_exportar_folha(sheet, export_folder) for sheet in abas_a_exportar]
     except Exception as e:
@@ -926,7 +950,7 @@ def exportar_parcial(*args):
                 pass
     else:
         # Garante que a aba ativa não seja uma aba ignorada
-        if active_sheet_name.lower() not in [ign.lower() for ign in FOLHAS_IGNORADAS]:
+        if active_sheet_name.lower() not in _abas_nao_entidade():
             abas_a_exportar.append(active_sheet)
 
     geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString(f"Processando exportação de: {', '.join(s.getName() for s in abas_a_exportar)}...")

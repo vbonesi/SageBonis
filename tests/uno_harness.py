@@ -6,6 +6,8 @@ escreve no arquivo rastreado), conecta via UNO, oferece helpers de leitura/
 escrita de abas, e limpa tudo ao final (documento, processo, profile, cópia).
 
 Requer 'soffice' no PATH e o módulo 'uno' (python3-uno / vem com o LibreOffice).
+SAGEBONIS_SOFFICE permite selecionar outro executável quando o PATH aponta
+para uma instalação diferente da usada pelo módulo 'uno'.
 
 Uso típico:
     from uno_harness import TesteUno
@@ -61,7 +63,8 @@ class TesteUno:
             check=True, capture_output=True,
         )
         self.processo = subprocess.Popen(
-            ["soffice", "--headless", "--norestore", "--nologo",
+            [os.environ.get("SAGEBONIS_SOFFICE", "soffice"),
+             "--headless", "--norestore", "--nologo",
              "--accept=socket,host=localhost,port=%d;urp;" % self.porta,
              "-env:UserInstallation=file://%s" % self.profile_dir],
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,

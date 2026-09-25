@@ -156,6 +156,13 @@ python tests/run_all.py            # tudo
 python tests/run_all.py --sem-uno  # só o smoke test (sem LibreOffice)
 ```
 
+O teste UNO deve usar o Python e o LibreOffice da mesma instalação. Se houver
+outro `soffice` antes do sistema no `PATH`, selecione o executável explicitamente:
+
+```bash
+SAGEBONIS_SOFFICE=/usr/bin/soffice /usr/bin/python3 tests/run_all.py
+```
+
 - `tests/smoke_test_parser.py` — o parser de `.dat` contra fixtures: bloco ativo e
   comentado, entidade com dígito no nome, `utf-8` e `latin-1`, CRLF, includes e
   comentários soltos. Roda em segundos, sem LibreOffice.

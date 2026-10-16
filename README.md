@@ -95,8 +95,8 @@ Se a célula na coluna "Gera" estiver vazia, a linha será ignorada durante a ex
 ## O que o round-trip garante
 
 Importar uma base e exportá-la de volta **não perde nada que o carregador do SAGE leia** — foi
-conferido carregando a base original e a exportada num SAGE 31 (`AtualizaBD fria fonte`) e comparando a
-listagem de todos os registros lidos. Para isso a macro faz, de propósito:
+conferido carregando a base original e a exportada no carregador do SAGE (`AtualizaBD fria fonte`) e
+comparando a listagem de todos os registros lidos. Para isso a macro faz, de propósito:
 
 - **`.dat` vazio é mantido**: um arquivo sem registro nenhum que algum `#include` aponta vira uma linha
   `Gera = n` com texto vazio e sai como `;`. Sem ele o `#include` ficava pendurado e o SAGE **aborta a carga**.

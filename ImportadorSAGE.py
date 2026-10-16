@@ -612,7 +612,7 @@ def _ler_base(base_folder_path, lista_entidades=None):
     # Arquivos que um #include ATIVO aponta e que não terminam em '.dat' (ocr.dat.novo,
     # pdd.dat.rgv...) também são a base: o carregador os lê. Ficavam de fora da planilha e
     # portanto da exportação, e o #include passava a apontar para um arquivo que não
-    # existe (medido no SAGE 31: a carga aborta). Os includes não aninham,
+    # existe (medido no carregador do SAGE: a carga aborta). Os includes não aninham,
     # mas o laço trata o caso de um arquivo desses incluir outro.
     while True:
         novos = []
@@ -920,7 +920,7 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
             # O carregador do SAGE trata toda linha que começa com ';' como comentário --
             # até ';ENTIDADE' e ';#include' -- e só encerra o registro num NOVO nome de
             # entidade. Atributo solto depois desses comentários continua o MESMO registro
-            # (provado no SAGE 31: tag + ';E2M' + atributos = 1 registro). Encerrar o bloco
+            # (provado no carregador do SAGE: tag + ';E2M' + atributos = 1 registro). Encerrar o bloco
             # no ';ENTIDADE' partia o registro em dois: um bloco sem atributos, que o
             # carregador rejeita ("obrigatorio nao preenchido"), e atributos órfãos. Então,
             # num bloco ativo, o comentário só encerra o bloco se NÃO houver atributo vivo
@@ -1064,8 +1064,8 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
     # Arquivo que não rendeu linha nenhuma (só linhas em branco) ainda faz parte da base:
     # o pai dele o inclui com #include, e o carregador do SAGE ABORTA a carga inteira se o
     # arquivo incluído não existe ("Arquivo ... nao encontrado"). Sem marca na planilha a
-    # exportação não o recriava -- medido no SAGE 31 com uma base real: 12 arquivos
-    # vazios, e o round-trip não carregava. A marca é um comentário vazio (Gera = n), que a
+    # exportação não o recriava -- medido no carregador do SAGE: com
+    # arquivos vazios, o round-trip não carregava. A marca é um comentário vazio (Gera = n), que a
     # exportação devolve como ';' e o SAGE lê sem problema.
     if sum(len(v) for v in all_data.values()) == linhas_antes:
         all_data.setdefault(chave_do_arquivo, []).append({

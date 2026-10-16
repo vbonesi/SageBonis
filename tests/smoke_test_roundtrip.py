@@ -2,7 +2,7 @@
 """Smoke test do ROUND-TRIP importação -> exportação (lógica pura, sem LibreOffice).
 
 Cada caso é um defeito que o round-trip tinha de verdade, medido no carregador do SAGE
-(`AtualizaBD fria fonte`, SAGE 31):
+(`AtualizaBD fria fonte`):
 
   1. .dat VAZIO referenciado por #include não era recriado: o carregador ABORTA a carga
      inteira se o arquivo incluído não existe.

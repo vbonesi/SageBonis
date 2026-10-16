@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """A régua dos testes de round-trip: a gramática do .dat como o CARREGADOR DO SAGE a lê.
 
-Medida no SAGE 31 (container Docker, `AtualizaBD fria fonte`, ver tests/docker/):
+Medida no carregador do SAGE (`AtualizaBD fria fonte`):
   * um registro começa numa linha que é SÓ o nome da entidade e vai até o próximo nome;
   * linha em branco e linha que começa com ';' são ignoradas -- inclusive ';ENTIDADE' e
     ';#include' -- e NÃO encerram o registro;

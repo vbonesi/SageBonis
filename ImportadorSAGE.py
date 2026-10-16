@@ -100,7 +100,6 @@ _UNICODE_PARA_LATIN1 = str.maketrans({
     '“': '"',    # aspas duplas esquerda
     '”': '"',    # aspas duplas direita
     '…': '...',  # reticências
-    '\u00a0': ' ',  # espaço não-quebrável
     '•': '-',    # bullet
 })
 
@@ -124,6 +123,13 @@ DEBUG_IMPORTACAO = False
 LOG_IMPORTACAO_RESUMO = True
 LOG_IMPORTACAO_AVISOS = True
 WATCHDOG_MAX_ITERACOES_SEM_PROGRESSO = 1000
+
+# O que o parser teve que preservar de um jeito diferente do original durante UMA
+# importação (zerado em _executar_importacao, lido pelas macros pra compor o status):
+# linhas fora do formato mantidas como comentário, atributos repetidos num bloco e
+# arquivos vazios marcados. Antes isso eram avisos no console, que ninguém lê.
+ACUMULADO_IMPORTACAO = {'preservadas': 0, 'repetidos': 0, 'arquivo_vazio': 0,
+                        'abas_esvaziadas': [], 'ignoradas': []}
 
 
 def _indice_de_abas(doc):
@@ -158,6 +164,24 @@ def _aba_existe_ci(doc, nome):
             or nome.strip().lower() in _indice_de_abas(doc))
 
 
+# Arquivo de dados do SAGE: 'x.dat' e as variantes 'x.dat.novo', 'pdd.dat.rgv'...
+_RE_ARQUIVO_DAT = re.compile(r'^(.+?)\.dat(?:\.[^.]+)?$', re.IGNORECASE)
+
+
+def _chave_do_arquivo(nome):
+    """Entidade que dá nome ao arquivo (minúscula): 'pds.dat' -> 'pds',
+    'pdd.dat.rgv' -> 'pdd'. É onde caem o cabeçalho e os #include que abrem o arquivo
+    antes do primeiro bloco."""
+    base = os.path.basename(nome)
+    m = _RE_ARQUIVO_DAT.match(base)
+    chave = (m.group(1) if m else os.path.splitext(base)[0]).strip().lower()
+    # É nome de aba: sem os caracteres que o LibreOffice proíbe e sem espaço nas pontas.
+    # O espaço importa: existem bases com 'grcmp .dat' (espaço no nome), e _get_sheet ignora
+    # espaço nas pontas -- a "aba" 'grcmp ' caía em cima da 'grcmp' e a SOBRESCREVIA
+    # (todos os grcmp.dat da base sumiam na exportação).
+    return re.sub(r"[\[\]*?:/\\]", "_", chave).strip("'") or "_"
+
+
 def _log_importacao(level, message, force=False):
     """Logger simples e opcional para diagnóstico da importação."""
     if force:
@@ -173,10 +197,16 @@ def _log_importacao(level, message, force=False):
         print(f"[IMPORTACAO:{level}] {message}")
 
 
+# Só espaço "de verdade" é borda de valor: str.strip() sem argumento também tira o espaço
+# não-quebrável (U+00A0), que existe em Latin-1 e que o carregador do SAGE MANTÉM no valor
+# ('...1.Grau\u00a0' aparecia assim na listagem do carregador e a importação o comia).
+_ESPACOS_ASCII = ' \t\r\n\f\v'
+
+
 def _classificar_linha_dat(raw_line, entidades_validas):
     """Classifica a linha do arquivo DAT para manter o parser determinístico."""
     original_line = raw_line.strip('\r\n')
-    stripped_line = original_line.strip()
+    stripped_line = original_line.strip(_ESPACOS_ASCII)
 
     if not stripped_line:
         return {'type': 'blank', 'original': original_line, 'stripped': stripped_line}
@@ -187,7 +217,7 @@ def _classificar_linha_dat(raw_line, entidades_validas):
             'type': 'include_commented',
             'original': original_line,
             'stripped': stripped_line,
-            'value': include_comentado_match.group(1).strip()
+            'value': include_comentado_match.group(1).strip(_ESPACOS_ASCII)
         }
 
     include_match = REGEX_INCLUDE.match(original_line)
@@ -196,7 +226,7 @@ def _classificar_linha_dat(raw_line, entidades_validas):
             'type': 'include',
             'original': original_line,
             'stripped': stripped_line,
-            'value': include_match.group(1).strip()
+            'value': include_match.group(1).strip(_ESPACOS_ASCII)
         }
 
     if stripped_line.upper() in entidades_validas:
@@ -230,8 +260,8 @@ def _classificar_linha_dat(raw_line, entidades_validas):
             'type': 'attribute',
             'original': original_line,
             'stripped': stripped_line,
-            'key': key.strip(),
-            'value': value.strip()
+            'key': key.strip(_ESPACOS_ASCII),
+            'value': value.strip(_ESPACOS_ASCII)
         }
 
     return {'type': 'invalid', 'original': original_line, 'stripped': stripped_line}
@@ -243,7 +273,7 @@ def _classificar_linha_bloco_comentado(raw_line, entidades_validas):
     O conteúdo útil está sempre após o primeiro ';'.
     """
     original_line = raw_line.strip('\r\n')
-    stripped_line = original_line.strip()
+    stripped_line = original_line.strip(_ESPACOS_ASCII)
 
     if not stripped_line:
         return {'type': 'blank', 'original': original_line, 'stripped': stripped_line}
@@ -251,7 +281,7 @@ def _classificar_linha_bloco_comentado(raw_line, entidades_validas):
     if not stripped_line.startswith(';'):
         return {'type': 'block_end', 'original': original_line, 'stripped': stripped_line}
 
-    inner_line = stripped_line[1:].strip()
+    inner_line = stripped_line[1:].strip(_ESPACOS_ASCII)
     if not inner_line:
         return {'type': 'comment', 'original': original_line, 'stripped': stripped_line, 'value': ''}
 
@@ -272,11 +302,24 @@ def _classificar_linha_bloco_comentado(raw_line, entidades_validas):
             'type': 'attribute',
             'original': original_line,
             'stripped': stripped_line,
-            'key': key.strip(),
-            'value': value.strip()
+            'key': key.strip(_ESPACOS_ASCII),
+            'value': value.strip(_ESPACOS_ASCII)
         }
 
     return {'type': 'comment', 'original': original_line, 'stripped': stripped_line, 'value': inner_line}
+
+
+def _proximo_estrutural(lines, i, entidades_validas):
+    """Índice e tipo da primeira linha depois de `i` que decide o destino de um registro
+    ativo: um atributo vivo, um novo nome de entidade, um #include ou uma linha fora do
+    formato. Comentários (inclusive `;ENTIDADE` e `;#include`) e linhas em branco não
+    contam. Devolve (None, None) se o arquivo acaba antes."""
+    for j in range(i + 1, len(lines)):
+        tipo = _classificar_linha_dat(lines[j], entidades_validas)['type']
+        if tipo in ('blank', 'comment', 'commented_entity_start', 'include_commented'):
+            continue
+        return j, tipo
+    return None, None
 
 
 def _iniciar_bloco(entidade_nome, tipo_bloco, relative_path, comentarios_iniciais=None):
@@ -431,6 +474,33 @@ def _ler_entidades_parciais(geral_sheet):
     return [str(row[0]).strip().lower() for row in dados if row and str(row[0]).strip()]
 
 
+def _sufixo_importacao():
+    """Sufixo do status da importação com o que ela teve que tratar de um jeito diferente
+    do original -- string vazia quando não há o que avisar. Nada disso é perda (a linha
+    continua na planilha), mas é o tipo de coisa que o usuário precisa saber que existe."""
+    partes = []
+    n = ACUMULADO_IMPORTACAO['arquivo_vazio']
+    if n:
+        partes.append(f"{n} arquivo(s) vazio(s) marcado(s) com um comentário vazio para a "
+                      "exportação recriá-lo (um #include aponta para ele)")
+    n = ACUMULADO_IMPORTACAO['preservadas']
+    if n:
+        partes.append(f"{n} linha(s) fora do formato mantida(s) como comentário")
+    n = ACUMULADO_IMPORTACAO['repetidos']
+    if n:
+        partes.append(f"{n} atributo(s) repetido(s) num bloco (vale o último; o anterior virou comentário)")
+    ignoradas = ACUMULADO_IMPORTACAO['ignoradas']
+    if ignoradas:
+        partes.append(f"{len(ignoradas)} entidade(s) NÃO importada(s) porque o nome coincide com uma aba "
+                      f"de configuração/relatório: {', '.join(ignoradas[:5])}")
+    esvaziadas = ACUMULADO_IMPORTACAO['abas_esvaziadas']
+    if esvaziadas:
+        nomes = ", ".join(esvaziadas[:5]) + ("..." if len(esvaziadas) > 5 else "")
+        partes.append(f"{len(esvaziadas)} aba(s) com dados de uma base anterior e que não existem "
+                      f"nesta pasta foram esvaziadas: {nomes}")
+    return f" ({'; '.join(partes)})" if partes else ""
+
+
 def importar_dats(*args):
     doc = XSCRIPTCONTEXT.getDocument() # type: ignore
     # Mantém a variável inicializada para que o bloco except não tente escrever
@@ -458,7 +528,8 @@ def importar_dats(*args):
             geral_sheet, CELULA_STATUS_IMPORTACAO, "importação total", e,
             "A planilha pode ter ficado parcialmente atualizada -- feche sem salvar antes de tentar de novo.")
         return
-    geral_sheet.getCellByPosition(*CELULA_STATUS_IMPORTACAO).setString("Importação total concluída com sucesso!")
+    geral_sheet.getCellByPosition(*CELULA_STATUS_IMPORTACAO).setString(
+        "Importação total concluída com sucesso!" + _sufixo_importacao())
 
 
 def importar_parcial(*args):
@@ -503,7 +574,93 @@ def importar_parcial(*args):
             geral_sheet, CELULA_STATUS_IMPORTACAO, "importação parcial", e,
             "A planilha pode ter ficado parcialmente atualizada -- feche sem salvar antes de tentar de novo.")
         return
-    geral_sheet.getCellByPosition(*CELULA_STATUS_IMPORTACAO).setString("Importação parcial concluída com sucesso!")
+    geral_sheet.getCellByPosition(*CELULA_STATUS_IMPORTACAO).setString(
+        "Importação parcial concluída com sucesso!" + _sufixo_importacao())
+
+
+def _ler_base(base_folder_path, lista_entidades=None):
+    """Lê todos os arquivos da base (lógica PURA, sem planilha) e devolve
+    {entidade: [linhas]} -- é o que a importação escreve nas abas. Separada de
+    _executar_importacao pra que os testes de round-trip exercitem a leitura real."""
+    all_data = {}
+    for chave_acumulada in ACUMULADO_IMPORTACAO:
+        ACUMULADO_IMPORTACAO[chave_acumulada] = [] if isinstance(ACUMULADO_IMPORTACAO[chave_acumulada], list) else 0
+    # Todo nome de entidade que existe na base, não só os da pasta do arquivo: o carregador
+    # do SAGE reconhece uma entidade em qualquer arquivo, e um 'lsc.dat' numa pasta sem
+    # 'cnf.dat' pode muito bem ter blocos CNF. Limitar à pasta fazia esses blocos virarem
+    # atributos órfãos.
+    entidades_validas_set = set()
+    for _, _, files in os.walk(base_folder_path):
+        entidades_validas_set.update(
+            _chave_do_arquivo(f).upper() for f in files if _RE_ARQUIVO_DAT.match(f))
+
+    arquivos_lidos = set()
+
+    def ler_arquivo(full_path):
+        relative_path = os.path.relpath(full_path, base_folder_path)
+        arquivos_lidos.add(os.path.normcase(relative_path))
+        parse_dat_file(full_path, relative_path, all_data, entidades_validas_set)
+
+    for root, _, files in os.walk(base_folder_path):
+        for file_name in files:
+            if not file_name.lower().endswith('.dat'):
+                continue
+            if lista_entidades is not None and _chave_do_arquivo(file_name) not in lista_entidades:
+                continue
+            ler_arquivo(os.path.join(root, file_name))
+
+    # Arquivos que um #include ATIVO aponta e que não terminam em '.dat' (ocr.dat.novo,
+    # pdd.dat.rgv...) também são a base: o carregador os lê. Ficavam de fora da planilha e
+    # portanto da exportação, e o #include passava a apontar para um arquivo que não
+    # existe (medido no SAGE 31: a carga aborta). Os includes não aninham,
+    # mas o laço trata o caso de um arquivo desses incluir outro.
+    while True:
+        novos = []
+        for linhas in list(all_data.values()):
+            for linha in linhas:
+                if linha.get('type') != CODIGO_INCLUDE:
+                    continue
+                alvo = os.path.normpath(os.path.join(
+                    base_folder_path, str(linha.get('data', '')).strip().strip('"\'').replace('\\', '/')))
+                rel = os.path.normcase(os.path.relpath(alvo, base_folder_path))
+                if (rel in arquivos_lidos or rel.startswith('..') or alvo in novos
+                        or alvo.lower().endswith('.dat') or not os.path.isfile(alvo)):
+                    continue
+                if lista_entidades is not None and _chave_do_arquivo(alvo) not in lista_entidades:
+                    continue
+                novos.append(alvo)
+        if not novos:
+            break
+        for alvo in novos:
+            ler_arquivo(alvo)
+    return all_data
+
+
+def _esvaziar_abas_ausentes(doc, entidades_importadas):
+    """Importação TOTAL: a planilha passa a refletir a pasta. Aba de entidade que sobrou de
+    uma base anterior e que não existe nesta pasta é esvaziada (mantém o cabeçalho).
+
+    Antes ela ficava com os dados velhos, e a exportação total os gravava na pasta de
+    saída: arquivos de uma base dentro da outra, sem aviso nenhum. Só mexe em aba com o
+    formato de entidade (Origem / Gera / Comentario-Include na linha 1)."""
+    nao_entidade = _abas_nao_entidade()
+    esvaziadas = []
+    for sheet in list(doc.getSheets()):
+        nome = sheet.getName()
+        if nome.lower() in nao_entidade or nome.lower() in entidades_importadas:
+            continue
+        cursor = sheet.createCursor()
+        cursor.gotoEndOfUsedArea(False)
+        addr = cursor.getRangeAddress()
+        if addr.EndRow < 1:
+            continue
+        cabecalho = [str(c) for c in sheet.getCellRangeByPosition(
+            0, 0, addr.EndColumn, 0).getDataArray()[0]]
+        if not {CABEÇALHO_COLUNA_ORIGEM, CABEÇALHO_COLUNA_CONTROLE, CABEÇALHO_COLUNA_DADOS} <= set(cabecalho):
+            continue
+        sheet.getCellRangeByPosition(0, 1, addr.EndColumn, addr.EndRow).clearContents(FLAGS_LIMPAR_TUDO)
+        esvaziadas.append(nome)
+    ACUMULADO_IMPORTACAO['abas_esvaziadas'] = esvaziadas
 
 
 def _executar_importacao(doc, base_folder_path, lista_entidades, modo_importacao):
@@ -512,21 +669,8 @@ def _executar_importacao(doc, base_folder_path, lista_entidades, modo_importacao
     """
     # ALTERAÇÃO: Carrega as configurações da planilha
     config = SageConfig(doc)
-    all_data = {}
+    all_data = _ler_base(base_folder_path, lista_entidades)
     prioridade_entidades = {entidade: idx for idx, entidade in enumerate(config.ordem_entidades)}
-    
-    # (A lógica de varrer os arquivos permanece a mesma)
-    for root, _, files in os.walk(base_folder_path):
-        entidades_validas_set = {os.path.splitext(f)[0].upper() for f in files if f.lower().endswith('.dat')}
-        for file_name in files:
-            if not file_name.lower().endswith('.dat'):
-                continue
-            entidade_nome = os.path.splitext(file_name)[0].lower()
-            if lista_entidades is not None and entidade_nome not in lista_entidades:
-                continue
-            full_path = os.path.join(root, file_name)
-            relative_path = os.path.relpath(full_path, base_folder_path)
-            parse_dat_file(full_path, relative_path, all_data, entidades_validas_set)
 
     # ALTERAÇÃO: Ordena as entidades a serem escritas com base na configuração
     entidades_importadas = all_data.keys()
@@ -537,11 +681,21 @@ def _executar_importacao(doc, base_folder_path, lista_entidades, modo_importacao
 
     # Lógica de escrita na planilha
     abas_a_escrever = lista_entidades if lista_entidades is not None else abas_ordenadas
+    nao_entidade = _abas_nao_entidade()
     for entidade_nome in abas_a_escrever:
         pontos = all_data.get(entidade_nome)
         if pontos:
+            if entidade_nome in nao_entidade:
+                # Um .dat com o nome de uma aba de config ('geral.dat', 'cores.dat'...) iria
+                # escrever em cima dela: apagaria o caminho da pasta da aba Geral, ou
+                # estouraria na aba protegida no meio da importação.
+                ACUMULADO_IMPORTACAO['ignoradas'].append(entidade_nome)
+                continue
             # Passa o objeto de configuração para a função de escrita
             write_to_sheet(doc, entidade_nome, pontos, modo_importacao, config)
+
+    if lista_entidades is None:
+        _esvaziar_abas_ausentes(doc, set(all_data) - set(ACUMULADO_IMPORTACAO['ignoradas']))
 
 
 def _mover_aba_para_o_fim(doc, nome):
@@ -572,41 +726,19 @@ def _mover_aba_para_o_fim(doc, nome):
         pass  # nunca vale perder a importação por causa da ordem das abas
 
 
-def write_to_sheet(doc, sheet_name, pontos_importados, modo, config):
-    """
-    Versão limpa e otimizada. Escreve os dados e aplica formatação visual básica,
-    incluindo o efeito zebrado nas linhas importadas + 20 linhas extras.
-    """
-    # --- Preparação da aba ---
-    # Aba que já existe é LIMPA e reaproveitada, nunca removida. Antes o modo REPLACE
-    # fazia removeByName + insertByName: entre um e outro a aba não existia, e uma falha
-    # ali (ou em qualquer ponto seguinte da importação) deixava a planilha sem ela, sem
-    # rollback nenhum. Limpar dá o mesmo resultado sem essa janela.
-    if _aba_existe_ci(doc, sheet_name):
-        sheet = _get_sheet(doc, sheet_name)
-        cursor = sheet.createCursor()
-        cursor.gotoEndOfUsedArea(False)
-        addr = cursor.getRangeAddress()
-        sheet.getCellRangeByPosition(0, 0, addr.EndColumn, addr.EndRow).clearContents(FLAGS_LIMPAR_TUDO)
-        if modo != 'UPDATE':
-            # Recriar jogava a aba pro fim, e é assim que a ordem final acaba sendo a da
-            # aba MaisUsadas (a importação escreve nessa ordem). Mover preserva esse
-            # efeito sem destruir nada.
-            _mover_aba_para_o_fim(doc, sheet.Name)
-    else:
-        new_sheet = doc.createInstance("com.sun.star.sheet.Spreadsheet")
-        doc.getSheets().insertByName(sheet_name, new_sheet)
-        sheet = _get_sheet(doc, sheet_name)
-
-    # --- Aplicação de Cores de Aba e Ordenação de Colunas (sem alterações) ---
-    cor_aba = config.cores_entidades.get(sheet_name.lower())
-    if cor_aba is not None and cor_aba != -1:
-        sheet.TabColor = cor_aba
-    todos_atributos = {attr for p in pontos_importados if 'attributes' in p for attr in p['attributes']}
-    ordem_atributos_aba = config.ordem_atributos.get(sheet_name.lower(), [])
+def _montar_matriz_aba(pontos_importados, ordem_atributos_aba):
+    """Monta (cabecalhos, matriz) de uma aba a partir das linhas lidas (lógica PURA).
+    `ordem_atributos_aba` é a prioridade de colunas da aba MaisUsadas; o resto das
+    colunas segue a ordem em que o atributo apareceu pela primeira vez."""
+    # Ordem de primeira aparição (dict preserva inserção), não a de um set: o conjunto
+    # embaralha a cada execução (hash randomizado de str), e todo atributo fora da
+    # MaisUsadas ia pra uma coluna diferente a cada importação -- o .dat exportado
+    # mudava de ordem sem ninguém ter mexido em nada, e o diff no Git virava ruído.
+    todos_atributos = list(dict.fromkeys(
+        attr for p in pontos_importados if 'attributes' in p for attr in p['attributes']))
     prioridade_atributos = {attr: idx for idx, attr in enumerate(ordem_atributos_aba)}
     atributos_ordenados = sorted(
-        list(todos_atributos),
+        todos_atributos,
         key=lambda a: prioridade_atributos.get(a, float('inf'))
     )
     cabecalhos = [CABEÇALHO_COLUNA_ORIGEM, CABEÇALHO_COLUNA_CONTROLE, CABEÇALHO_COLUNA_DADOS] + atributos_ordenados
@@ -628,6 +760,42 @@ def write_to_sheet(doc, sheet_name, pontos_importados, modo, config):
                 if col_idx is not None:
                     row_data[col_idx] = attr_value
         data_matrix.append(row_data)
+    return cabecalhos, data_matrix
+
+
+def write_to_sheet(doc, sheet_name, pontos_importados, modo, config):
+    """
+    Versão limpa e otimizada. Escreve os dados e aplica formatação visual básica,
+    incluindo o efeito zebrado nas linhas importadas + 20 linhas extras.
+    """
+    # --- Preparação da aba ---
+    # Aba que já existe é LIMPA e reaproveitada, nunca removida. Antes o modo REPLACE
+    # fazia removeByName + insertByName: entre um e outro a aba não existia, e uma falha
+    # ali (ou em qualquer ponto seguinte da importação) deixava a planilha sem ela, sem
+    # rollback nenhum -- o risco de destrutividade apontado na auditoria. Limpar dá o
+    # mesmo resultado sem essa janela.
+    if _aba_existe_ci(doc, sheet_name):
+        sheet = _get_sheet(doc, sheet_name)
+        cursor = sheet.createCursor()
+        cursor.gotoEndOfUsedArea(False)
+        addr = cursor.getRangeAddress()
+        sheet.getCellRangeByPosition(0, 0, addr.EndColumn, addr.EndRow).clearContents(FLAGS_LIMPAR_TUDO)
+        if modo != 'UPDATE':
+            # Recriar jogava a aba pro fim, e é assim que a ordem final acaba sendo a da
+            # aba MaisUsadas (a importação escreve nessa ordem). Mover preserva esse
+            # efeito sem destruir nada.
+            _mover_aba_para_o_fim(doc, sheet.Name)
+    else:
+        new_sheet = doc.createInstance("com.sun.star.sheet.Spreadsheet")
+        doc.getSheets().insertByName(sheet_name, new_sheet)
+        sheet = _get_sheet(doc, sheet_name)
+
+    # --- Aplicação de Cores de Aba e Ordenação de Colunas (sem alterações) ---
+    cor_aba = config.cores_entidades.get(sheet_name.lower())
+    if cor_aba is not None and cor_aba != -1:
+        sheet.TabColor = cor_aba
+    cabecalhos, data_matrix = _montar_matriz_aba(
+        pontos_importados, config.ordem_atributos.get(sheet_name.lower(), []))
 
     if data_matrix:
         num_rows = len(data_matrix) - 1
@@ -699,7 +867,10 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
             return
         
     i = 0
-    current_entidade_chave = os.path.splitext(os.path.basename(file_path))[0].lower()
+    chave_do_arquivo = _chave_do_arquivo(file_path)
+    current_entidade_chave = chave_do_arquivo
+    # Conta de linhas já guardadas, pra saber no fim se este arquivo rendeu alguma.
+    linhas_antes = sum(len(v) for v in all_data.values())
     pending_comments = []
     current_block = None
     stats = {
@@ -708,10 +879,16 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
         'comments': 0,
         'ignored_lines': 0,
         'invalid_lines': 0,
-        'warnings': 0
+        'warnings': 0,
+        'preservadas': 0,
+        'repetidos': 0,
+        'arquivo_vazio': 0
     }
     last_i = -1
     iteracoes_sem_progresso = 0
+    # Cache da olhada adiante (_proximo_estrutural): até que linha o último resultado vale.
+    estrutural_ate = -1
+    estrutural_tipo = None
 
     _log_importacao('DEBUG', f"Iniciando parse de {relative_path} com {len(lines)} linhas.")
 
@@ -740,6 +917,26 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
         )
 
         if current_block:
+            # O carregador do SAGE trata toda linha que começa com ';' como comentário --
+            # até ';ENTIDADE' e ';#include' -- e só encerra o registro num NOVO nome de
+            # entidade. Atributo solto depois desses comentários continua o MESMO registro
+            # (provado no SAGE 31: tag + ';E2M' + atributos = 1 registro). Encerrar o bloco
+            # no ';ENTIDADE' partia o registro em dois: um bloco sem atributos, que o
+            # carregador rejeita ("obrigatorio nao preenchido"), e atributos órfãos. Então,
+            # num bloco ativo, o comentário só encerra o bloco se NÃO houver atributo vivo
+            # depois dele antes da próxima entidade/include.
+            if (current_block['type'] == CODIGO_BLOCO_ATIVO
+                    and line_info['type'] in ('commented_entity_start', 'include_commented')):
+                if i >= estrutural_ate:
+                    estrutural_ate, estrutural_tipo = _proximo_estrutural(lines, i, entidades_validas)
+                    if estrutural_ate is None:
+                        estrutural_ate = len(lines)
+                if estrutural_tipo == 'attribute':
+                    current_block['comments'].append(line_info['stripped'].lstrip(';').lstrip())
+                    stats['comments'] += 1
+                    i += 1
+                    continue
+
             if line_info['type'] in ['entity_start', 'commented_entity_start', 'include', 'include_commented', 'block_end']:
                 _finalizar_bloco(current_block, all_data, relative_path, stats, line_no)
                 current_block = None
@@ -757,15 +954,29 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
                 continue
 
             if line_info['type'] == 'attribute':
-                current_block['attributes'][line_info['key']] = line_info['value']
+                chave_attr = line_info['key']
+                if chave_attr in current_block['attributes']:
+                    # Atributo repetido no mesmo bloco: o dict guarda só o último, e o
+                    # anterior sumia sem aviso. Fica como comentário do bloco (o SAGE
+                    # rejeita atributo repetido em bloco ativo, e em bloco comentado a
+                    # alternativa que o autor deixou de lado vale ser lembrada).
+                    current_block['comments'].append(
+                        f"{chave_attr} = {current_block['attributes'][chave_attr]}")
+                    stats['repetidos'] += 1
+                current_block['attributes'][chave_attr] = line_info['value']
                 i += 1
                 continue
 
+            # Linha fora do formato dentro do bloco: vira comentário do bloco em vez de
+            # sumir (antes só um aviso no console, que ninguém vê).
+            current_block['comments'].append(line_info['stripped'])
+            stats['preservadas'] += 1
             stats['invalid_lines'] += 1
             stats['warnings'] += 1
             _log_importacao(
                 'WARN',
-                f"{relative_path}:{line_no} linha inválida dentro do bloco {current_block['identifier']}: {line_info['original']}",
+                f"{relative_path}:{line_no} linha inválida dentro do bloco {current_block['identifier']} "
+                f"(preservada como comentário): {line_info['original']}",
                 force=True
             )
             i += 1
@@ -824,22 +1035,20 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
             i += 1
             continue
 
-        if line_info['type'] == 'attribute':
-            stats['warnings'] += 1
-            stats['invalid_lines'] += 1
-            _log_importacao(
-                'WARN',
-                f"{relative_path}:{line_no} atributo fora de bloco ignorado: {line_info['original']}",
-                force=True
-            )
-            i += 1
-            continue
-
+        # Atributo sem bloco, ou linha que não é nada do formato (um rodapé do tipo "Arquivo gerado
+        # automaticamente por ...", sem ';', é o caso real mais comum em arquivos gerados por
+        # ferramenta): o carregador do SAGE tolera, então a importação também. Mas
+        # tolerar não é jogar fora -- a linha segue como comentário, no lugar em que
+        # estava, e o round-trip a devolve com ';' na frente.
+        pending_comments.append(line_info['stripped'])
+        stats['preservadas'] += 1
         stats['warnings'] += 1
         stats['invalid_lines'] += 1
         _log_importacao(
             'WARN',
-            f"{relative_path}:{line_no} linha não reconhecida ignorada: {line_info['original']}",
+            f"{relative_path}:{line_no} "
+            f"{'atributo fora de bloco' if line_info['type'] == 'attribute' else 'linha não reconhecida'} "
+            f"(preservado como comentário): {line_info['original']}",
             force=True
         )
         i += 1
@@ -851,6 +1060,23 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
     # precisam ser gravados, senão somem no round-trip (auditoria #4).
     pending_comments = _descarregar_comentarios_pendentes(
         pending_comments, all_data, current_entidade_chave, relative_path)
+
+    # Arquivo que não rendeu linha nenhuma (só linhas em branco) ainda faz parte da base:
+    # o pai dele o inclui com #include, e o carregador do SAGE ABORTA a carga inteira se o
+    # arquivo incluído não existe ("Arquivo ... nao encontrado"). Sem marca na planilha a
+    # exportação não o recriava -- medido no SAGE 31 com uma base real: 12 arquivos
+    # vazios, e o round-trip não carregava. A marca é um comentário vazio (Gera = n), que a
+    # exportação devolve como ';' e o SAGE lê sem problema.
+    if sum(len(v) for v in all_data.values()) == linhas_antes:
+        all_data.setdefault(chave_do_arquivo, []).append({
+            'type': CODIGO_COMENTARIO_SIMPLES,
+            'data': '',
+            'origem': relative_path
+        })
+        stats['arquivo_vazio'] = 1
+
+    for chave_stat in ('preservadas', 'repetidos', 'arquivo_vazio'):
+        ACUMULADO_IMPORTACAO[chave_stat] += stats[chave_stat]
 
     elapsed = time.perf_counter() - start_time
     _log_importacao(
@@ -895,17 +1121,14 @@ def exportar_dats(*args):
         return
 
     geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString("Processando exportação total...")
-    abas_a_exportar = [s for s in doc.getSheets() if s.getName().lower() not in _abas_nao_entidade()]
+    abas_a_exportar = _abas_de_entidade(doc)
     try:
-        resultados = [_exportar_folha(sheet, export_folder) for sheet in abas_a_exportar]
+        erros, total_substituicoes, total_sem_origem = _exportar_folhas(abas_a_exportar, export_folder)
     except Exception as e:
         _reportar_falha_inesperada(
             geral_sheet, CELULA_STATUS_EXPORTACAO, "exportação", e,
             "Parte dos .dat pode já ter sido gravada; a versão anterior de cada um está no .bak ao lado.")
         return
-    erros = [r[0] for r in resultados if r[0]]
-    total_substituicoes = sum(r[1] for r in resultados)
-    total_sem_origem = sum(r[2] for r in resultados)
 
     if erros:
         geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString(f"ERRO: {'; '.join(erros)}")
@@ -955,15 +1178,15 @@ def exportar_parcial(*args):
 
     geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString(f"Processando exportação de: {', '.join(s.getName() for s in abas_a_exportar)}...")
     try:
-        resultados = [_exportar_folha(sheet, export_folder) for sheet in abas_a_exportar]
+        # As outras abas entram só como contexto: um .dat que várias abas alimentam sai
+        # inteiro, não só com as linhas da aba exportada (ver _exportar_folhas).
+        erros, total_substituicoes, total_sem_origem = _exportar_folhas(
+            abas_a_exportar, export_folder, contexto=_abas_de_entidade(doc))
     except Exception as e:
         _reportar_falha_inesperada(
             geral_sheet, CELULA_STATUS_EXPORTACAO, "exportação", e,
             "Parte dos .dat pode já ter sido gravada; a versão anterior de cada um está no .bak ao lado.")
         return
-    erros = [r[0] for r in resultados if r[0]]
-    total_substituicoes = sum(r[1] for r in resultados)
-    total_sem_origem = sum(r[2] for r in resultados)
 
     if erros:
         geral_sheet.getCellByPosition(*CELULA_STATUS_EXPORTACAO).setString(f"ERRO: {'; '.join(erros)}")
@@ -985,13 +1208,19 @@ def _avisos_exportacao(total_substituicoes, total_sem_origem):
     return f" ({'; '.join(partes)})" if partes else ""
 
 
-def _exportar_folha(sheet, export_folder):
-    """
-    Exporta uma única aba, criando um backup (.bak) do arquivo anterior
-    antes de salvar a nova versão. Retorna (erro_ou_None, n_substituicoes,
-    n_linhas_sem_origem) -- n_substituicoes é a soma de caracteres sem equivalente
-    em latin-1 trocados por '?' ao longo de todos os arquivos escritos por esta aba,
-    e n_linhas_sem_origem conta as linhas que seriam exportadas mas não têm destino.
+def _abas_de_entidade(doc):
+    """As abas que são entidade (as que a exportação total percorre), na ordem da planilha."""
+    return [s for s in doc.getSheets() if s.getName().lower() not in _abas_nao_entidade()]
+
+
+def _coletar_folha(sheet):
+    """Lê uma aba e devolve (erro_ou_None, {origem: [blocos de texto]}, n_linhas_sem_origem).
+
+    Só lê: quem grava é _gravar_arquivos. A separação existe porque UM .dat pode ser
+    alimentado por mais de uma aba (um 'pdf_1.dat' tem PDF e, se começa por um #include,
+    uma linha na aba 'pdf_1' -- a aba do nome do arquivo --, além dos blocos na 'pdf').
+    Gravar aba por aba fazia a segunda sobrescrever a primeira, e a primeira ia parar no
+    .bak: parte do conteúdo sumia do .dat (medido em bases reais).
     """
     sheet_name = sheet.getName()
     cursor = sheet.createCursor()
@@ -999,7 +1228,7 @@ def _exportar_folha(sheet, export_folder):
     data_range = cursor.getRangeAddress()
     data_array = sheet.getCellRangeByPosition(0, 0, data_range.EndColumn, data_range.EndRow).getDataArray()
 
-    if not data_array or len(data_array) < 2: return None, 0, 0
+    if not data_array or len(data_array) < 2: return None, {}, 0
 
     headers = data_array[0]
     try:
@@ -1007,7 +1236,7 @@ def _exportar_folha(sheet, export_folder):
         gera_col_idx = headers.index(CABEÇALHO_COLUNA_CONTROLE)
         dados_col_idx = headers.index(CABEÇALHO_COLUNA_DADOS)
     except ValueError:
-        return f"Aba '{sheet_name}' não possui as colunas 'Origem', 'Gera' ou 'Dados'.", 0, 0
+        return f"Aba '{sheet_name}' não possui as colunas 'Origem', 'Gera' ou 'Dados'.", {}, 0
 
     dados_agrupados_por_arquivo = {}
     linhas_sem_origem = 0
@@ -1054,10 +1283,18 @@ def _exportar_folha(sheet, export_folder):
                 bloco_final = "\n".join(point_lines)
         if bloco_final is not None:
             dados_agrupados_por_arquivo[origem_path].append(bloco_final)
-            
-    # Itera sobre os dados agrupados e escreve cada arquivo.
+
+    return None, dados_agrupados_por_arquivo, linhas_sem_origem
+
+
+def _gravar_arquivos(export_folder, arquivos):
+    """Grava {origem: [blocos]} na pasta de saída, um arquivo por vez, com .bak do
+    anterior. Devolve (lista_de_erros, n_substituicoes) -- n_substituicoes é a soma de
+    caracteres sem equivalente em latin-1 trocados por '?' ao longo de todos os arquivos.
+    Um arquivo que falha não impede a gravação dos demais."""
     total_substituicoes = 0
-    for relative_path, file_content_list in dados_agrupados_por_arquivo.items():
+    erros = []
+    for relative_path, file_content_list in arquivos.items():
         try:
             full_output_path = os.path.join(export_folder, relative_path)
 
@@ -1076,9 +1313,60 @@ def _exportar_folha(sheet, export_folder):
             with open(full_output_path, 'w', encoding=ENCODING_EXPORTACAO_SAGE) as f:
                 f.write(conteudo)
         except IOError as e:
-            return f"Falha ao escrever {relative_path}: {e}", total_substituicoes, linhas_sem_origem
+            erros.append(f"Falha ao escrever {relative_path}: {e}")
+    return erros, total_substituicoes
 
-    return None, total_substituicoes, linhas_sem_origem
+
+def _exportar_folhas(folhas, export_folder, contexto=None):
+    """Exporta as abas `folhas` e devolve (lista_de_erros, n_substituicoes, n_sem_origem).
+
+    Cada arquivo é gravado UMA vez, com as linhas de todas as abas que apontam pra ele.
+    `contexto` (padrão: as próprias folhas) é o conjunto de abas consultado pra montar
+    cada arquivo: na exportação parcial, passa-se todas as abas de entidade, pra que um
+    .dat compartilhado não saia truncado só com as linhas da aba exportada.
+
+    Ordem dentro do arquivo: primeiro as linhas da aba que leva o nome do arquivo (é onde
+    caem o cabeçalho e os #include que abrem o arquivo), depois as das demais abas na
+    ordem da planilha. A ordem relativa entre entidades diferentes no mesmo arquivo não
+    existe na planilha e o SAGE não depende dela."""
+    contexto = list(contexto) if contexto is not None else list(folhas)
+    nomes_contexto = {s.getName() for s in contexto}
+    todas = list(contexto) + [s for s in folhas if s.getName() not in nomes_contexto]
+
+    erros = []
+    por_aba = []  # (ordem, nome_da_aba, {origem: blocos})
+    sem_origem = 0
+    selecionadas = {s.getName() for s in folhas}
+    for ordem, sheet in enumerate(todas):
+        erro, arquivos, n_sem = _coletar_folha(sheet)
+        if sheet.getName() in selecionadas:
+            sem_origem += n_sem
+            if erro:
+                erros.append(erro)
+        por_aba.append((ordem, sheet.getName(), arquivos))
+
+    origens = []
+    for ordem, nome, arquivos in por_aba:
+        if nome in selecionadas:
+            origens.extend(o for o in arquivos if o not in origens)
+
+    a_gravar = {}
+    for origem in origens:
+        stem = _chave_do_arquivo(origem)
+        partes = [(0 if nome.lower() == stem else 1, ordem, arquivos[origem])
+                  for ordem, nome, arquivos in por_aba if origem in arquivos]
+        a_gravar[origem] = [b for _, _, blocos in sorted(partes, key=lambda t: t[:2]) for b in blocos]
+
+    erros_gravacao, substituicoes = _gravar_arquivos(export_folder, a_gravar)
+    erros.extend(erros_gravacao)
+    return erros, substituicoes, sem_origem
+
+
+def _exportar_folha(sheet, export_folder):
+    """Exporta uma única aba (compatibilidade: a exportação usa _exportar_folhas).
+    Retorna (erro_ou_None, n_substituicoes, n_linhas_sem_origem)."""
+    erros, substituicoes, sem_origem = _exportar_folhas([sheet], export_folder)
+    return (erros[0] if erros else None), substituicoes, sem_origem
 
 # ===============================================================
 # ================= FUNÇÃO DE CORES DO TEMA =====================

@@ -92,6 +92,32 @@ Esta coluna é o principal controle da exportação. Ela indica à macro o que f
 
 Se a célula na coluna "Gera" estiver vazia, a linha será ignorada durante a exportação.
 
+## O que o round-trip garante
+
+Importar uma base e exportá-la de volta **não perde nada que o carregador do SAGE leia** — foi
+conferido carregando a base original e a exportada num SAGE 31 (`AtualizaBD fria fonte`) e comparando a
+listagem de todos os registros lidos. Para isso a macro faz, de propósito:
+
+- **`.dat` vazio é mantido**: um arquivo sem registro nenhum que algum `#include` aponta vira uma linha
+  `Gera = n` com texto vazio e sai como `;`. Sem ele o `#include` ficava pendurado e o SAGE **aborta a carga**.
+- **`#include` de arquivo que não termina em `.dat`** (`ocr.dat.novo`, `pdd.dat.rgv`) é seguido e importado.
+  Backups e variantes que nenhum `#include` ativo aponta continuam de fora.
+- **Um `.dat` que mais de uma aba alimenta** (o `#include` que o abre mora na aba do nome do arquivo, os
+  blocos na da entidade) sai inteiro, uma vez só — também na exportação parcial.
+- **Um registro com `;ENTIDADE` no meio** continua sendo um registro só (o carregador ignora toda linha que
+  começa com `;`).
+- **Linha fora do formato** (um rodapé sem `;`) é mantida como comentário; **atributo repetido** no bloco: vale
+  o último e o anterior fica como comentário.
+- **A importação total esvazia as abas de entidade** que sobraram de uma base anterior (elas iam para a pasta
+  de saída junto com a base nova); o status diz quais. Um `.dat` com nome de aba de configuração
+  (`geral.dat`, `cores.dat`...) não é importado.
+- **Acentos**: `.dat` em UTF-8 é lido como UTF-8 e sai em Latin-1 (o que o SAGE espera). O espaço não-quebrável
+  é preservado. A ordem das colunas é estável: exportar duas vezes dá os mesmos bytes.
+
+Normalizações sem consequência para o SAGE: atributo de valor vazio (`OBSRV =`) é omitido (para o carregador
+vazio e ausente são a mesma coisa), a ordem dos atributos no bloco, os comentários (vão para o topo do
+bloco), as linhas em branco e `# include`/`#include`.
+
 ## Aba `opmsk`
 
 A planilha também contém uma aba auxiliar chamada `opmsk`, que pode ser usada para facilitar o cálculo e a configuração das máscaras de bits do protocolo 61850.
@@ -170,6 +196,13 @@ SAGEBONIS_SOFFICE=/usr/bin/soffice /usr/bin/python3 tests/run_all.py
   sintética numa cópia descartável do `.ods` e exporta de volta, conferindo o que a
   ferramenta promete: acento em Latin-1, includes, blocos comentados, linhas ignoradas,
   backup `.bak` e exportação parcial. **Nunca escreve no `.ods` rastreado.**
+
+- `tests/smoke_test_roundtrip.py` — o round-trip em lógica pura, contra a **gramática do carregador do SAGE**
+  (`tests/gramatica_sage.py`): cada defeito de perda de dado listado acima é um caso.
+- `tests/teste_uno_roundtrip_perdas.py` — o mesmo no LibreOffice real: valores que o Calc poderia interpretar
+  (fórmula, número, data, texto longo) saem intactos, aba de base anterior é esvaziada, `grcmp .dat` não
+  sobrescreve a aba `grcmp`, exportação parcial não trunca arquivo compartilhado e exportar duas vezes dá os
+  mesmos bytes.
 
 Tudo isso roda sozinho no GitHub Actions a cada push/PR — inclusive uma checagem que
 reprova quem editar o `ImportadorSAGE.py` e esquecer o `sync_macro.py inject`.

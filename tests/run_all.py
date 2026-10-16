@@ -15,9 +15,11 @@ RAIZ = os.path.dirname(os.path.abspath(__file__))
 
 SMOKE_TESTS = [
     "smoke_test_parser.py",
+    "smoke_test_roundtrip.py",
 ]
 TESTES_UNO = [
     "teste_uno_roundtrip.py",
+    "teste_uno_roundtrip_perdas.py",
 ]
 
 

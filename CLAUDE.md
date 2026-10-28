@@ -1,5 +1,7 @@
 # SageBonis — Contexto do Projeto
 
+**Auditoria de 28/10/2026:** [linha de base e retomada](docs/AUDITORIA-2026-10-28.md). Quatro suítes aprovadas em `434f1fc`; alterações posteriores exigem validação própria.
+
 ## O que é
 Ferramenta para editar em massa a base de dados do **SAGE** (Sistema Aberto de
 Gerenciamento de Energia) usando o **LibreOffice Calc**. A planilha `SageBonis.ods`

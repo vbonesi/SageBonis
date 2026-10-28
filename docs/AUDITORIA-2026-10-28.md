@@ -20,3 +20,9 @@ no escopo testado. Todos os exemplos usados foram sintéticos.
 Nenhum arquivo de dados real, artefato cifrado ou histórico externo foi aberto
 ou alterado. Logs da auditoria permanecem privados. A publicação deste documento
 não inclui as modificações funcionais de outra frente.
+
+## Atualização posterior
+
+- Removido o fallback de leitura de `parse_dat_file` que nunca executava (`latin-1`
+  decodifica qualquer byte). Macro reinjetada no `.ods`; `sync_macro.py status` OK e as
+  quatro suítes aprovadas após a mudança.

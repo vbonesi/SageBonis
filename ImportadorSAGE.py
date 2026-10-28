@@ -857,15 +857,9 @@ def parse_dat_file(file_path, relative_path, all_data, entidades_validas):
             print(f"Erro ao ler o arquivo {file_path}: {e}")
             return
 
-    if lines is None:
-        # Fallback resiliente para evitar falha total em arquivos com bytes inválidos.
-        try:
-            with open(file_path, 'r', encoding=ENCODING_EXPORTACAO_SAGE, errors='ignore') as f:
-                lines = f.readlines()
-        except IOError as e:
-            print(f"Erro ao ler o arquivo {file_path}: {e}")
-            return
-        
+    # latin-1 (último da lista) decodifica qualquer byte, então `lines` nunca fica None
+    # aqui: a falha de leitura real (IOError) já retornou acima.
+
     i = 0
     chave_do_arquivo = _chave_do_arquivo(file_path)
     current_entidade_chave = chave_do_arquivo
